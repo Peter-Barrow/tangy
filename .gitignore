@@ -1,0 +1,6 @@
+local_testing
+build
+dist
+__pycache__
+*.so
+*.html

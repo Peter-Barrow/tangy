@@ -1,0 +1,173 @@
+#ifndef __BASE__
+#define __BASE__
+
+#include <errno.h>
+#include <math.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef uint8_t u8;
+typedef int32_t b32;
+typedef int32_t i32;
+typedef uint32_t u32;
+typedef uint64_t u64;
+typedef float f32;
+typedef double f64;
+typedef uintptr_t uptr;
+typedef char byte;
+typedef unsigned char ubyte;
+typedef ptrdiff_t size;
+typedef size_t usize;
+
+#define CAT(a, b) a##b
+#define PASTE(a, b) CAT(a, b)
+#define JOIN(prefix, name) PASTE(prefix, PASTE(_, name))
+#define _JOIN(prefix, name) PASTE(_, PASTE(prefix, PASTE(_, name)))
+
+#define lengthOf(array) (sizeof(array) / sizeof(array[0]));
+
+/** \enum Error cases for creating shared memory
+ */
+typedef enum {
+    NONE,
+    SHARED_OPEN,
+    TRUNCATE_FAILED,
+    MAPPING_FAILED,
+    STAT_ERROR,
+} tbError;
+
+typedef struct tbResult {
+    tbError Error;
+    bool Ok;
+} tbResult;
+
+typedef struct index_range {
+    u64 begin;
+    u64 end;
+} index_range;
+
+
+/** @struct iterator
+ * @brief simple iterator a contiguous block of memory
+ */
+typedef struct iterator {
+    usize index; /**< current index */
+    usize count; /**< number of elements remaining */
+} iterator;
+
+
+/** @struct circular iterator
+ * @brief struct containing a pair of iterators to handle access into a ring
+ * buffer
+ *
+ * @see(iterator, next) This struct provides a mechanism to treat a ring buffer
+ * as though it was a contiguous block of memory taking care of the wrap-around
+ * case and allowing sequential access by incrementing a cursor rather than
+ * needed modulo division for each access
+ */
+typedef struct circular_iterator {
+    usize count;    /**< Number of elements remaining in iterator */
+    iterator lower; /**< Iterator for first side of ring (before wrap-around)
+                       @see{iterator} */
+    iterator upper; /**< Iterator for second side of ring (after wrap-around)
+                       @see{iterator} */
+} circular_iterator;
+
+
+/**
+ * @brief next value of iterator for ring buffer
+ *
+ * Allows accessing items sequentially from a ring buffer without the need to
+ * use modulo division (%-operator) to access each position. Decrements the 
+ * count for relevent iterator field and own count field on each invocation to 
+ * track the number of elements left to visit.
+ *
+ * @param[in] iter pointer to circular_iterator struct
+ * @return usize next position
+ */
+static inline usize
+next(circular_iterator* iter) {
+    if (iter->lower.count > 0) {
+        iter->count--;
+        iter->lower.count--;
+        iter->lower.index++;
+        return iter->lower.index;
+    }
+    if (iter->upper.count > 0) {
+        iter->count--;
+        iter->upper.count--;
+        iter->upper.index++;
+        return iter->upper.index;
+    }
+    return 0;
+}
+
+
+/**
+ * @brief Initialise a new iterator for a ring buffer
+ *
+ * Takes a start and stop position of a ring buffer, these will typicall be
+ * greater than the capacity of the ring buffer if it has already been in use.
+ * These are then used to determine two points in the underlying array of the
+ * ring buffer that need to be incremented from and to by way of modulo division
+ * with the ring buffers capacity
+ *
+ * @param[in, out] iter pointer to circular_iterator
+ * @param[in] capacity of ring buffer
+ * @param[in] start index of buffer to begin iteration from
+ * @param[in] stop point of buffer to terminate at
+ * @return [TODO:description]
+ */
+static inline int
+iterator_init(circular_iterator* iter,
+              usize capacity,
+              usize start,
+              usize stop) {
+    if (start > stop) {
+        iter->count = 0;
+        return -1;
+    }
+
+    iter->count = stop - start;
+
+    if (stop <= capacity) {
+        iter->lower.index = start;
+        iter->lower.count = iter->count;
+        iter->upper.index = 0;
+        iter->upper.count = 0;
+        return 0;
+    }
+
+    usize x = start % capacity;
+    usize y = stop % capacity;
+
+    iter->lower.index = x;
+    iter->lower.count = capacity - x;
+    iter->upper.index = 0;
+    iter->upper.count = y;
+
+    return 0;
+}
+
+typedef struct {
+    usize length;
+    usize oldest; // not the best name for the result of argmin
+    u8* channels;
+    usize* index;
+    usize* limit;
+    circular_iterator* iters;
+} pattern_iterator;
+
+// // Vector style storage struct for timetags found in coincidence
+// // length of timetags needs to be truncated to count * n_channels
+// typedef struct {
+//     usize count;
+//     usize n_channels;
+//     u64* timetags;
+// } record_vec;
+
+#endif
