@@ -300,8 +300,8 @@ class clkbuffer:
         _resolution: _tangy.clk_res
         _resolution.coarse = resolution_coarse
         _resolution.fine = resolution_fine
-        result = _tangy.clk_buffer_init(length, _resolution, n_channels, c_name,
-                                        cython.address(self._buffer))
+        result = _tangy.clk_buffer_init(length, _resolution, n_channels,
+                                        c_name, cython.address(self._buffer))
         if False is result.Ok:
             # raise an error
             print("buffer creation failed")
@@ -531,13 +531,13 @@ def singles(buffer: RecordBuffer,
     total: uint64 = 0
 
     if RecordBuffer is stdbuffer:
-        total = _tangy.std_singles(cython.address(buffer._buffer),
-                                   start, stop, cython.address(counters_view[0]))
+        total = _tangy.std_singles(cython.address(buffer._buffer), start, stop,
+                                   cython.address(counters_view[0]))
         return (total, counters)
 
     elif RecordBuffer is clkbuffer:
-        total = _tangy.clk_singles(cython.address(buffer._buffer),
-                                   start, stop, cython.address(counters_view[0]))
+        total = _tangy.clk_singles(cython.address(buffer._buffer), start, stop,
+                                   cython.address(counters_view[0]))
         return (total, counters)
 
 
@@ -581,6 +581,7 @@ class StdCoincidenceMeasurement:
         count: uint64 = _tangy.std_coincidences_records(
             cython.address(buffer._buffer), cython.address(self.delays[0]),
             radius, read_time, self._cc)
+
         total: uint64 = self._cc.records.length
         records: ndarray(uint64) = zeros(total, dtype=uint64)
         for i in range(total):
@@ -713,6 +714,8 @@ def timetrace(buffer: RecordBuffer, channels: List[int], read_time: float,
     n_channels: uint64 = len(channels)
     channels: uint8[:] = asarray(channels, dtype=uint8)
     channels_view: cython.uchar[::1] = channels
+    channels_ptr: cython.pointer(cython.uchar) = cython.address(
+        channels_view[0])
 
     buffer_resolution: float64 = 0
     if RecordBuffer is stdbuffer:
@@ -728,21 +731,23 @@ def timetrace(buffer: RecordBuffer, channels: List[int], read_time: float,
 
     intensities: uint64[:] = zeros(n, dtype=uint64)
     intensities_view: c_uint64_t[::1] = intensities
+    intensities_ptr: cython.pointer(c_uint64_t) = cython.address(
+        intensities_view[0])
 
     if RecordBuffer is stdbuffer:
         total: uint64 = _tangy.std_timetrace(cython.address(buffer._buffer),
                                              read_time,
                                              bin_width,
-                                             cython.address(channels_view[0]),
+                                             channels_ptr,
                                              n_channels,
-                                             cython.address(intensities_view[0]))
+                                             intensities_ptr)
     elif RecordBuffer is clkbuffer:
         total: uint64 = _tangy.clk_timetrace(cython.address(buffer._buffer),
                                              read_time,
                                              bin_width,
-                                             cython.address(channels_view[0]),
+                                             channels_ptr,
                                              n_channels,
-                                             cython.address(intensities_view[0]))
+                                             intensities_ptr)
     return intensities
 
 

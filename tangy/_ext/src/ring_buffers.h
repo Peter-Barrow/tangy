@@ -72,6 +72,7 @@ typedef struct {
     RESOLUTION
     *resolution; // maybe it does make sense to have setters for fields that
                  // should be constant after initialisation
+    u64* conversion_factor;
     u64* capacity;
     u64* count;
     u64* index_of_reference; // pointer to index of reference record
@@ -80,6 +81,7 @@ typedef struct {
 
 typedef struct {
     RESOLUTION resolution;
+    u64 conversion_factor;
     u64 capacity;
     u64 count;
     u64 index_of_reference; // pointer to index of reference record
@@ -87,6 +89,7 @@ typedef struct {
 } BUFFER_INFO;
 
 u64 JOIN(STUB, size_of)();
+u64 JOIN(STUB, conversion_factor)(RESOLUTION resolution);
 
 static inline u64
 JOIN(STUB, buffer_map_size)(u64 num_elements) {
@@ -115,6 +118,7 @@ static inline void
 JOIN(STUB, buffer_info_init)(byte* data, BUFFER* buffer) {
 
     buffer->resolution = &((BUFFER_INFO*)data)->resolution;
+    buffer->conversion_factor = &((BUFFER_INFO*)data)->conversion_factor;
     buffer->capacity = &((BUFFER_INFO*)data)->capacity;
     buffer->count = &((BUFFER_INFO*)data)->count;
     buffer->index_of_reference = &((BUFFER_INFO*)data)->index_of_reference;
@@ -149,6 +153,9 @@ JOIN(STUB, buffer_init)(const u64 num_elements,
     offset = offsetof(BUFFER_INFO, resolution) / sizeof(RESOLUTION);
     ((RESOLUTION*)buffer->map_ptr)[offset] = resolution;
 
+    offset = offsetof(BUFFER_INFO, conversion_factor) / 8;
+    ((u64*)buffer->map_ptr)[offset] = JOIN(STUB, conversion_factor)(resolution);
+
     offset = offsetof(BUFFER_INFO, count) / 8;
     ((u64*)buffer->map_ptr)[offset] = 0;
 
@@ -160,6 +167,7 @@ JOIN(STUB, buffer_init)(const u64 num_elements,
 
     buffer->capacity = &((BUFFER_INFO*)buffer->map_ptr)->capacity;
     buffer->resolution = &((BUFFER_INFO*)buffer->map_ptr)->resolution;
+    buffer->conversion_factor = &((BUFFER_INFO*)buffer->map_ptr)->conversion_factor;
     buffer->count = &((BUFFER_INFO*)buffer->map_ptr)->count;
     buffer->index_of_reference =
       &((BUFFER_INFO*)buffer->map_ptr)->index_of_reference;
@@ -716,6 +724,8 @@ JOIN(STUB, coincidences_records)(const BUFFER* const buffer,
         // TODO: error message here
         return 0;
     }
+
+    TT_VECTOR_RESET(measurement->records);
 
     measurement->resolution = *(buffer->resolution);
     measurement->read_time = read_time;

@@ -42,10 +42,14 @@ typedef struct std_slice {
 #define TT_VECTOR_INIT(C) std_vec_init(C)
 #define TT_VECTOR_DEINIT(C) std_vec_deinit(C)
 #define TT_VECTOR_PUSH(V_PTR, E) std_vec_push(V_PTR, E)
-#define TT_VECTOR_RESET(V_PTR) std_vec_reset(V_PTR)`
+#define TT_VECTOR_RESET(V_PTR) std_vec_reset(V_PTR)
 // #define CC_RESULT std_cc_result
 
 #include "ring_buffers.h"
+
+u64 std_conversion_factor(std_res resolution) {
+    return 1;
+}
 
 u64 std_size_of() {
     u64 elem_size = sizeof(uint8_t) + sizeof(uint64_t);

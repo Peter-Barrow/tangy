@@ -136,10 +136,15 @@ void clk_vec_push(vec_clk_timetag* multivec, clk_timetag value) {
 #define TT_VECTOR_INIT(C) clk_vec_init(C)
 #define TT_VECTOR_DEINIT(C) clk_vec_deinit(C)
 #define TT_VECTOR_PUSH(V_PTR, E) clk_vec_push(V_PTR, E)
-#define TT_VECTOR_RESET(V_PTR) clk_vec_reset(V_PTR)`
+#define TT_VECTOR_RESET(V_PTR) clk_vec_reset(V_PTR)
 // #define CC_RESULT clk_cc_result
 
 #include "ring_buffers.h"
+
+u64 clk_conversion_factor(clk_res resolution) {
+    u64 factor = (u64)round(resolution.coarse / resolution.fine);
+    return factor;
+}
 
 u64
 clk_size_of() {
@@ -166,11 +171,19 @@ clk_channel_at(const clk_buffer* const buffer, u64 absolute_index) {
 u64
 clk_arrival_time_at(const clk_buffer* const buffer, u64 absolute_index) {
     clk_timetag timestamp = buffer->ptrs.timestamp[absolute_index];
+    
     // return ((u64)roundl((f64)timestamp.clock / buffer->resolution->coarse)) +
     //        timestamp.delta;
-    clk_res resolution = *(buffer->resolution);
-    f64 ratio = resolution.coarse / resolution.fine;
-    return (u64)roundl((f64)timestamp.clock * ratio) + timestamp.delta;
+    // clk_res resolution = *(buffer->resolution);
+    // // TODO: probably a micro optimisation but it should be possible to convert
+    // // this all to use integer multiplication and get rid of the casts. If we
+    // // can have "ratio" as some number of bins to convert the clocked timestamp
+    // // into an arrival time then this should be possible to do in a single step
+    // f64 ratio = resolution.coarse / resolution.fine;
+    // return (u64)roundl((f64)timestamp.clock * ratio) + timestamp.delta;
+    
+    // NOTE: in testing this is ~3x faster for 2-fold cc counting
+    return (*(buffer->conversion_factor) * timestamp.clock) + timestamp.delta;
 }
 
 clk_slice
