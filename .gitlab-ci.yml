@@ -28,7 +28,7 @@ build:
   before_script:
     - python --version ; pip --version  # For debugging
     - pip install poetry
-    - poetry install
+    - poetry build
     - source `poetry env info --path`/bin/activate
   
   script:
