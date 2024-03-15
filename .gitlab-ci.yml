@@ -1,0 +1,38 @@
+stages:
+  - build
+
+
+variables:
+  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/release/${CI_COMMIT_TAG}/"
+
+
+build:
+  stage: build
+  image: python:3.9
+
+  #rules:
+  #  - if: $CI_COMMIT_TAG
+
+  #only:
+  #  - tags
+  except:
+    - branches
+
+  variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+  cache:
+    paths:
+      - .cache/pip
+
+  before_script:
+    - python --version ; pip --version  # For debugging
+    - pip install poetry
+    - poetry install
+    #- source `poetry env info --path`/bin/activate
+  
+  script:
+    - poetry build
+    - poetry config repositories.gitlab "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/packages/pypi"
+    - poetry config http-basic.gitlab gitlab-ci-token "$CI_JOB_TOKEN"
+    - poetry publish --repository gitlab
