@@ -38,7 +38,7 @@ build:
   
   artifacts:
       paths:
-      - /builds/PeterBarrow/tangy/dist/tangy-0.1.0.tar.gz
+      - /builds/PeterBarrow/tangy/dist/tangy-*.whl
 
 upload:
   stage: upload
