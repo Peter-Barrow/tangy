@@ -1,6 +1,7 @@
 local_testing
 build
 dist
+site
 __pycache__
 *.so
 *.html

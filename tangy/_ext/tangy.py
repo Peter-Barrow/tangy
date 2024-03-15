@@ -2,7 +2,7 @@ import datetime
 from numpy import ndarray, asarray, zeros, uint64, uint8, float64
 import cython
 from cython.cimports.cython import view
-from cython.cimports import _tangy as _tangy
+from cython.cimports import tangy as _tangy
 
 import mmap
 from os import dup
@@ -21,6 +21,11 @@ import struct
 import numpy.typing as npt
 from typing import List, Tuple, Optional, Union
 from enum import Enum
+
+
+# __all__ = [standard_records, clocked_records, stdbuffer, BufferClocked, PTUFile,
+#            singles, coincidences, timetrace, find_zero_delay,
+#            coincidence_measurement]
 
 
 @cython.dataclasses.dataclass(frozen=True)
@@ -95,7 +100,31 @@ class clocked_records:
 
 
 @cython.cclass
-class stdbuffer:
+class BufferStandard:
+    """Interface to underlying ring buffer
+
+    Args:
+        name (str): Name of buffer to be created or attached to.
+        resolution (Optional[Union[float, Tuple[float, float]]]): Resolution \
+        of timetags in seconds. A single float for the "standard timetags". A \
+        pair of floats for "clocked timetags" with a "coarse" and "fine" \
+        timing structure. Unused if connecting.
+        n_channels (int): Number of channels
+        length (Optional[int] = 1000): Length of buffer to create. Unused if \
+        connecting.
+
+    Examples:
+        Creating a new buffer can be done like so:
+        >>> my_buffer = tangy.buffer("my_buffer", 1e-9, 4, int(1e6))
+
+        Buffers can also be connected to since they are backed by shared \
+        memory they can be created in one python instance that is for example \
+        reading from a timetagger and then connected to in another instance to\
+        analyse the timetags in that buffer without interfering with the \
+        device connection.
+        >>> my_connected_buffer = tangy.buffer("my_buffer")
+    """
+
 
     _buffer = cython.declare(_tangy.std_buffer)
     _name = cython.declare(bytes)
@@ -277,7 +306,30 @@ class stdbuffer:
 
 
 @cython.cclass
-class clkbuffer:
+class BufferClocked:
+    """Interface to underlying ring buffer
+
+    Args:
+        name (str): Name of buffer to be created or attached to.
+        resolution (Optional[Union[float, Tuple[float, float]]]): Resolution \
+        of timetags in seconds. A single float for the "standard timetags". A \
+        pair of floats for "clocked timetags" with a "coarse" and "fine" \
+        timing structure. Unused if connecting.
+        n_channels (int): Number of channels
+        length (Optional[int] = 1000): Length of buffer to create. Unused if \
+        connecting.
+
+    Examples:
+        Creating a new buffer can be done like so:
+        >>> my_buffer = tangy.buffer("my_buffer", 1e-9, 4, int(1e6))
+
+        Buffers can also be connected to since they are backed by shared \
+        memory they can be created in one python instance that is for example \
+        reading from a timetagger and then connected to in another instance to\
+        analyse the timetags in that buffer without interfering with the \
+        device connection.
+        >>> my_connected_buffer = tangy.buffer("my_buffer")
+    """
 
     _buffer = cython.declare(_tangy.clk_buffer)
     _name = cython.declare(bytes)
@@ -479,6 +531,77 @@ class clkbuffer:
         return _tangy.clk_time_in_buffer(cython.address(self._buffer))
 
 
+# @cython.cfunc
+# def _time_in_buffer(buffer: TangyBuffers) -> float:
+#     if TangyBuffers is _tangy.std_buffer:
+#         return _tangy.std_time_in_buffer(cython.address(buffer))
+#     elif TangyBuffers is _tangy.clk_buffer:
+#         return _tangy.clk_time_in_buffer(cython.address(buffer))
+
+
+_Buffer = cython.union(
+    standard=_tangy.std_buffer,
+    clocked=_tangy.clk_buffer)
+
+TangyBuffer = cython.fused_type(_tangy.std_buffer, _tangy.clk_buffer)
+
+RecordBuffer = cython.fused_type(BufferStandard, BufferClocked)
+
+
+@cython.cfunc
+def time_in_buffer_alt(buffer: RecordBuffer) -> float:
+    if RecordBuffer is BufferStandard:
+        buffer_time = _tangy.std_time_in_buffer(cython.address(buffer._buffer))
+    elif RecordBuffer is BufferClocked:
+        buffer_time = _tangy.clk_time_in_buffer(cython.address(buffer._buffer))
+    return buffer_time
+
+
+@cython.cfunc
+def bins_from_time(buffer: TangyBuffer, time: float64) -> cython.ulonglong:
+    bins: uint64 = 0
+    if TangyBuffer is _tangy.std_buffer:
+        bins = _tangy.std_bins_from_time(buffer.resolution[0], time)
+    elif TangyBuffer is _tangy.clk_buffer:
+        bins = _tangy.clk_bins_from_time(buffer.resolution[0], time)
+    return bins
+
+
+@cython.cfunc
+def lower_bound_alt(buffer: TangyBuffer, time: float64) -> cython.ulonglong:
+    index: uint64 = 0
+    bins: uint64 = bins_from_time(buffer, time)
+    if TangyBuffer is _tangy.std_buffer:
+        index = _tangy.std_lower_bound(cython.address(buffer), bins)
+    elif TangyBuffer is _tangy.clk_buffer:
+        index = _tangy.clk_lower_bound(cython.address(buffer), bins)
+    return index
+
+
+@cython.cfunc
+def time_in_buffer_alt_alt(buffer: TangyBuffer) -> float:
+    if TangyBuffer is _tangy.std_buffer:
+        buffer_time = _tangy.std_time_in_buffer(cython.address(buffer))
+    elif TangyBuffer is _tangy.clk_buffer:
+        buffer_time = _tangy.clk_time_in_buffer(cython.address(buffer))
+    return buffer_time
+
+
+# @cython.cfunc
+# def _singles_alt(buffer: TangyBuffer, start: cython.ulonglong,
+#                  stop: cython.ulonglong, counters: uint64[:]
+#                  ) -> cython.ulonglong:
+#
+#     total: uint64 = 0
+#     if TangyBuffer is _tangy.std_buffer:
+#         total = _tangy.std_singles(cython.address(buffer), start, stop,
+#                                    counters)
+#     elif TangyBuffer is _tangy.clk_buffer:
+#         total = _tangy.clk_singles(cython.address(buffer), start, stop,
+#                                    counters)
+#     return total
+
+
 @cython.dataclasses.dataclass(frozen=True)
 class zero_delay_result:
     times: ndarray(float64) = cython.dataclasses.field()
@@ -496,17 +619,15 @@ def double_decay(time, tau1, tau2, t0, max_intensity):
     return decay
 
 
-PyBuffers = cython.fused_type(stdbuffer, clkbuffer)
-
-RecordBuffer = cython.fused_type(stdbuffer, clkbuffer)
+PyBuffers = cython.fused_type(BufferStandard, BufferClocked)
 
 
 @cython.ccall
 def lower_bound(buffer: RecordBuffer, read_time: float) -> int:
     time_in_buffer: float64 = buffer.time_in_buffer()
-    if RecordBuffer is stdbuffer:
+    if RecordBuffer is BufferStandard:
         index: uint64 = buffer.lower_bound(time_in_buffer - read_time)
-    elif RecordBuffer is clkbuffer:
+    elif RecordBuffer is BufferClocked:
         index: uint64 = buffer.lower_bound(time_in_buffer - read_time)
 
     return index
@@ -517,6 +638,25 @@ def singles(buffer: RecordBuffer,
             read_time: Optional[float] = None, n_channels: int = 16,
             start: Optional[int] = None, stop: Optional[int] = None
             ) -> Tuple[int, List[int]]:
+    """Count the occurances of each channel over a region of the buffer
+
+    Args:
+        buffer (RecordBuffer): Buffer containing timetags
+        read_time (Optional[float] = None): Length of time to integrate over
+        n_channels (int = 16): Number of channels present in the buffer
+        start (Optional[int] = None): Buffer position to start counting from
+        stop (Optional[int] = None): Buffer position to sotp counting to
+
+    Returns:
+        (int, List[int]): Total counts and list of total counts on each channel
+
+    Examples:
+        Get all of the singles in a buffer
+        >>> tangy.singles(buffer, buffer.time_in_buffer())
+
+        Count the singles in the last 1s
+        >>> tangy.singles(buffer, 1)
+    """
 
     counters: uint64[:] = zeros(n_channels, dtype=uint64)
     counters_view: c_uint64_t[::1] = counters
@@ -530,12 +670,12 @@ def singles(buffer: RecordBuffer,
 
     total: uint64 = 0
 
-    if RecordBuffer is stdbuffer:
+    if RecordBuffer is BufferStandard:
         total = _tangy.std_singles(cython.address(buffer._buffer), start, stop,
                                    cython.address(counters_view[0]))
         return (total, counters)
 
-    elif RecordBuffer is clkbuffer:
+    elif RecordBuffer is BufferClocked:
         total = _tangy.clk_singles(cython.address(buffer._buffer), start, stop,
                                    cython.address(counters_view[0]))
         return (total, counters)
@@ -548,7 +688,7 @@ class StdCoincidenceMeasurement:
     channels: cython.uchar[:]
     delays: cython.double[:]
 
-    def __init__(self, buffer: stdbuffer, channels: List[int],
+    def __init__(self, buffer: BufferStandard, channels: List[int],
                  delays: Optional[List[float]] = None):
 
         n: uint64 = len(channels)
@@ -566,7 +706,7 @@ class StdCoincidenceMeasurement:
         _tangy.std_coincidence_measurement_delete(self._cc)
 
     @cython.ccall
-    def count(self, buffer: stdbuffer, radius: float, read_time: float) -> int:
+    def count(self, buffer: BufferStandard, radius: float, read_time: float) -> int:
         count: uint64 = _tangy.std_coincidences_count(
             cython.address(buffer._buffer),
             self._cc.n_channels,
@@ -576,13 +716,13 @@ class StdCoincidenceMeasurement:
         return count
 
     @cython.ccall
-    def collect(self, buffer: stdbuffer, radius: float, read_time: float
+    def collect(self, buffer: BufferStandard, radius: float, read_time: float
                 ) -> standard_records:
         count: uint64 = _tangy.std_coincidences_records(
             cython.address(buffer._buffer), cython.address(self.delays[0]),
             radius, read_time, self._cc)
 
-        total: uint64 = self._cc.records.length
+        total: uint64 = self._cc.total_records
         records: ndarray(uint64) = zeros(total, dtype=uint64)
         for i in range(total):
             records[i] = self._cc.records.data[i]
@@ -603,7 +743,7 @@ class ClkCoincidenceMeasurement:
     _channels_view: cython.uchar[:]
     _delays_view: cython.double[:]
 
-    def __init__(self, buffer: clkbuffer, channels: List[int],
+    def __init__(self, buffer: BufferClocked, channels: List[int],
                  delays: Optional[List[float]] = None):
 
         n: uint64 = len(channels)
@@ -624,7 +764,7 @@ class ClkCoincidenceMeasurement:
         _tangy.clk_coincidence_measurement_delete(self._cc)
 
     @cython.ccall
-    def count(self, buffer: clkbuffer, radius: float, read_time: float) -> int:
+    def count(self, buffer: BufferClocked, radius: float, read_time: float) -> int:
         count: uint64 = _tangy.clk_coincidences_count(
             cython.address(buffer._buffer), self._cc.n_channels,
             cython.address(self._channels_view[0]), cython.address(
@@ -633,13 +773,13 @@ class ClkCoincidenceMeasurement:
         return count
 
     @cython.ccall
-    def collect(self, buffer: clkbuffer, radius: float, read_time: float
+    def collect(self, buffer: BufferClocked, radius: float, read_time: float
                 ) -> clocked_records:
         count: uint64 = _tangy.clk_coincidences_records(
             cython.address(buffer._buffer), cython.address(
                 self._delays_view[0]),
             radius, read_time, self._cc)
-        total: uint64 = self._cc.records.length
+        total: uint64 = self._cc.total_records
         clocks: ndarray(uint64) = zeros(total, dtype=uint64)
         deltas: ndarray(uint64) = zeros(total, dtype=uint64)
         for i in range(total):
@@ -659,11 +799,115 @@ CCMeasurement = cython.fused_type(StdCoincidenceMeasurement,
 
 
 def coincidence_measurement(buffer: RecordBuffer, channels: List[int],
-                            delays: Optional[List[float]] = None):
-    if stdbuffer is RecordBuffer:
+                            delays: Optional[List[float]] = None) -> Union[StdCoincidenceMeasurement, ClkCoincidenceMeasurement]:
+    if BufferStandard is RecordBuffer:
         return StdCoincidenceMeasurement(buffer, channels, delays)
-    elif clkbuffer is RecordBuffer:
+    elif BufferClocked is RecordBuffer:
         return ClkCoincidenceMeasurement(buffer, channels, delays)
+
+
+@cython.cclass
+class CoincidenceMeasurementStandard:
+    _cc = cython.declare(cython.pointer(_tangy.std_cc_measurement))
+
+    channels: ndarray(uint8)
+    delays: ndarray(float64)
+
+    _channels_view: cython.uchar[:]
+    _delays_view: cython.double[:]
+
+    def __init__(self, resolution: float, channels: List[int],
+                 delays: Optional[List[float]] = None):
+
+        n: uint64 = len(channels)
+        self.channels = asarray(channels, dtype=uint8)
+        self.delays = zeros(n, dtype=float64)
+
+        if delays:
+            for i in range(n):
+                self.delays[i] = delays[i]
+
+        self._channels_view = self.channels
+        self._delays_view = self.delays
+        self._cc = _tangy.std_coincidence_measurement_new(
+            resolution, n, cython.address(self._channels_view[0]))
+
+    def __del__(self):
+        _tangy.std_coincidence_measurement_delete(self._cc)
+
+
+@cython.cclass
+class CoincidenceMeasurementClocked:
+    _cc = cython.declare(cython.pointer(_tangy.clk_cc_measurement))
+
+    channels: ndarray(uint8)
+    delays: ndarray(float64)
+
+    _channels_view: cython.uchar[:]
+    _delays_view: cython.double[:]
+
+    def __init__(self, resolution: Tuple[float, float], channels: List[int],
+                 delays: Optional[List[float]] = None):
+
+        n: uint64 = len(channels)
+        self.channels = asarray(channels, dtype=uint8)
+        self.delays = zeros(n, dtype=float64)
+
+        if delays:
+            for i in range(n):
+                self.delays[i] = delays[i]
+
+        self._channels_view = self.channels
+        self._delays_view = self.delays
+        res: _tangy.clk_res
+        res.coarse = resolution[0]
+        res.fine = resolution[1]
+        self._cc = _tangy.clk_coincidence_measurement_new(
+            res, n, cython.address(self._channels_view[0]))
+
+    def __del__(self):
+        _tangy.clk_coincidence_measurement_delete(self._cc)
+
+
+@cython.cclass
+class CoincidenceMeasurement:
+    _measurement: Union[
+        CoincidenceMeasurementStandard,
+        CoincidenceMeasurementClocked]
+
+    def __init__(self, buffer: Union[BufferStandard, BufferClocked],
+                 channels: List[int], delays: Optional[List[float]] = None):
+
+        resolution = buffer.resolution
+        if type(buffer) is BufferStandard:
+            self._measurement = CoincidenceMeasurementStandard(resolution,
+                                                               channels,
+                                                               delays)
+        elif type(buffer) is BufferClocked:
+            self._measurement = CoincidenceMeasurementClocked(resolution,
+                                                              channels, delays)
+        return
+
+    def count(self, buffer: Union[BufferStandard, BufferClocked],
+              radius: float, read_time: float) -> int:
+
+        count: uint64 = 0
+        if type(buffer) is BufferStandard:
+            count = _tangy.std_coincidences_count(
+                    cython.address(buffer._buffer),
+                    len(self._measurement.channels),
+                    cython.address(self._measurement._channels_view[0]),
+                    cython.address(self._measurement._delays_view[0]),
+                    radius, read_time)
+        elif type(buffer) is BufferClocked:
+            count = _tangy.clk_coincidences_count(
+                    cython.address(buffer._buffer),
+                    len(self._measurement.channels),
+                    cython.address(self._measurement._channels_view[0]),
+                    cython.address(self._measurement._delays_view[0]),
+                    radius, read_time)
+        return count
+
 
 
 # def collect_coincidences(buffer: RecordBuffer, channels: List[int],
@@ -672,11 +916,11 @@ def coincidence_measurement(buffer: RecordBuffer, channels: List[int],
 #     Tuple[int, clocked_records, CCMeasurement],
 #     Tuple[int, standard_records, CCMeasurement]
 # ]:
-#     if stdbuffer is RecordBuffer:
+#     if BufferStandard is RecordBuffer:
 #         measurement = StdCoincidenceMeasurement(buffer, channels, delays)
 #         (count, records) = measurement.count(buffer, radius, read_time)
 #         return (count, records, measurement)
-#     elif clkbuffer is RecordBuffer:
+#     elif BufferClocked is RecordBuffer:
 #         measurement = ClkCoincidenceMeasurement(buffer, channels, delays)
 #         (count, records) = measurement.count(buffer, radius, read_time)
 #         return (count, records, measurement)
@@ -692,13 +936,13 @@ def coincidences(buffer: RecordBuffer, channels: cython.uchar[:],
     n_channels: uint64 = channels.shape[0]
     count: uint64 = 0
 
-    if RecordBuffer is stdbuffer:
+    if RecordBuffer is BufferStandard:
         count = _tangy.std_coincidences_count(cython.address(buffer._buffer),
                                               n_channels,
                                               cython.address(channels[0]),
                                               cython.address(delays[0]),
                                               diameter, read_time)
-    elif RecordBuffer is clkbuffer:
+    elif RecordBuffer is BufferClocked:
         count = _tangy.clk_coincidences_count(cython.address(buffer._buffer),
                                               n_channels,
                                               cython.address(channels[0]),
@@ -718,9 +962,9 @@ def timetrace(buffer: RecordBuffer, channels: List[int], read_time: float,
         channels_view[0])
 
     buffer_resolution: float64 = 0
-    if RecordBuffer is stdbuffer:
+    if RecordBuffer is BufferStandard:
         buffer_resolution = buffer._buffer.resolution[0]
-    elif RecordBuffer is clkbuffer:
+    elif RecordBuffer is BufferClocked:
         buffer_resolution = buffer._buffer.resolution[0].fine
 
     bin_width: uint64 = round(resolution / buffer_resolution)
@@ -734,14 +978,14 @@ def timetrace(buffer: RecordBuffer, channels: List[int], read_time: float,
     intensities_ptr: cython.pointer(c_uint64_t) = cython.address(
         intensities_view[0])
 
-    if RecordBuffer is stdbuffer:
+    if RecordBuffer is BufferStandard:
         total: uint64 = _tangy.std_timetrace(cython.address(buffer._buffer),
                                              read_time,
                                              bin_width,
                                              channels_ptr,
                                              n_channels,
                                              intensities_ptr)
-    elif RecordBuffer is clkbuffer:
+    elif RecordBuffer is BufferClocked:
         total: uint64 = _tangy.clk_timetrace(cython.address(buffer._buffer),
                                              read_time,
                                              bin_width,
@@ -768,9 +1012,9 @@ def find_zero_delay(buffer: RecordBuffer, channel_a: int, channel_b: int,
         resolution = (2 / avrg_intensity) / 8000
 
     res: float64 = 0
-    if RecordBuffer is stdbuffer:
+    if RecordBuffer is BufferStandard:
         res = buffer._buffer.resolution[0]
-    elif RecordBuffer is clkbuffer:
+    elif RecordBuffer is BufferClocked:
         res = buffer._buffer.resolution[0].fine
 
     n_bins: uint64 = round(correlation_window / resolution) - 1
@@ -784,7 +1028,7 @@ def find_zero_delay(buffer: RecordBuffer, channel_a: int, channel_b: int,
     intensities: uint64[:] = zeros(n_bins, dtype=uint64)
     intensities_view: c_uint64_t[::1] = intensities
 
-    if RecordBuffer is stdbuffer:
+    if RecordBuffer is BufferStandard:
         _tangy.std_find_zero_delay(cython.address(buffer._buffer),
                                    read_time,
                                    uint64(correlation_window),
@@ -794,7 +1038,7 @@ def find_zero_delay(buffer: RecordBuffer, channel_a: int, channel_b: int,
                                    n_bins,
                                    cython.address(intensities_view[0]))
 
-    elif RecordBuffer is clkbuffer:
+    elif RecordBuffer is BufferClocked:
         _tangy.clk_find_zero_delay(cython.address(buffer._buffer),
                                    read_time,
                                    uint64(correlation_window),
@@ -831,19 +1075,64 @@ def find_zero_delay(buffer: RecordBuffer, channel_a: int, channel_b: int,
 Resolution = cython.fused_type(_tangy.std_res, _tangy.clk_res)
 
 
+@cython.ccall
+def Buffer(name: str, length: int, n_channels: int,
+           resolution: Optional[Union[float, [float, float]]]):
+    """Function to create a new buffer or connect to an existing one
+
+    Args:
+        name (str): Name of buffer to be created or attached to.
+        resolution (Optional[Union[float, Tuple[float, float]]]): Resolution \
+        of timetags in seconds. A single float for the "standard timetags". A \
+        pair of floats for "clocked timetags" with a "coarse" and "fine" \
+        timing structure. Unused if connecting.
+        n_channels (int): Number of channels
+        length (Optional[int] = 1000): Length of buffer to create. Unused if \
+        connecting.
+
+    Returns:
+        An instance of either the ``BufferStandard`` or ``BufferClocked``\
+        classes
+
+    Note:
+        For buffers using the clocked timetag format the resolution must be \
+        specified as a tuple in the form (coarse resolution, fine resolution).\
+        As an example a clock signal from an 80Mhz TiSapphire laser and a fine\
+        resolution on-board the time timetagger would give: \
+        ``resolution = (12.5e-9, 1e-12)``
+
+    Examples:
+        Create a new buffer with the standard format
+        >>> standard_buffer = tangy.buffer("standard", 1e-9, 4, int(1e6))
+
+        Create a new buffer with the clocked format
+        >>> resolution = (12.5e-9, 1e-12) # 80Mhz Clock and 1ps fine resolution
+        >>> my_buffer = tangy.buffer("clocked", resolution, 4, int(1e6))
+
+        Connect to existing buffer
+        >>> standard_buffer_connection = tangy.buffer("standard")
+        >>> clocked_buffer_connection = tangy.buffer("clocked")
+    """
+    if type(resolution) is float:
+        return BufferStandard(name, length, resolution, n_channels)
+    elif type(resolution) is tuple:
+        return BufferClocked(name, length, resolution[0], resolution[1],
+                             n_channels)
+
+
 @ cython.cfunc
 def new_buffer(name: str, length: int, n_channels: int,
                resolution: Resolution):
 
     if Resolution is _tangy.std_res:
-        return stdbuffer(name, length, resolution, n_channels)
+        return BufferStandard(name, length, resolution, n_channels)
 
     elif Resolution is _tangy.clk_res:
-        return clkbuffer(name, length, resolution.coarse, resolution.fine,
-                         n_channels)
+        return BufferClocked(name, length, resolution.coarse, resolution.fine,
+                             n_channels)
 
 
-Buffer = cython.fused_type(_tangy.std_buffer, _tangy.clk_buffer)
+BufferT = cython.fused_type(_tangy.std_buffer, _tangy.clk_buffer)
 
 Record = cython.fused_type(_tangy.standard, _tangy.clocked)
 
@@ -869,14 +1158,14 @@ def bins_from_record(record: Record, resolution: Resolution):
 
 
 @ cython.cfunc
-def _read_next(buffer: Buffer,
+def _read_next(buffer: BufferT,
                file_handle: cython.pointer(FILE),
                status: cython.pointer(_tangy.READER_STATUS), n: uint64):
     res: uint64
-    if Buffer is _tangy.std_buffer:
+    if BufferT is _tangy.std_buffer:
         res = _tangy.read_next_HH2_T2(
             cython.address(buffer), file_handle, status, n)
-    elif Buffer is _tangy.clk_buffer:
+    elif BufferT is _tangy.clk_buffer:
         res = _tangy.read_next_HH2_T3(
             cython.address(buffer), file_handle, status, n)
 
@@ -1046,10 +1335,31 @@ def _read_header(data):
 
 @ cython.cclass
 class PTUFile():
+    """Class to read data from Picoquant PTU file and write into buffer.
+
+    Args:
+        file_path (str): Path to Picoquant PTU file.
+        name (str): Name of buffer to be created (or connected to).
+        length (int = 1000)
+
+    Attributes:
+        buffer: Buffer being written to
+        header (dict): Dictionary containing information found in the file header
+        record_count (int): Total number of records processed from PTU file
+        count (int): Total number of timetags written into the buffer
+
+    Examples:
+        Open a .ptu file and create a new buffer with a name
+        >>> ptu = tangy.PTUFile("my_measurement.ptu", "measurement", int(1e8))
+
+        Get the underlying buffer and count the singles from it
+        >>> (total, singles) = tangy.singles(ptu.buffer, 1)
+
+    """
 
     _status = cython.declare(cython.pointer(_tangy.READER_STATUS))
     _c_file_handle = cython.declare(cython.pointer(FILE))
-    _file_name: str
+    _file_path: str
     _file_handle: object
     _mem_map: object
     _header: dict
@@ -1058,13 +1368,13 @@ class PTUFile():
     _offset: uint64
 
     _buffer_type: _tangy.BufferType
-    _std_buffer: stdbuffer
-    _clk_buffer: clkbuffer
+    _std_buffer: BufferStandard
+    _clk_buffer: BufferClocked
 
-    def __init__(self, file_name: str, name: str, length: int = 1000):
+    def __init__(self, file_path: str, name: str, length: int = 1000):
 
-        self._file_name = file_name
-        self._file_handle = open(self._file_name, "rb")
+        self._file_path = file_path
+        self._file_handle = open(self._file_path, "rb")
 
         _file_no = self._file_handle.fileno()
         _mem_map = mmap.mmap(_file_no, 0, access=mmap.ACCESS_READ)
@@ -1080,7 +1390,7 @@ class PTUFile():
         num_records_in_file = self._header["TTResult_NumberOfRecords"]["value"]
 
         if num_records_in_file == 0:
-            file_size = getsize(file_name)
+            file_size = getsize(file_path)
             possible_num_records = (
                 file_size - self._offset) // 4  # 4 bytes in a u32
             num_records_in_file = int(possible_num_records)
@@ -1171,6 +1481,11 @@ class PTUFile():
             return clocked_records(n, coarse, fine, channels, clocks, deltas)
 
     def read(self, n: uint64):
+        """
+        Read an amount of tags from the target file
+
+        :param n: [TODO:description]
+        """
         if _tangy.BufferType.Standard == self._buffer_type:
             res: uint64 = _tangy.read_next_HH2_T2(
                 cython.address(self._std_buffer._buffer), self._c_file_handle,

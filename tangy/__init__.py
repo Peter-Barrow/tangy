@@ -1,7 +1,8 @@
-from ._tangy import standard_records, clocked_records
-from ._tangy import stdbuffer, clkbuffer, PTUFile
-from ._tangy import singles, coincidences, timetrace, find_zero_delay
-from ._tangy import coincidence_measurement
+from .tangy import standard_records, clocked_records
+from .tangy import PTUFile
+from .tangy import Buffer, BufferStandard, BufferClocked
+from .tangy import singles, coincidences, timetrace, find_zero_delay
+from .tangy import coincidence_measurement
 
 # __all__ - ["standard_records", "clocked_records", "stdbuffer", "clkbuffer",
 #            "PTUFile"]

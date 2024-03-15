@@ -14,10 +14,9 @@ typedef f64 std_res;
 
 typedef struct std_slice {
     usize length;
-    u8 *channel;
-    timetag *timestamp;
+    u8* channel;
+    timetag* timestamp;
 } std_slice;
-
 
 #define VEC_T timetag
 #define VEC_NAME std_vec
@@ -47,43 +46,55 @@ typedef struct std_slice {
 
 #include "ring_buffers.h"
 
-u64 std_conversion_factor(std_res resolution) {
+u64
+std_conversion_factor(std_res resolution) {
     return 1;
 }
 
-u64 std_size_of() {
+u64
+std_size_of() {
     u64 elem_size = sizeof(uint8_t) + sizeof(uint64_t);
     return elem_size;
 }
 
-standard std_record_at(const std_buffer *const buffer, u64 absolute_index) {
-    standard record = {.channel = buffer->ptrs.channel[absolute_index],
-                       .timestamp = buffer->ptrs.timestamp[absolute_index]};
+inline standard
+std_record_at(const std_buffer* const buffer, u64 absolute_index) {
+    standard record = { .channel = buffer->ptrs.channel[absolute_index],
+                        .timestamp = buffer->ptrs.timestamp[absolute_index] };
     return record;
 }
 
-timetag std_timestamp_at(const std_buffer* const buffer, u64 absolute_index) {
+inline timetag
+std_timestamp_at(const std_buffer* const buffer, u64 absolute_index) {
     return buffer->ptrs.timestamp[absolute_index];
 }
 
-u8 std_channel_at(const std_buffer *const buffer, u64 absolute_index) {
+inline u8
+std_channel_at(const std_buffer* const buffer, u64 absolute_index) {
     return buffer->ptrs.channel[absolute_index];
 }
 
-u64 std_arrival_time_at(const std_buffer *const buffer, u64 absolute_index) {
+inline u64
+std_arrival_time_at(const std_buffer* const buffer, u64 absolute_index) {
     return buffer->ptrs.timestamp[absolute_index];
 }
 
-std_slice std_init_base_ptrs(const std_buffer *const buffer) {
-    std_slice slice = {0};
+inline u64
+std_arrival_time_at_next(u64 conversion_factor, timetag timestamp) {
+    return timestamp;
+}
+
+std_slice
+std_init_base_ptrs(const std_buffer* const buffer) {
+    std_slice slice = { 0 };
     u64 num_elems = *buffer->capacity;
 
     u64 channel_offset = sizeof(std_buffer_info);
     u64 timestamp_offset = channel_offset + (sizeof(u8) * num_elems);
 
     slice.length = num_elems;
-    slice.channel = (u8 *)buffer->map_ptr + channel_offset;
-    slice.timestamp = (u64 *)buffer->map_ptr + (timestamp_offset / 8);
+    slice.channel = (u8*)buffer->map_ptr + channel_offset;
+    slice.timestamp = (u64*)buffer->map_ptr + (timestamp_offset / 8);
     return slice;
 }
 
@@ -98,23 +109,28 @@ std_slice std_init_base_ptrs(const std_buffer *const buffer) {
 //     return slice;
 // }
 
-u64 std_bins_from_time(const std_res resolution, const f64 time) {
+inline u64
+std_bins_from_time(const std_res resolution, const f64 time) {
     return (u64)roundl(time / resolution);
 }
 
-f64 std_time_from_bins(const std_res resolution, const u64 bins) {
+inline f64
+std_time_from_bins(const std_res resolution, const u64 bins) {
     return (f64)bins * resolution;
 }
 
-f64 std_to_time(standard record, std_res resolution) {
+inline f64
+std_to_time(standard record, std_res resolution) {
     return (f64)record.timestamp * resolution;
 }
 
-u64 std_as_bins(standard record, std_res resolution) {
+inline u64
+std_as_bins(standard record, std_res resolution) {
     return (u64)roundl((f64)record.timestamp * resolution);
 }
 
-bool std_equal(standard a, standard b) {
+bool
+std_equal(standard a, standard b) {
     return a.timestamp == b.timestamp;
 }
 

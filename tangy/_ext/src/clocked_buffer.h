@@ -62,7 +62,8 @@ clk_vec_init(size capacity) {
     return new_vector;
 }
 
-vec_clk_timetag* clk_vec_deinit(vec_clk_timetag* multivec) {
+vec_clk_timetag*
+clk_vec_deinit(vec_clk_timetag* multivec) {
     free(multivec->data.clock);
     free(multivec->data.delta);
     free(multivec);
@@ -70,13 +71,15 @@ vec_clk_timetag* clk_vec_deinit(vec_clk_timetag* multivec) {
     return multivec;
 }
 
-void clk_vec_reset(vec_clk_timetag* multivec){
+void
+clk_vec_reset(vec_clk_timetag* multivec) {
     multivec->length = 0;
 }
 
 #define GROWTH_FACTOR 2
 
-bool clk_vec_grow(vec_clk_timetag* multivec) {
+bool
+clk_vec_grow(vec_clk_timetag* multivec) {
     if (multivec->data.clock == NULL) {
         return false;
     }
@@ -105,7 +108,8 @@ bool clk_vec_grow(vec_clk_timetag* multivec) {
     return true;
 }
 
-void clk_vec_push(vec_clk_timetag* multivec, clk_timetag value) {
+void
+clk_vec_push(vec_clk_timetag* multivec, clk_timetag value) {
     if (!((multivec->length) <= (multivec->capacity - 1))) {
         clk_vec_grow(multivec);
     }
@@ -141,8 +145,11 @@ void clk_vec_push(vec_clk_timetag* multivec, clk_timetag value) {
 
 #include "ring_buffers.h"
 
-u64 clk_conversion_factor(clk_res resolution) {
+inline u64
+clk_conversion_factor(clk_res resolution) {
     u64 factor = (u64)round(resolution.coarse / resolution.fine);
+    // u64 factor = (u64)round(resolution.coarse / resolution.fine);
+    // printf("factor:\t%lu\n", factor);
     return factor;
 }
 
@@ -159,11 +166,12 @@ clk_record_at(const clk_buffer* const buffer, u64 absolute_index) {
     return record;
 }
 
-clk_timetag clk_timestamp_at(const clk_buffer* const buffer, u64 absolute_index) {
+inline clk_timetag
+clk_timestamp_at(const clk_buffer* const buffer, u64 absolute_index) {
     return buffer->ptrs.timestamp[absolute_index];
 }
 
-u8
+inline u8
 clk_channel_at(const clk_buffer* const buffer, u64 absolute_index) {
     return buffer->ptrs.channel[absolute_index];
 }
@@ -171,19 +179,33 @@ clk_channel_at(const clk_buffer* const buffer, u64 absolute_index) {
 u64
 clk_arrival_time_at(const clk_buffer* const buffer, u64 absolute_index) {
     clk_timetag timestamp = buffer->ptrs.timestamp[absolute_index];
-    
+
     // return ((u64)roundl((f64)timestamp.clock / buffer->resolution->coarse)) +
     //        timestamp.delta;
+    // TODO: probably a micro optimisation but it should be possible to convert
+    // this all to use integer multiplication and get rid of the casts. If we
+    // can have "ratio" as some number of bins to convert the clocked timestamp
+    // into an arrival time then this should be possible to do in a single step
     // clk_res resolution = *(buffer->resolution);
-    // // TODO: probably a micro optimisation but it should be possible to convert
-    // // this all to use integer multiplication and get rid of the casts. If we
-    // // can have "ratio" as some number of bins to convert the clocked timestamp
-    // // into an arrival time then this should be possible to do in a single step
     // f64 ratio = resolution.coarse / resolution.fine;
     // return (u64)roundl((f64)timestamp.clock * ratio) + timestamp.delta;
-    
+
     // NOTE: in testing this is ~3x faster for 2-fold cc counting
     return (*(buffer->conversion_factor) * timestamp.clock) + timestamp.delta;
+
+    //         // tof = (truensync * self.sync_period + dtime * self.dtime_res)
+    //         as u64;
+
+    //         // sync_period: (sync_period? * 1e12) as u64,
+    //         // dtime_res: (dtime_res? * 1e12) as u64,
+
+    // clk_res resolution = *(buffer->resolution);
+    // return timestamp.clock * (u64)(resolution.coarse * 1e12) +
+    // timestamp.delta;
+}
+
+inline u64 clk_arrival_time_at_next(u64 conversion_factor, clk_timetag timestamp) {
+    return (conversion_factor * timestamp.clock) + timestamp.delta;
 }
 
 clk_slice
@@ -214,26 +236,30 @@ clk_init_base_ptrs(const clk_buffer* const buffer) {
 //     return slice;
 // }
 
-u64
+inline u64
 clk_bins_from_time(const clk_res resolution, const f64 time) {
-    return (u64)roundl(time / resolution.fine);
+    u64 factor = (u64)roundl(1 / resolution.fine);
+    return time * factor;
+    // return (u64)roundl(time / resolution.fine);
 }
 
-f64
+inline f64
 clk_time_from_bins(const clk_res resolution, const u64 bins) {
     return (f64)bins * resolution.fine;
 }
 
-f64
+inline f64
 clk_to_time(clocked record, clk_res resolution) {
     return clk_as_bins(record, resolution) * resolution.fine;
 }
 
-u64
+inline u64
 clk_as_bins(clocked record, clk_res resolution) {
     f64 ratio = resolution.coarse / resolution.fine;
     return (u64)roundl((f64)record.timestamp.clock * ratio) +
            record.timestamp.delta;
+    // u64 factor = clk_conversion_factor(resolution);
+    // return (factor * record.timestamp.clock) + record.timestamp.delta;
 }
 
 bool

@@ -11,13 +11,13 @@ cython_dir = os.path.join("tangy/_ext")
 extensions = [
     Extension(
         # "tangy._tangy",
-        "tangy._tangy",
+        "tangy.tangy",
         [
-            os.path.join(cython_dir, "_tangy.py"),
+            os.path.join(cython_dir, "tangy.py"),
         ],
         define_macros=[('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')],
         include_dirs=[get_include()],
-        extra_compile_args=["-O2", "-funroll-loops", "-march=native"],
+        extra_compile_args=["-O2", "-march=native"],
     ),
 ]
 

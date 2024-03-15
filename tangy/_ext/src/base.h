@@ -60,6 +60,12 @@ typedef struct iterator {
 } iterator;
 
 
+typedef enum iterator_state {
+    lower,
+    upper,
+    exhausted,
+} iterator_state;
+
 /** @struct circular iterator
  * @brief struct containing a pair of iterators to handle access into a ring
  * buffer
@@ -70,6 +76,7 @@ typedef struct iterator {
  * needed modulo division for each access
  */
 typedef struct circular_iterator {
+    // iterator_state state;
     usize count;    /**< Number of elements remaining in iterator */
     iterator lower; /**< Iterator for first side of ring (before wrap-around)
                        @see{iterator} */

@@ -109,10 +109,16 @@ static inline int Parse_HH2_T3(u32 record, Record_HH2_T3 *Rec_struct,
 
     const u64 T3WRAPAROUND_V2 = 1024;
 
-    u8 sp = (u8)(record >> 31 & 1);
-    u8 ch = (u8)((record >> 25) & 0b111111);
-    u64 dt = (u64)((record >> 10) & (0xffff >> 2));
-    u64 ns = (u64)(record & 0b1111111111);
+    // u8 sp = (u8)(record >> 31 & 1);
+    // u8 ch = (u8)((record >> 25) & 0b111111);
+    // u64 dt = (u64)((record >> 10) & (0xffff >> 2));
+    // u64 ns = (u64)(record & 0b1111111111);
+
+    u32 sp = (record & 0b10000000000000000000000000000000) >> 31;
+    u8 ch = (u8)((record & 0b01111110000000000000000000000000) >> 25);
+    u64 dt = (u64)((record & 0b00000001111111111111110000000000) >> 10);
+    u64 ns = (u64)(record & 0b00000000000000000000001111111111);
+
     int photon = 0;
 
     if (sp == 1) {

@@ -104,6 +104,13 @@ cdef extern from "./src/standard_buffer.h":
 
     void std_bins_from_time_delays(const std_buffer * buffer, const int length, const f64 *const delays, u64 * bins)
 
+    u64 std_coincidences_count_test(const std_buffer* const buffer,
+                         const usize n_channels,
+                         const u8* channels,
+                         const f64* delays,
+                         const f64 radius,
+                         const f64 read_time)
+
     u64 std_coincidences_count(const std_buffer* const buffer,
                          const usize n_channels,
                          const u8* channels,
@@ -229,6 +236,13 @@ cdef extern from "./src/clocked_buffer.h":
     u64 clk_singles(const clk_buffer *buffer, const u64 start, const u64 stop, u64 *counters)
 
     void clk_bins_from_time_delays(const clk_buffer * buffer, const int length, const f64 *const delays, u64 * bins)
+
+    u64 clk_coincidences_count_test(const clk_buffer* const buffer,
+                         const usize n_channels,
+                         const u8* channels,
+                         const f64* delays,
+                         const f64 radius,
+                         const f64 read_time)
 
     u64 clk_coincidences_count(const clk_buffer* const buffer,
                          const usize n_channels,

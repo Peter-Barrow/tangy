@@ -1,0 +1,91 @@
+site_name: "tangy"
+site_author: Peter Barrow
+
+repo_name: PeterBarrow/tangy
+repo_url: https://gitlab.com/PeterBarrow/tangy
+
+copyright: Copyright © 2024 Peter Thomas Barrow
+
+theme:
+  name: "material"
+  language: en
+  features:
+    - navigation.tabs
+    - navigation.indexes
+    - navigation.top
+    - navigation.instant
+
+  palette:
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: amber
+      accent: amber
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: amber
+      accent: amber
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+
+markdown_extensions:
+  - attr_list
+  - admonition
+  - footnotes
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [tangy/*]
+          options:
+            docstring_section_style: list
+            merge_init_into_class: true
+            show_root_heading: true
+            separate_signature: true
+            show_signature_annotations: true
+            show_category_heading: true
+            summary: true
+  - mkdoxy:
+        projects:
+          tangy:
+            src-dirs: tangy/_ext/src/
+            full-doc: True
+            doxy-cfg:
+              FILE_PATTERNS: "*.c *.h*"
+              RECURSIVE: True
+
+nav:
+  - "Home": index.md
+  - "API Reference": api.md
+  - "C-API":
+    - "Links": "tangy/links.md"
+    - "Functions": "tangy/functions.md"
+    - "Variables": "tangy/variables.md"
+    - "Macros": "tangy/macros.md"
+    - "Files": "tangy/files.md"
+    - "annotated": "tangy/annotated.md"
+    - "ns": "tangy/namespace_member_functions.md"
+    - "standard_buffer": "tangy/standard__buffer_8h.md"
+  - "License": license.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/gitlab
+      link: https://gitlab.com/PeterBarrow/tangy
+    - icon: fontawesome/brands/python
+      link: https://gitlab.com/PeterBarrow/tangy
