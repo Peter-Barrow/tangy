@@ -1,0 +1,73 @@
+stages:
+  - build
+  - upload
+  - release
+
+variables:
+  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/release/${CI_COMMIT_TAG}/"
+
+
+build:
+  stage: build
+  image: python:3.9
+
+  #rules:
+  #  - if: $CI_COMMIT_TAG
+
+  only:
+    - tags
+  except:
+    - branches
+
+  variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+  cache:
+    paths:
+      - .cache/pip
+
+  before_script:
+    - python --version ; pip --version  # For debugging
+    - pip install poetry
+    - poetry install
+    - source `poetry env info --path`/bin/activate
+  
+  script:
+    - poetry install
+    - poetry build
+  
+  artifacts:
+      paths:
+      - /builds/PeterBarrow/tagtools/dist/tagtools-0.1.0.tar.gz
+
+upload:
+  stage: upload
+  image: curlimages/curl:latest
+  
+  #rules:
+  #  - if: $CI_COMMIT_TAG
+
+  only:
+    - tags
+  except:
+    - branches
+
+  script:
+    - |
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file /builds/PeterBarrow/tagtools/dist/tagtools-0.1.0.tar.gz ${PACKAGE_REGISTRY_URL}
+
+release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli
+  #rules:
+  #  - if: $CI_COMMIT_TAG
+
+  only:
+    - tags
+  except:
+    - branches
+    
+  script:
+    - |
+      release-cli create --name "Release $CI_COMMIT_REF_NAME" --tag-name $CI_COMMIT_REF_NAME \
+        --assets-link "{\"name\":\"tagtools-$CI_COMMIT_REF_NAME\",\"url\":\"${PACKAGE_REGISTRY_URL}tangy*.whl\"}" \
