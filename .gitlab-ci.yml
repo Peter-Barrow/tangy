@@ -1,7 +1,6 @@
 stages:
   - build
-  - upload
-  - release
+
 
 variables:
   PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/release/${CI_COMMIT_TAG}/"
@@ -33,41 +32,7 @@ build:
     - source `poetry env info --path`/bin/activate
   
   script:
-    - poetry install
     - poetry build
-  
-  artifacts:
-      paths:
-      - /builds/PeterBarrow/tangy/dist/tangy-*.whl
-
-upload:
-  stage: upload
-  image: curlimages/curl:latest
-  
-  #rules:
-  #  - if: $CI_COMMIT_TAG
-
-  only:
-    - tags
-  except:
-    - branches
-
-  script:
-    - |
-      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file /builds/PeterBarrow/tangy/dist/tangy-0.1.0*.whl ${PACKAGE_REGISTRY_URL}
-
-release:
-  stage: release
-  image: registry.gitlab.com/gitlab-org/release-cli
-  #rules:
-  #  - if: $CI_COMMIT_TAG
-
-  only:
-    - tags
-  except:
-    - branches
-    
-  script:
-    - |
-      release-cli create --name "Release $CI_COMMIT_REF_NAME" --tag-name $CI_COMMIT_REF_NAME \
-        --assets-link "{\"name\":\"tangy-$CI_COMMIT_REF_NAME\",\"url\":\"${PACKAGE_REGISTRY_URL}tangy*.whl\"}" \
+    - poetry config repositories.gitlab "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/packages/pypi"
+    - poetry config http-basic.gitlab gitlab-ci-token "$CI_JOB_TOKEN"
+    - poetry publish --repository gitlab
