@@ -28,11 +28,11 @@ build:
   before_script:
     - python --version ; pip --version  # For debugging
     - pip install poetry
-      # - poetry install
+    - poetry install
     #- source `poetry env info --path`/bin/activate
   
   script:
-    - poetry install
+    - poetry build
     - ls ./tangy
     - ls ./dist
     - poetry config repositories.gitlab "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/packages/pypi"
