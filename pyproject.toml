@@ -10,7 +10,10 @@ exclude = [
     "tangy/_ext/*.html"
     ]
 include = [
+    "tangy/*.a",
     "tangy/*.so",
+    "tangy/*.dll",
+    "tangy/*.lib",
 ]
 
 [tool.poetry.dependencies]
