@@ -304,6 +304,10 @@ class BufferStandard:
     def time_in_buffer(self) -> cython.double:
         return _tangy.std_time_in_buffer(cython.address(self._buffer))
 
+    @cython.cfunc
+    def buffer_address(self) -> cython.pointer(_tangy.std_buffer):
+        return cython.address(self._buffer)
+
 
 @cython.cclass
 class BufferClocked:
@@ -529,6 +533,10 @@ class BufferClocked:
     @cython.ccall
     def time_in_buffer(self) -> cython.double:
         return _tangy.clk_time_in_buffer(cython.address(self._buffer))
+
+    @cython.cfunc
+    def buffer_address(self) -> cython.pointer(_tangy.clk_buffer):
+        return cython.address(self._buffer)
 
 
 # @cython.cfunc
@@ -875,8 +883,26 @@ class CoincidenceMeasurement:
         CoincidenceMeasurementStandard,
         CoincidenceMeasurementClocked]
 
+    channels: ndarray(uint8)
+    delays: ndarray(float64)
+
+    _channels_view: cython.uchar[:]
+    _delays_view: cython.double[:]
+
     def __init__(self, buffer: Union[BufferStandard, BufferClocked],
+    # def __init__(self, buffer: RecordBuffer,
                  channels: List[int], delays: Optional[List[float]] = None):
+
+        n: uint64 = len(channels)
+        self.channels = asarray(channels, dtype=uint8)
+        self.delays = zeros(n, dtype=float64)
+
+        if delays:
+            for i in range(n):
+                self.delays[i] = delays[i]
+
+        self._channels_view = self.channels
+        self._delays_view = self.delays
 
         resolution = buffer.resolution
         if type(buffer) is BufferStandard:
@@ -888,25 +914,25 @@ class CoincidenceMeasurement:
                                                               channels, delays)
         return
 
-    def count(self, buffer: Union[BufferStandard, BufferClocked],
-              radius: float, read_time: float) -> int:
+    # def count(self, buffer: RecordBuffer,
+    #           radius: float, read_time: float) -> int:
 
-        count: uint64 = 0
-        if type(buffer) is BufferStandard:
-            count = _tangy.std_coincidences_count(
-                    cython.address(buffer._buffer),
-                    len(self._measurement.channels),
-                    cython.address(self._measurement._channels_view[0]),
-                    cython.address(self._measurement._delays_view[0]),
-                    radius, read_time)
-        elif type(buffer) is BufferClocked:
-            count = _tangy.clk_coincidences_count(
-                    cython.address(buffer._buffer),
-                    len(self._measurement.channels),
-                    cython.address(self._measurement._channels_view[0]),
-                    cython.address(self._measurement._delays_view[0]),
-                    radius, read_time)
-        return count
+    #     count: uint64 = 0
+    #     if RecordBuffer is BufferStandard:
+    #         count = _tangy.std_coincidences_count(
+    #                 cython.address(buffer._buffer),
+    #                 len(self._measurement.channels),
+    #                 cython.address(self._channels_view[0]),
+    #                 cython.address(self._delays_view[0]),
+    #                 radius, read_time)
+    #     elif RecordBuffer is BufferClocked:
+    #         count = _tangy.clk_coincidences_count(
+    #                 cython.address(buffer._buffer),
+    #                 len(self._measurement.channels),
+    #                 cython.address(self._channels_view[0]),
+    #                 cython.address(self._delays_view[0]),
+    #                 radius, read_time)
+    #     return count
 
 
 

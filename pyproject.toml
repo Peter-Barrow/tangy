@@ -9,6 +9,9 @@ exclude = [
     "tangy/_ext/src/*",
     "tangy/_ext/*.html"
     ]
+include = [
+    "tangy/*.so",
+]
 
 [tool.poetry.dependencies]
 python = "^3.9"
