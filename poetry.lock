@@ -613,6 +613,20 @@ files = [
 six = ">=1.5"
 
 [[package]]
+name = "pytkdocs"
+version = "0.16.1"
+description = "Load Python objects documentation."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "pytkdocs-0.16.1-py3-none-any.whl", hash = "sha256:a8c3f46ecef0b92864cc598e9101e9c4cf832ebbf228f50c84aa5dd850aac379"},
+    {file = "pytkdocs-0.16.1.tar.gz", hash = "sha256:e2ccf6dfe9dbbceb09818673f040f1a7c32ed0bffb2d709b06be6453c4026045"},
+]
+
+[package.extras]
+numpy-style = ["docstring_parser (>=0.7)"]
+
+[[package]]
 name = "pyyaml"
 version = "6.0.1"
 description = "YAML parser and emitter for Python"
@@ -821,4 +835,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "2ca798383a099aa4f3c468b81bb53ccfb3cf2d8f2893de869fc7e17bfa6be3fb"
+content-hash = "f3e9815ca6f16edc4a2eabf3220829e42f4aef000dae745105a5eabc8b71a597"

@@ -3,6 +3,7 @@
 from numpy cimport int8_t as byte
 
 from numpy cimport uint8_t as u8
+from numpy cimport uint32_t as u32
 from numpy cimport uint64_t as u64
 from numpy cimport uint64_t as usize
 from numpy cimport int64_t as isize
@@ -104,13 +105,6 @@ cdef extern from "./src/standard_buffer.h":
 
     void std_bins_from_time_delays(const std_buffer * buffer, const int length, const f64 *const delays, u64 * bins)
 
-    u64 std_coincidences_count_test(const std_buffer* const buffer,
-                         const usize n_channels,
-                         const u8* channels,
-                         const f64* delays,
-                         const f64 radius,
-                         const f64 read_time)
-
     u64 std_coincidences_count(const std_buffer* const buffer,
                          const usize n_channels,
                          const u8* channels,
@@ -142,6 +136,13 @@ cdef extern from "./src/standard_buffer.h":
                                  const f64 radius,
                                  const f64 read_time,
                                  std_cc_measurement* measurement)
+
+    usize std_joint_delay_histogram(const std_buffer* const buffer,
+                                     const f64* delays,
+                                     const f64 radius,
+                                     const f64 read_time,
+                                     std_cc_measurement* measurement,
+                                     u32 *histogram)
 
     u64 std_timetrace(const std_buffer *const buffer,
                       const f64 read_time,
@@ -237,13 +238,6 @@ cdef extern from "./src/clocked_buffer.h":
 
     void clk_bins_from_time_delays(const clk_buffer * buffer, const int length, const f64 *const delays, u64 * bins)
 
-    u64 clk_coincidences_count_test(const clk_buffer* const buffer,
-                         const usize n_channels,
-                         const u8* channels,
-                         const f64* delays,
-                         const f64 radius,
-                         const f64 read_time)
-
     u64 clk_coincidences_count(const clk_buffer* const buffer,
                          const usize n_channels,
                          const u8* channels,
@@ -280,6 +274,13 @@ cdef extern from "./src/clocked_buffer.h":
                                  const f64 radius,
                                  const f64 read_time,
                                  clk_cc_measurement* measurement)
+
+    usize clk_joint_delay_histogram(const clk_buffer* const buffer,
+                                     const f64* delays,
+                                     const f64 radius,
+                                     const f64 read_time,
+                                     clk_cc_measurement* measurement,
+                                     u32 *histogram)
 
     u64 clk_timetrace(const clk_buffer *const buffer,
                       const f64 read_time,

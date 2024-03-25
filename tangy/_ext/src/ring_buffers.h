@@ -425,32 +425,8 @@ JOIN(STUB, bins_from_time_delays)(const BUFFER* const buffer,
 static inline size
 JOIN(STUB, arg_min)(const BUFFER* const buffer,
                     const u64* const channel_max,
-                    const u64* const index,
+                    const u64* const current,
                     const size n_channels) {
-
-    int min_index = 0;
-    u64 temp;
-    // u64 min_val = ArrivalTimeAt(buffer, index[0] % capacity);
-    u64 min_val = ArrivalTimeAt(buffer, index[0]);
-
-    for (int i = 1; i < n_channels; i++) {
-        // temp = ArrivalTimeAt(buffer, index[i] % capacity);
-        temp = ArrivalTimeAt(buffer, index[i]);
-        if (temp < min_val) {
-            min_val = temp;
-            min_index = i;
-        }
-    }
-    return min_index;
-}
-#define ArgMin(BUF, CH_MAX, IDX, N_CH)                                         \
-    JOIN(STUB, arg_min)(BUF, CH_MAX, IDX, N_CH)
-
-static inline size
-JOIN(STUB, arg_min_test)(const BUFFER* const buffer,
-                         const u64* const channel_max,
-                         const u64* const current,
-                         const size n_channels) {
 
     int min_index = 0;
     u64 temp;
@@ -467,8 +443,8 @@ JOIN(STUB, arg_min_test)(const BUFFER* const buffer,
     }
     return min_index;
 }
-#define ArgMinTest(BUF, CH_MAX, CUR, N_CH)                                     \
-    JOIN(STUB, arg_min_test)(BUF, CH_MAX, CUR, N_CH)
+#define ArgMin(BUF, CH_MAX, CUR, N_CH)                                         \
+    JOIN(STUB, arg_min)(BUF, CH_MAX, CUR, N_CH)
 
 // measurements
 
@@ -627,50 +603,51 @@ JOIN(STUB, next_for_channel)(const BUFFER* const buffer,
 //                                  circular_iterator* iter,
 //                                  u8 channel,
 //                                  usize* index) {
-// 
-// 
+//
+//
 //     if (iter->lower.count == 0 && iter->upper.count) {
 //         return false;
 //     }
-// 
-// 
+//
+//
 //     usize start =
 //       if (iter->lower.count != 0) ? iter->lower.index : iter->upper.index;
 //     usize count =
 //       if (iter->lower.count != 0) ? iter->lower.count : iter->upper.count;
 //     usize stop = start + count;
-// 
+//
 //     for (usize i = start; i < count; i++) {
 //         if (ChannelAt(buffer, i) == channel) {
 //             break
 //         }
 //     }
-// 
-// 
+//
+//
 //     // NOTE: what is the exit condition here?
-//     // presumably the initial state of the iterator needs to be compared to the
+//     // presumably the initial state of the iterator needs to be compared to
+//     the
 //     // result of this loop?
-// 
+//
 //     // FIX: the iterator needs to mutated here to reflect the changes made in
 //     // the above loop
-// 
+//
 //     // if a record isn't found then check limits again
 //     if (iter->lower.count == 0 && iter->upper.count) {
 //         return false;
 //     }
-// 
+//
 //     // if we got to here then we check the "upper" side of the iterator
-// 
+//
 //     start = iter->upper.count;
 //     count = iter->upper.count;
 //     stop = start + count;
-// 
+//
 //     for (usize i = start; i < count; i++) {
 //         if (ChannelAt(buffer, i) == channel) {
 //             goto //TODO: goto where? (exit statement)
 //         }
 //     }
-// 
+//
 // }
 
 /**
@@ -688,21 +665,25 @@ JOIN(STUB, next_for_channel)(const BUFFER* const buffer,
 static inline u64
 JOIN(STUB, channels_in_coincidence)(const BUFFER* const buffer,
                                     const u8 n_channels,
+                                    const u64* current_times,
                                     const u64* const channel_max,
                                     const u64* const index,
                                     const u64 radius,
                                     const u64 diameter,
-                                    const u64 min_index) {
+                                    const u64 min_index,
+                                    const u64 conversion_factor) {
 
-    usize oldest =
-      channel_max[min_index] - ArrivalTimeAt(buffer, index[min_index]);
+    // usize oldest = channel_max[min_index] -
+    //                ArrivalTimeAtNext(conversion_factor,
+    //                                  TimestampAt(buffer, index[min_index]));
+    usize oldest = channel_max[min_index] - current_times[min_index];
     usize in_coincidence = 0;
 
     usize j = 0;
     usize newer = 0;
     for (j = 0; j < min_index; j++) {
-        newer = channel_max[j] - ArrivalTimeAt(buffer, index[j]);
-        if ((newer + radius - oldest) < diameter) {
+        newer = channel_max[j] - current_times[j];
+        if ((oldest - newer) < diameter) {
             in_coincidence++;
         } else {
             break;
@@ -710,8 +691,8 @@ JOIN(STUB, channels_in_coincidence)(const BUFFER* const buffer,
     }
 
     for (j = min_index + 1; j < n_channels; j++) {
-        newer = channel_max[j] - ArrivalTimeAt(buffer, index[j]);
-        if ((newer + radius - oldest) < diameter) {
+        newer = channel_max[j] - current_times[j];
+        if ((oldest - newer) < diameter) {
             in_coincidence++;
         } else {
             break;
@@ -721,56 +702,8 @@ JOIN(STUB, channels_in_coincidence)(const BUFFER* const buffer,
     usize coincidence_size = (usize)n_channels - 1;
     return (in_coincidence == coincidence_size) ? 1 : 0;
 }
-#define InCoincidence(BUF, N, CH_MAX, IDX, RAD, DIA, MIN)                      \
-    JOIN(STUB, channels_in_coincidence)(BUF, N, CH_MAX, IDX, RAD, DIA, MIN)
-
-static inline u64
-JOIN(STUB, channels_in_coincidence_test)(const BUFFER* const buffer,
-                                         const u8 n_channels,
-                                         const u64* current_times,
-                                         const u64* const channel_max,
-                                         const u64* const index,
-                                         const u64 radius,
-                                         const u64 diameter,
-                                         const u64 min_index,
-                                         const u64 conversion_factor) {
-
-    usize oldest = channel_max[min_index] -
-                   ArrivalTimeAtNext(conversion_factor,
-                                     TimestampAt(buffer, index[min_index]));
-    // channel_max[min_index] - ArrivalTimeAt(buffer, index[min_index]);
-    usize in_coincidence = 0;
-
-    usize j = 0;
-    usize newer = 0;
-    for (j = 0; j < min_index; j++) {
-        // printf("A: %lu\n", j);
-        newer = channel_max[j] - current_times[j];
-        if ((newer + radius - oldest) < diameter) {
-            in_coincidence++;
-        } else {
-            break;
-        }
-    }
-
-    for (j = min_index + 1; j < n_channels; j++) {
-        // printf("B: %lu\n", j);
-        // printf("%lu\n", current_times[j]);
-        // printf("%lu\n", channel_max[j] - current_times[j]);
-        newer = channel_max[j] - current_times[j];
-        // printf("B: %lu\n", j);
-        if ((newer + radius - oldest) < diameter) {
-            in_coincidence++;
-        } else {
-            break;
-        }
-    }
-
-    usize coincidence_size = (usize)n_channels - 1;
-    return (in_coincidence == coincidence_size) ? 1 : 0;
-}
-#define InCoincidenceTest(BUF, N, CUR, CH_MAX, IDX, RAD, DIA, MIN, CF)         \
-    JOIN(STUB, channels_in_coincidence_test)                                   \
+#define InCoincidence(BUF, N, CUR, CH_MAX, IDX, RAD, DIA, MIN, CF)             \
+    JOIN(STUB, channels_in_coincidence)                                        \
     (BUF, N, CUR, CH_MAX, IDX, RAD, DIA, MIN, CF)
 
 // are the const qualifiers really needed, I guess they are good for signalling
@@ -812,28 +745,18 @@ JOIN(STUB, coincidences_count)(const BUFFER* const buffer,
     bool in_range = true;
     u64 count = 0;
     while (in_range == true) {
-        // pattern.oldest =
-        //   ArgMin(buffer, pattern.limit, pattern.index, n_channels);
         pattern.oldest =
-          ArgMinTest(buffer, pattern.limit, current_times, n_channels);
+          ArgMin(buffer, pattern.limit, current_times, n_channels);
 
-        // count += InCoincidence(buffer,
-        //                        n_channels,
-        //                        pattern.limit,
-        //                        pattern.index,
-        //                        radius_bins,
-        //                        diameter_bins,
-        //                        pattern.oldest);
-
-        count += InCoincidenceTest(buffer,
-                                   n_channels,
-                                   current_times,
-                                   pattern.limit,
-                                   pattern.index,
-                                   radius_bins,
-                                   diameter_bins,
-                                   pattern.oldest,
-                                   conversion_factor);
+        count += InCoincidence(buffer,
+                               n_channels,
+                               current_times,
+                               pattern.limit,
+                               pattern.index,
+                               radius_bins,
+                               diameter_bins,
+                               pattern.oldest,
+                               conversion_factor);
 
         // last function to optimise, currently capable of 1e8 tags in ~1.1s
         // could this get us below the second?
@@ -851,22 +774,6 @@ JOIN(STUB, coincidences_count)(const BUFFER* const buffer,
     free(current_times);
 
     return count;
-}
-
-static inline u64
-JOIN(STUB, coincidences_count_test)(const BUFFER* const buffer,
-                                    const usize n_channels,
-                                    u8* channels,
-                                    const f64* delays,
-                                    const f64 radius,
-                                    const f64 read_time) {
-    switch (n_channels) {
-        case 2:
-            return JOIN(STUB, coincidences_count)(
-              buffer, 2, channels, delays, radius, read_time);
-    }
-    return JOIN(STUB, coincidences_count)(
-      buffer, n_channels, channels, delays, radius, read_time);
 }
 
 #define CC_MEASUREMENT JOIN(STUB, cc_measurement)
@@ -955,25 +862,115 @@ JOIN(STUB, coincidences_records)(const BUFFER* const buffer,
 
     // usize iterations = 0;
     while (in_range == true) {
-        // pattern.oldest =
-        //   ArgMin(buffer, pattern.limit, pattern.index, n_channels);
 
         pattern.oldest =
-          ArgMinTest(buffer, pattern.limit, current_times, n_channels);
+          ArgMin(buffer, pattern.limit, current_times, n_channels);
 
         check = InCoincidence(buffer,
                               n_channels,
+                              current_times,
                               pattern.limit,
                               pattern.index,
                               radius_bins,
                               diameter_bins,
-                              pattern.oldest);
+                              pattern.oldest,
+                              conversion_factor);
 
+        // lookup of timestamps is repeated here. TODO: test with local array
+        // of timestamps
         if (check == 1) {
             for (usize i = 0; i < n_channels; i++) {
                 TT_VECTOR_PUSH(measurement->records,
                                TimestampAt(buffer, pattern.index[i]));
             }
+        }
+
+        count += check;
+
+        in_range = NextForChannel(buffer,
+                                  &pattern.iters[pattern.oldest],
+                                  measurement->channels[pattern.oldest],
+                                  &pattern.index[pattern.oldest]);
+
+        current_times[pattern.oldest] =
+          ArrivalTimeAtNext(conversion_factor,
+                            TimestampAt(buffer, pattern.index[pattern.oldest]));
+    }
+
+    PatternIteratorDeinit(&pattern);
+    free(current_times);
+    measurement->total_records = count;
+
+    return count;
+}
+
+static inline usize
+JOIN(STUB, joint_delay_histogram)(const BUFFER* const buffer,
+                                  const f64* delays,
+                                  const f64 radius,
+                                  const f64 read_time,
+                                  CC_MEASUREMENT* measurement,
+                                  u32* histogram_2d) {
+
+    if (measurement == NULL) {
+        // TODO: error message here
+        return 0;
+    }
+
+    TT_VECTOR_RESET(measurement->records);
+
+    measurement->resolution = *(buffer->resolution);
+    measurement->read_time = read_time;
+
+    usize n_channels = measurement->n_channels;
+
+    pattern_iterator pattern = PatternIteratorInit(
+      buffer, n_channels, measurement->channels, delays, read_time);
+
+    u64 conversion_factor = *(buffer->conversion_factor);
+    u64* current_times = (u64*)malloc(n_channels * sizeof(u64));
+    for (usize i = 0; i < n_channels; i++) {
+        current_times[i] = ArrivalTimeAtNext(
+          conversion_factor, TimestampAt(buffer, pattern.index[i]));
+    }
+
+    RESOLUTION res = *(buffer->resolution);
+    u64 radius_bins = BinsFromTime(res, radius);
+    u64 diameter_bins = radius_bins + radius_bins;
+
+    bool in_range = true;
+    u64 check = 0;
+    u64 count = 0;
+
+    u64 bin_x = 0;
+    u64 bin_y = 0;
+
+    while (in_range == true) {
+
+        pattern.oldest =
+          ArgMin(buffer, pattern.limit, current_times, n_channels);
+
+        check = InCoincidence(buffer,
+                              n_channels,
+                              current_times,
+                              pattern.limit,
+                              pattern.index,
+                              radius_bins,
+                              diameter_bins,
+                              pattern.oldest,
+                              conversion_factor);
+
+        if (check == 1) {
+            bin_x = pattern.limit[pattern.oldest] - current_times[pattern.oldest];
+            for (usize c = 0; c < n_channels; c++) {
+                if (pattern.channels[c] != pattern.channels[pattern.oldest]) {
+                    bin_y = pattern.limit[pattern.oldest] -
+                            current_times[pattern.oldest];
+                    break;
+                }
+            }
+            // histogram_2d[bin_y][bin_x] += 1;
+            histogram_2d[(bin_x * radius_bins) + bin_y] += 1;
         }
 
         count += check;

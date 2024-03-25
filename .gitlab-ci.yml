@@ -33,8 +33,6 @@ build:
   
   script:
     - poetry build
-    - ls ./tangy
-    - ls ./dist
     - poetry config repositories.gitlab "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/packages/pypi"
     - poetry config http-basic.gitlab gitlab-ci-token "$CI_JOB_TOKEN"
     - poetry publish --repository gitlab
