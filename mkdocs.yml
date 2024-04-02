@@ -79,7 +79,6 @@ nav:
     - "Macros": "tangy/macros.md"
     - "Files": "tangy/files.md"
     - "annotated": "tangy/annotated.md"
-    - "ns": "tangy/namespace_member_functions.md"
     - "standard_buffer": "tangy/standard__buffer_8h.md"
   - "License": license.md
 

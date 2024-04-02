@@ -668,7 +668,6 @@ JOIN(STUB, channels_in_coincidence)(const BUFFER* const buffer,
                                     const u64* current_times,
                                     const u64* const channel_max,
                                     const u64* const index,
-                                    const u64 radius,
                                     const u64 diameter,
                                     const u64 min_index,
                                     const u64 conversion_factor) {
@@ -702,9 +701,9 @@ JOIN(STUB, channels_in_coincidence)(const BUFFER* const buffer,
     usize coincidence_size = (usize)n_channels - 1;
     return (in_coincidence == coincidence_size) ? 1 : 0;
 }
-#define InCoincidence(BUF, N, CUR, CH_MAX, IDX, RAD, DIA, MIN, CF)             \
+#define InCoincidence(BUF, N, CUR, CH_MAX, IDX, DIA, MIN, CF)                  \
     JOIN(STUB, channels_in_coincidence)                                        \
-    (BUF, N, CUR, CH_MAX, IDX, RAD, DIA, MIN, CF)
+    (BUF, N, CUR, CH_MAX, IDX, DIA, MIN, CF)
 
 // are the const qualifiers really needed, I guess they are good for signalling
 // intent but, that s a lot of extra visual noise
@@ -753,7 +752,6 @@ JOIN(STUB, coincidences_count)(const BUFFER* const buffer,
                                current_times,
                                pattern.limit,
                                pattern.index,
-                               radius_bins,
                                diameter_bins,
                                pattern.oldest,
                                conversion_factor);
@@ -776,6 +774,8 @@ JOIN(STUB, coincidences_count)(const BUFFER* const buffer,
     return count;
 }
 
+// TODO: Move to base.h and make records take a void pointer, specialise that
+// in coincidence_measurement_new
 #define CC_MEASUREMENT JOIN(STUB, cc_measurement)
 typedef struct CC_MEASUREMENT CC_MEASUREMENT;
 struct CC_MEASUREMENT {
@@ -871,7 +871,6 @@ JOIN(STUB, coincidences_records)(const BUFFER* const buffer,
                               current_times,
                               pattern.limit,
                               pattern.index,
-                              radius_bins,
                               diameter_bins,
                               pattern.oldest,
                               conversion_factor);
@@ -904,23 +903,65 @@ JOIN(STUB, coincidences_records)(const BUFFER* const buffer,
     return count;
 }
 
+#define DH_MEASUREMENT delay_histogram_measurement
+
+void JOIN(STUB, dh_measurement_check)(usize n_channels,
+                                      u8 clock,
+                                      u8 signal,
+                                      u8 idler,
+                                      u8* channels,
+                                      DH_MEASUREMENT* config);
+
+static inline DH_MEASUREMENT
+JOIN(STUB, dh_measurement_new)(usize n_channels,
+                               u8 clock,
+                               u8 signal,
+                               u8 idler,
+                               u8* channels) {
+
+    DH_MEASUREMENT* measurement =
+      (DH_MEASUREMENT*)malloc(sizeof(DH_MEASUREMENT));
+
+    JOIN(STUB, dh_measurement_check)
+    (n_channels, clock, signal, idler, channels, measurement);
+
+    measurement->ok = true;
+    measurement->n_channels = n_channels;
+    measurement->channels = channels;
+    return measurement[0];
+}
+
+static inline void
+JOIN(STUB, dh_measurement_delete)(DH_MEASUREMENT* measurement) {
+    free(measurement);
+}
+
+histogram2D_coords JOIN(STUB, calculate_joint_histogram_coordinates)(
+  DH_MEASUREMENT* measurement,
+  TS* timetags);
+
 static inline usize
 JOIN(STUB, joint_delay_histogram)(const BUFFER* const buffer,
                                   const f64* delays,
                                   const f64 radius,
                                   const f64 read_time,
-                                  CC_MEASUREMENT* measurement,
-                                  u32* histogram_2d) {
+                                  DH_MEASUREMENT* measurement,
+                                  u64** histogram_2d) {
+
+    printf("entry point\n");
+    printf("measurement: CLK[%d]\tSIG[%d]\tIDL[%d]\n",
+           measurement->channels[measurement->idx_clock],
+           measurement->idx_signal,
+           measurement->idx_idler);
 
     if (measurement == NULL) {
         // TODO: error message here
         return 0;
     }
 
-    TT_VECTOR_RESET(measurement->records);
-
-    measurement->resolution = *(buffer->resolution);
-    measurement->read_time = read_time;
+    if (measurement->ok == false) {
+        return 0;
+    }
 
     usize n_channels = measurement->n_channels;
 
@@ -928,10 +969,12 @@ JOIN(STUB, joint_delay_histogram)(const BUFFER* const buffer,
       buffer, n_channels, measurement->channels, delays, read_time);
 
     u64 conversion_factor = *(buffer->conversion_factor);
+    TS* current_timetags = (TS*)malloc(n_channels * sizeof(TS));
     u64* current_times = (u64*)malloc(n_channels * sizeof(u64));
     for (usize i = 0; i < n_channels; i++) {
-        current_times[i] = ArrivalTimeAtNext(
-          conversion_factor, TimestampAt(buffer, pattern.index[i]));
+        current_timetags[i] = TimestampAt(buffer, pattern.index[i]);
+        current_times[i] =
+          ArrivalTimeAtNext(conversion_factor, current_timetags[i]);
     }
 
     RESOLUTION res = *(buffer->resolution);
@@ -942,8 +985,7 @@ JOIN(STUB, joint_delay_histogram)(const BUFFER* const buffer,
     u64 check = 0;
     u64 count = 0;
 
-    u64 bin_x = 0;
-    u64 bin_y = 0;
+    histogram2D_coords point = { 0 };
 
     while (in_range == true) {
 
@@ -955,22 +997,19 @@ JOIN(STUB, joint_delay_histogram)(const BUFFER* const buffer,
                               current_times,
                               pattern.limit,
                               pattern.index,
-                              radius_bins,
                               diameter_bins,
                               pattern.oldest,
                               conversion_factor);
 
         if (check == 1) {
-            bin_x = pattern.limit[pattern.oldest] - current_times[pattern.oldest];
-            for (usize c = 0; c < n_channels; c++) {
-                if (pattern.channels[c] != pattern.channels[pattern.oldest]) {
-                    bin_y = pattern.limit[pattern.oldest] -
-                            current_times[pattern.oldest];
-                    break;
-                }
-            }
-            // histogram_2d[bin_y][bin_x] += 1;
-            histogram_2d[(bin_x * radius_bins) + bin_y] += 1;
+            point = JOIN(STUB, calculate_joint_histogram_coordinates)(
+              measurement, current_timetags);
+            // printf("X:%lu\t|\tY:%lu\n", point.x, point.y);
+            // histogram_2d[(point.x * diameter_bins) + point.y] += 1;
+            // histogram_2d[(point.y * diameter_bins) + point.x] += 1;
+            // histogram_2d[(point.y * 1) + point.x] += 1;
+            histogram_2d[point.y % diameter_bins][point.x % diameter_bins] += 1;
+            // histogram_2d[point.y][point.x] += 1;
         }
 
         count += check;
@@ -980,14 +1019,17 @@ JOIN(STUB, joint_delay_histogram)(const BUFFER* const buffer,
                                   measurement->channels[pattern.oldest],
                                   &pattern.index[pattern.oldest]);
 
-        current_times[pattern.oldest] =
-          ArrivalTimeAtNext(conversion_factor,
-                            TimestampAt(buffer, pattern.index[pattern.oldest]));
+        current_timetags[pattern.oldest] =
+          TimestampAt(buffer, pattern.index[pattern.oldest]);
+
+        current_times[pattern.oldest] = ArrivalTimeAtNext(
+          conversion_factor, current_timetags[pattern.oldest]);
     }
 
     PatternIteratorDeinit(&pattern);
     free(current_times);
-    measurement->total_records = count;
+    free(current_timetags);
+    // measurement->total_records = count;
 
     return count;
 }
@@ -1009,23 +1051,33 @@ JOIN(STUB, timetrace)(const BUFFER* const buffer,
                       const usize bin_width,
                       const u8* channels,
                       const usize n_channels,
-                      u64* intensities) {
+                      const usize length,
+                      vec_u64* intensities) {
     RESOLUTION res = *(buffer->resolution);
-    u64 start_time = BinsFromTime(res, TimeInBuffer(buffer) - read_time);
-    usize index = LowerBound(buffer, start_time);
+    // u64 start_time = BinsFromTime(res, TimeInBuffer(buffer) - read_time);
+    // u64 start_time = BinsFromTime(res, read_time);
+    // usize index = LowerBound(buffer, start_time);
+    u64 count = *(buffer->count) - 1;
+    u64 capacity = *(buffer->capacity);
+    u64 most_recent = ArrivalTimeAt(buffer, count % capacity);
+    u64 read_bins = BinsFromTime(res, read_time);
+    usize index = LowerBound(buffer, most_recent - read_bins) + 1;
+    printf("index:\t%lu\n", index);
 
     circular_iterator iter = { 0 };
-    u64 capacity = *(buffer->capacity);
-    u64 count = *(buffer->count);
     iterator_init(&iter, capacity, index, count);
     index = iter.lower.index;
 
     usize i = 0;
-    usize j = 0;
+    // usize j = 0;
     u64 offset = 1;
     u8 current_channel = 0;
     u64 intensity = 0;
-    u64 end_of_bin = ArrivalTimeAt(buffer, index);
+    // u64 end_of_bin = ArrivalTimeAt(buffer, index);
+    u64 conversion = *(buffer->conversion_factor);
+    u64 end_of_bin =
+      ArrivalTimeAtNext(conversion, TimestampAt(buffer, index)) + bin_width;
+    printf("First: %lu\n", ArrivalTimeAtNext(conversion, TimestampAt(buffer, index)));
     while (0 != offset) {
 
         current_channel = ChannelAt(buffer, index);
@@ -1036,24 +1088,25 @@ JOIN(STUB, timetrace)(const BUFFER* const buffer,
             }
         }
 
-        if (ArrivalTimeAt(buffer, index) > end_of_bin) {
-            intensities[j] = intensity;
-            j++;
+        if (ArrivalTimeAtNext(conversion, TimestampAt(buffer, index)) >
+            end_of_bin) {
+            vector_u64_push(intensities, intensity);
             intensity = 0;
             end_of_bin += bin_width;
         }
 
         offset = next(&iter);
+        // printf("%lu\n", offset);
         if (0 == offset) {
+            printf("done it\n");
             break;
         }
         index = offset;
     }
-
-    return j;
+    printf("done it\n");
+    printf("Last: %lu\n", ArrivalTimeAtNext(conversion, TimestampAt(buffer, index)));
+    return intensities->length;
 }
-#define Timetrace(BUF, RT, BW, CHs, INTENS)                                    \
-    JOIN(STUB, timetrace)(BUF, RT, BW, CHs, INTENS)
 
 /*! \fn Find zero delay between a pair of channels
  * \param buffer
@@ -1120,8 +1173,6 @@ JOIN(STUB, find_zero_delay)(const BUFFER* const buffer,
         index = offset;
     }
 }
-#define FindZeroDelay(BUF, RT, CW, RES, CH_A, CH_B, N, INTENS)                 \
-    JOIN(STUB, find_zero_delay)(BUF, RT, CW, RES, CH_A, CH_B, N, INTENS)
 
 #undef STUB
 #undef T
@@ -1161,4 +1212,5 @@ JOIN(STUB, find_zero_delay)(const BUFFER* const buffer,
 #undef PatternIteratorDeinit
 #undef NextForChannel
 #undef InCoincidence
-#undef Timetrace
+#undef CC_MEASUREMENT
+#undef DH_MEASUREMENT

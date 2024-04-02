@@ -29,6 +29,23 @@ cdef extern from "./src/base.h":
         tbError Error
         bint Ok
 
+    ctypedef struct delay_histogram_measurement:
+        bint ok
+        usize n_channels
+        u8 idx_clock
+        u8 idx_signal
+        u8 idx_idler
+        u8* channels
+
+cdef extern from "./src/vector_impls.h":
+    ctypedef struct vec_u64:
+        isize length
+        isize capacity
+        u64* data
+
+    vec_u64* vector_u64_init(isize capacity)
+    vec_u64* vector_u64_deinit(vec_u64* vector)
+
 cdef extern from "./src/shared_memory.c":
     tbResult shmem_exists(byte *const map_name, bint *exists)
 
@@ -137,19 +154,28 @@ cdef extern from "./src/standard_buffer.h":
                                  const f64 read_time,
                                  std_cc_measurement* measurement)
 
+    delay_histogram_measurement std_dh_measurement_new(usize n_channels,
+                               u8 clock,
+                               u8 signal,
+                               u8 idler,
+                               u8* channels)
+
+    void std_dh_measurement_delete(delay_histogram_measurement* measurement)
+
     usize std_joint_delay_histogram(const std_buffer* const buffer,
                                      const f64* delays,
                                      const f64 radius,
                                      const f64 read_time,
-                                     std_cc_measurement* measurement,
-                                     u32 *histogram)
+                                     delay_histogram_measurement* measurement,
+                                     u64** histogram)
 
     u64 std_timetrace(const std_buffer *const buffer,
                       const f64 read_time,
                       const usize bin_width,
                       const u8* channels,
                       const usize n_channels,
-                      u64 *intensities)
+                      const usize length,
+                      vec_u64 *intensities)
 
     void std_find_zero_delay(const std_buffer* const buffer,
                              const f64 read_time,
@@ -275,19 +301,28 @@ cdef extern from "./src/clocked_buffer.h":
                                  const f64 read_time,
                                  clk_cc_measurement* measurement)
 
+    delay_histogram_measurement clk_dh_measurement_new(usize n_channels,
+                               u8 clock,
+                               u8 signal,
+                               u8 idler,
+                               u8* channels)
+
+    void clk_dh_measurement_delete(delay_histogram_measurement* measurement)
+
     usize clk_joint_delay_histogram(const clk_buffer* const buffer,
                                      const f64* delays,
                                      const f64 radius,
                                      const f64 read_time,
-                                     clk_cc_measurement* measurement,
-                                     u32 *histogram)
+                                     delay_histogram_measurement* measurement,
+                                     u64** histogram)
 
     u64 clk_timetrace(const clk_buffer *const buffer,
                       const f64 read_time,
                       const usize bin_width,
                       const u8* channels,
                       const usize n_channels,
-                      u64 *intensities)
+                      const usize length,
+                      vec_u64 *intensities)
 
     void clk_find_zero_delay(const clk_buffer* const buffer,
                              const f64 read_time,

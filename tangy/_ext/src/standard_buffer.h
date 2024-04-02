@@ -134,4 +134,66 @@ std_equal(standard a, standard b) {
     return a.timestamp == b.timestamp;
 }
 
+histogram2D_coords
+std_calculate_joint_histogram_coordinates(
+  delay_histogram_measurement* measurement,
+  timetag* timetags) {
+
+    usize arrival_clock = timetags[measurement->idx_clock];
+    usize arrival_signal = timetags[measurement->idx_signal];
+    usize arrival_idler = timetags[measurement->idx_idler];
+
+    histogram2D_coords point = {
+        .x = (arrival_clock > arrival_idler) ? arrival_clock - arrival_idler
+                                             : arrival_idler - arrival_clock,
+        .y = (arrival_clock > arrival_signal) ? arrival_clock - arrival_signal
+                                              : arrival_signal - arrival_clock,
+    };
+
+    return point;
+}
+
+void
+std_dh_measurement_check(usize n_channels,
+                         u8 clock,
+                         u8 signal,
+                         u8 idler,
+                         u8* channels,
+                         delay_histogram_measurement* config) {
+    bool has_clock = false;
+    bool has_signal = false;
+    bool has_idler = false;
+
+    u8 idx_clock = 0;
+    u8 idx_signal = 0;
+    u8 idx_idler = 0;
+
+    for (usize i = 0; i < n_channels; i++) {
+        if (channels[i] == clock) {
+            has_clock = true;
+            idx_clock = i;
+        }
+
+        if (channels[i] == signal) {
+            has_signal = true;
+            idx_signal = i;
+        }
+
+        if (channels[i] == idler) {
+            has_idler = true;
+            idx_idler = i;
+        }
+    }
+
+    if (!(has_clock == true && has_signal == true && has_idler == true)) {
+        config->ok = false;
+        return;
+    }
+
+    config->idx_clock = idx_clock;
+    config->idx_signal = idx_signal;
+    config->idx_idler = idx_idler;
+    return;
+}
+
 #endif

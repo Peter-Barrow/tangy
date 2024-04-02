@@ -1,18 +1,32 @@
-# Welcome to MkDocs
+# Welcome to tangy 🍊
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+*tangy* brings you a method to buffer timetags from devices and files and high performance analysis on that data.
 
-## Commands
+## Installing
+```sh
+pip install tangy
+```
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+## Example
+```python
+import tangy as tangy
 
-## Project layout
+target_file = 'tttr_data.ptu'
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+n = int(1e7)
+name = "tagbuffer"
+ptu = tangy.PTUFile(target_file, name, n)
 
+for i in range(11):
+    start_time = perf_counter()
+    a = ptu.read(1e6)
+    stop_time = perf_counter()
+    run_time += (stop_time - start_time)
+    print([ptu.record_count, ptu.count])
+
+coincidences = tangy.Coincidences(buffer, [0, 1], [0, 1.6205874491248539e-07])
+res = coincidences.collect(0.5e-9, 1)
+print(res.count)
+print(coincidences.count(0.5e-9, 1))
+
+```

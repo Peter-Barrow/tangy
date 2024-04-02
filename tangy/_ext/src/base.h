@@ -160,6 +160,7 @@ iterator_init(circular_iterator* iter,
     return 0;
 }
 
+// TODO: add arrival_times field
 typedef struct {
     usize length;
     usize oldest; // not the best name for the result of argmin
@@ -176,5 +177,21 @@ typedef struct {
 //     usize n_channels;
 //     u64* timetags;
 // } record_vec;
+
+typedef struct delay_histogram_measurement delay_histogram_measurement;
+struct delay_histogram_measurement {
+    bool ok;
+    usize n_channels;
+    u8 idx_clock;
+    u8 idx_signal;
+    u8 idx_idler;
+    u8* channels;
+};
+
+typedef struct histogram2D_coords histogram2D_coords;
+struct histogram2D_coords {
+    usize x;
+    usize y;
+};
 
 #endif

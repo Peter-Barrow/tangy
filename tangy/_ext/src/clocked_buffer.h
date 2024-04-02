@@ -204,7 +204,8 @@ clk_arrival_time_at(const clk_buffer* const buffer, u64 absolute_index) {
     // timestamp.delta;
 }
 
-inline u64 clk_arrival_time_at_next(u64 conversion_factor, clk_timetag timestamp) {
+inline u64
+clk_arrival_time_at_next(u64 conversion_factor, clk_timetag timestamp) {
     return (conversion_factor * timestamp.clock) + timestamp.delta;
 }
 
@@ -266,6 +267,50 @@ bool
 clk_equal(clocked a, clocked b) {
     return ((true == (a.timestamp.clock == b.timestamp.clock)) &&
             (true == (a.timestamp.delta == b.timestamp.delta)));
+}
+
+histogram2D_coords
+clk_calculate_joint_histogram_coordinates(
+  delay_histogram_measurement* measurement,
+  clk_timetag* timetags) {
+    histogram2D_coords point = { .x = timetags[measurement->idx_idler].delta,
+                                 .y = timetags[measurement->idx_signal].delta };
+    return point;
+}
+
+void
+clk_dh_measurement_check(usize n_channels,
+                         u8 clock,
+                         u8 signal,
+                         u8 idler,
+                         u8* channels,
+                         delay_histogram_measurement* config) {
+    bool has_signal = false;
+    bool has_idler = false;
+
+    u8 idx_signal = 0;
+    u8 idx_idler = 0;
+
+    for (usize i = 0; i < n_channels; i++) {
+        if (channels[i] == signal) {
+            has_signal = true;
+            idx_signal = i;
+        }
+
+        if (channels[i] == idler) {
+            has_idler = true;
+            idx_idler = i;
+        }
+    }
+
+    if (!(has_signal == true && has_idler == true)) {
+        config->ok = false;
+        return;
+    }
+
+    config->idx_signal = idx_signal;
+    config->idx_idler = idx_idler;
+    return;
 }
 
 #undef STUB
