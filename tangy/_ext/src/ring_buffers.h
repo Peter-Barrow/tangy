@@ -676,25 +676,38 @@ JOIN(STUB, channels_in_coincidence)(const BUFFER* const buffer,
     //                ArrivalTimeAtNext(conversion_factor,
     //                                  TimestampAt(buffer, index[min_index]));
     usize oldest = channel_max[min_index] - current_times[min_index];
+    usize oldest = channel_max[min_index] - current_times[min_index] + diameter;
     usize in_coincidence = 0;
 
     usize j = 0;
     usize newer = 0;
     for (j = 0; j < min_index; j++) {
         newer = channel_max[j] - current_times[j];
-        if ((oldest - newer) < diameter) {
-            in_coincidence++;
-        } else {
+        // if ((oldest - newer) < diameter) {
+        //     in_coincidence++;
+        // } else {
+        //     break;
+        // }
+        // if (!((oldest + diameter) >= newer)) {
+        if (!(oldest >= newer)) {
             break;
+        } else {
+            in_coincidence++;
         }
     }
 
     for (j = min_index + 1; j < n_channels; j++) {
         newer = channel_max[j] - current_times[j];
-        if ((oldest - newer) < diameter) {
-            in_coincidence++;
-        } else {
+        // if ((oldest - newer) < diameter) {
+        //     in_coincidence++;
+        // } else {
+        //     break;
+        // }
+        // if (!((oldest + diameter) >= newer)) {
+        if (!(oldest >= newer)) {
             break;
+        } else {
+            in_coincidence++;
         }
     }
 
@@ -1008,8 +1021,12 @@ JOIN(STUB, joint_delay_histogram)(const BUFFER* const buffer,
             // histogram_2d[(point.x * diameter_bins) + point.y] += 1;
             // histogram_2d[(point.y * diameter_bins) + point.x] += 1;
             // histogram_2d[(point.y * 1) + point.x] += 1;
-            histogram_2d[point.y % diameter_bins][point.x % diameter_bins] += 1;
-            // histogram_2d[point.y][point.x] += 1;
+            // histogram_2d[point.y % diameter_bins][point.x % diameter_bins] +=
+            // 1;
+            // histogram_2d[point.y % radius_bins][point.x % radius_bins] += 1;
+            if ((point.x < diameter_bins) & (point.y < diameter_bins)) {
+                histogram_2d[point.y][point.x] += 1;
+            }
         }
 
         count += check;
@@ -1062,7 +1079,6 @@ JOIN(STUB, timetrace)(const BUFFER* const buffer,
     u64 most_recent = ArrivalTimeAt(buffer, count % capacity);
     u64 read_bins = BinsFromTime(res, read_time);
     usize index = LowerBound(buffer, most_recent - read_bins) + 1;
-    printf("index:\t%lu\n", index);
 
     circular_iterator iter = { 0 };
     iterator_init(&iter, capacity, index, count);
@@ -1077,7 +1093,6 @@ JOIN(STUB, timetrace)(const BUFFER* const buffer,
     u64 conversion = *(buffer->conversion_factor);
     u64 end_of_bin =
       ArrivalTimeAtNext(conversion, TimestampAt(buffer, index)) + bin_width;
-    printf("First: %lu\n", ArrivalTimeAtNext(conversion, TimestampAt(buffer, index)));
     while (0 != offset) {
 
         current_channel = ChannelAt(buffer, index);
@@ -1096,15 +1111,11 @@ JOIN(STUB, timetrace)(const BUFFER* const buffer,
         }
 
         offset = next(&iter);
-        // printf("%lu\n", offset);
         if (0 == offset) {
-            printf("done it\n");
             break;
         }
         index = offset;
     }
-    printf("done it\n");
-    printf("Last: %lu\n", ArrivalTimeAtNext(conversion, TimestampAt(buffer, index)));
     return intensities->length;
 }
 

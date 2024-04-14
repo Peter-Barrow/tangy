@@ -470,7 +470,6 @@ def timetrace(buffer: TagBuffer, channels: List[int], read_time: float,
         buffer_resolution = buffer.resolution[1]    # fine resolution
 
     bin_width: uint64 = round(resolution / buffer_resolution)
-    print("bin width:", bin_width)
 
     n: cython.int = 1
     if resolution < read_time:
@@ -478,11 +477,9 @@ def timetrace(buffer: TagBuffer, channels: List[int], read_time: float,
 
     intensity_vec: cython.pointer(_tangy.vec_u64) = _tangy.vector_u64_init(n)
 
-    print("length of array -> ", n)
     intensities: uint64[:] = zeros(n, dtype=uint64)
     # intensities = zeros(n, dtype=uint64)
     intensities_view: c_uint64_t[::1] = intensities
-    print("a")
     if buffer._type is _tangy.BufferType.Standard:
         total: uint64 = _tangy.std_timetrace(buffer._ptr.standard,
                                              read_time,
@@ -491,8 +488,6 @@ def timetrace(buffer: TagBuffer, channels: List[int], read_time: float,
                                              n_channels,
                                              n,
                                              intensity_vec)
-        print("b")
-        print(total)
     elif buffer._type is _tangy.BufferType.Clocked:
         total: uint64 = _tangy.clk_timetrace(buffer._ptr.clocked,
                                              read_time,
@@ -501,8 +496,6 @@ def timetrace(buffer: TagBuffer, channels: List[int], read_time: float,
                                              n_channels,
                                              n,
                                              intensity_vec)
-        print("c")
-        print("total: ", total)
 
     intensities: uint64[:] = zeros(intensity_vec.length, dtype=uint64)
     intensities_view: c_uint64_t[::1] = intensities
@@ -650,9 +643,6 @@ class Coincidences:
 
         self._channels_view = self.channels
         self._delays_view = self.delays
-
-        print(self.channels)
-        print(self.delays)
 
         channels_ptr = cython.address(self._channels_view[0])
 
@@ -820,21 +810,18 @@ class JointDelayHistogram:
 
         resolution = buffer.resolution
 
-        print("b")
         if type(resolution) is float:
             self._type = _tangy.BufferType.Standard
             self._measurement = _tangy.std_dh_measurement_new(n, clock, signal, idler, channels_ptr)
             self._measurement_ptr = cython.address(self._measurement)
             self._buffer_ptr = _Buffer_Ptr(standard=buffer._ptr.standard)
 
-            print("c")
         elif type(resolution) is tuple:
             self._type = _tangy.BufferType.Clocked
             self._measurement = _tangy.clk_dh_measurement_new(n, clock, signal, idler, channels_ptr)
             self._measurement_ptr = cython.address(self._measurement)
             self._buffer_ptr = _Buffer_Ptr(clocked=buffer._ptr.clocked)
 
-            print("d")
         return
 
     def __del__(self):

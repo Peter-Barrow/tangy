@@ -50,6 +50,16 @@
         show_source: false
 
 ## Measurements
+### :::tangy.timetrace
+    options:
+        show_root_heading: true
+        show_source: false
+
+### :::tangy.find_zero_delay
+    options:
+        show_root_heading: true
+        show_source: false
+
 ### :::tangy.singles
     options:
         show_root_heading: true
