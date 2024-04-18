@@ -18,6 +18,10 @@
 #error "No template type 'SLICE' for resolution supplied"
 #endif
 
+#ifndef FIELD_PTRS
+#error "No template type 'FIELD_PTRS' for resolution supplied"
+#endif
+
 #ifndef TT_VECTOR
 #error "No template type 'TT_VECTOR' for resolution supplied"
 #endif
@@ -257,6 +261,11 @@ u64 JOIN(STUB, as_bins)(T record, RESOLUTION resolution);
 #define TimeFromBins(RES, BINS) JOIN(STUB, time_from_bins)(RES, BINS)
 #define ToTime(RECORD, RES) JOIN(STUB, to_time)(RECORD, RES)
 #define ToBins(RECORD, RES) JOIN(STUB, as_bins)(RECORD, RES)
+
+usize JOIN(STUB, slice_buffer)(const BUFFER* const buffer,
+                               FIELD_PTRS ptrs,
+                               usize start,
+                               usize stop);
 
 // comparisons
 static inline bool
@@ -676,39 +685,40 @@ JOIN(STUB, channels_in_coincidence)(const BUFFER* const buffer,
     //                ArrivalTimeAtNext(conversion_factor,
     //                                  TimestampAt(buffer, index[min_index]));
     usize oldest = channel_max[min_index] - current_times[min_index];
-    usize oldest = channel_max[min_index] - current_times[min_index] + diameter;
+    // usize oldest = channel_max[min_index] - current_times[min_index] +
+    // diameter;
     usize in_coincidence = 0;
 
     usize j = 0;
     usize newer = 0;
     for (j = 0; j < min_index; j++) {
         newer = channel_max[j] - current_times[j];
-        // if ((oldest - newer) < diameter) {
-        //     in_coincidence++;
-        // } else {
-        //     break;
-        // }
-        // if (!((oldest + diameter) >= newer)) {
-        if (!(oldest >= newer)) {
-            break;
-        } else {
+        if ((oldest - newer) < diameter) {
             in_coincidence++;
+        } else {
+            break;
         }
+        // if (!((oldest + diameter) >= newer)) {
+        // // if (!(oldest >= newer)) {
+        //     break;
+        // } else {
+        //     in_coincidence++;
+        // }
     }
 
     for (j = min_index + 1; j < n_channels; j++) {
         newer = channel_max[j] - current_times[j];
-        // if ((oldest - newer) < diameter) {
-        //     in_coincidence++;
-        // } else {
-        //     break;
-        // }
-        // if (!((oldest + diameter) >= newer)) {
-        if (!(oldest >= newer)) {
-            break;
-        } else {
+        if ((oldest - newer) < diameter) {
             in_coincidence++;
+        } else {
+            break;
         }
+        // if (!((oldest + diameter) >= newer)) {
+        // // if (!(oldest >= newer)) {
+        //     break;
+        // } else {
+        //     in_coincidence++;
+        // }
     }
 
     usize coincidence_size = (usize)n_channels - 1;

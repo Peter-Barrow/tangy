@@ -9,8 +9,11 @@ from os import dup
 from os.path import getsize
 import time
 from scipy.optimize import curve_fit
-from numpy import log2, mean, where, exp
+from numpy import log2, mean, where, exp, roll, reshape, ravel
+from numpy import sum as npsum
+from numpy import round as npround
 from numpy import abs as nabs
+from numpy import histogram as nphist
 from numpy import arange, array, ndarray, asarray, zeros, empty, frombuffer
 from numpy import uint, uint8, uint64, int64, float64
 from cython.cimports.libc.stdlib import malloc, free
@@ -280,6 +283,78 @@ class TagBuffer:
             result = _tangy.clk_buffer_deinit(self._ptr.clocked)
         # TODO: check result...
 
+    def __len__(self):
+        return self.capacity
+
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    def __getitem__(self, key):
+        return self._get(key)
+
+    @cython.ccall
+    def _get(self, key):
+        size: int = self.capacity
+        count: int = self.count
+        tail: int
+        if size > count:
+            tail = 0
+        else:
+            tail = self.count
+
+        if isinstance(key, slice):
+            start: int = key.start or 0
+            stop: int = key.stop or tail
+            step: int = key.step or 1
+
+            indices = zeros(abs(stop) - abs(start), dtype=int)
+            if step == -1:
+                indices = asarray([i % size for i in range(
+                    stop - 1, start, step)], dtype=int)
+            else:
+                indices = asarray(
+                    [i % size for i in range(start, stop, step)], dtype=int)
+
+            indices = indices % len(self)
+            channels = zeros(len(indices), dtype=uint8)
+
+            if self._type is _tangy.BufferType.Standard:
+                timetags = zeros(len(indices), dtype=uint64)
+                for i, j in enumerate(indices):
+                    channels[i] = self._buffer.standard.ptrs.channel[j]
+                    timetags[i] = self._buffer.standard.ptrs.timestamp[j]
+                return (channels, timetags)
+            elif self._type is _tangy.BufferType.Clocked:
+                clocks = zeros(len(indices), dtype=uint64)
+                deltas = zeros(len(indices), dtype=uint64)
+                for i, j in enumerate(indices):
+                    channels[i] = self._buffer.clocked.ptrs.channel[j]
+                    clocks[i] = self._buffer.clocked.ptrs.timestamp[j].clock
+                    deltas[i] = self._buffer.clocked.ptrs.timestamp[j].delta
+                return (channels, clocks, deltas)
+
+        if key < 0:
+            key += size
+        if key < 0 or key >= size:
+            raise IndexError("Index out of range")
+        channel = zeros(1, dtype=uint8)
+        timetag = zeros(1, dtype=uint64)
+        tail = self.count
+        key = (tail + key) % size
+        if self._type is _tangy.BufferType.Standard:
+            channel = zeros(1, dtype=uint8)
+            timetag = zeros(1, dtype=uint64)
+            channel[0] = self._buffer.standard.ptrs.channel[key]
+            timetag[0] = self._buffer.standard.ptrs.timestamp[key]
+            return (channel, timetag)
+        elif self._type is _tangy.BufferType.Clocked:
+            channel = zeros(1, dtype=uint8)
+            clock = zeros(1, dtype=uint64)
+            delta = zeros(1, dtype=uint64)
+            channel[0] = self._buffer.clocked.ptrs.channel[key]
+            clock[0] = self._buffer.clocked.ptrs.timestamp[key].clock
+            delta[0] = self._buffer.clocked.ptrs.timestamp[key].delta
+            return (channel, clock, delta)
+
     @property
     def name(self):
         if self._type is _tangy.BufferType.Standard:
@@ -515,18 +590,21 @@ def double_decay(time, tau1, tau2, t0, max_intensity):
 
 @cython.dataclasses.dataclass(frozen=True)
 class zero_delay_result:
+    # TODO: add a "central_delay" field
     times: ndarray(float64) = cython.dataclasses.field()
     intensities: ndarray(uint64) = cython.dataclasses.field()
     fit: ndarray(float64) = cython.dataclasses.field()
     tau1: cython.double = cython.dataclasses.field()
     tau2: cython.double = cython.dataclasses.field()
     t0: cython.double = cython.dataclasses.field()
+    central_delay: cython.double = cython.dataclasses.field()
     max_intensity: cython.double = cython.dataclasses.field()
 
 
 @cython.ccall
 def find_zero_delay(buffer: TagBuffer, channel_a: int, channel_b: int,
-                    read_time: float, resolution: float = 1e-9
+                    read_time: float, resolution: float = 1e-9,
+                    window: Optional[float] = None
                     ) -> zero_delay_result:
 
     trace_res: float64 = 5e-2
@@ -535,7 +613,10 @@ def find_zero_delay(buffer: TagBuffer, channel_a: int, channel_b: int,
 
     avrg_intensity = mean(trace) / trace_res
 
-    correlation_window = 2 / avrg_intensity * 2
+    if window is None:
+        correlation_window = 2 / avrg_intensity * 2
+
+    correlation_window = float64(window)
 
     if resolution is None:
         resolution = (2 / avrg_intensity) / 8000
@@ -554,7 +635,7 @@ def find_zero_delay(buffer: TagBuffer, channel_a: int, channel_b: int,
 
     correlation_window = n_bins * measurement_resolution
     n_bins = n_bins * 2
-    intensities: uint64[:] = zeros(n_bins, dtype=uint64)
+    intensities: uint64[:] = zeros(int(n_bins), dtype=uint64)
     intensities_view: c_uint64_t[::1] = intensities
 
     if buffer._type is _tangy.BufferType.Standard:
@@ -579,7 +660,8 @@ def find_zero_delay(buffer: TagBuffer, channel_a: int, channel_b: int,
 
     times = (arange(n_bins) - (n_bins // 2)) * resolution
     max_idx = intensities.argmax()
-    intensities[max_idx] = 0
+    # intensities[max_idx] = 0
+    # intensities[n_bins // 2] = intensities[(n_bins // 2) - 1]
     t0 = times[intensities.argmax()]
 
     tau = 2 / avrg_intensity
@@ -589,6 +671,24 @@ def find_zero_delay(buffer: TagBuffer, channel_a: int, channel_b: int,
 
     [opt, cov] = curve_fit(double_decay, times, intensities, p0=guess)
     hist_fit = double_decay(times, *opt)
+
+    # TODO: calculate the central delay
+    # - histogram deltas for each channel (marginals)
+    # - interpulse_delay = time[fwhm(marginal(channel_b))] + time[fwhm(marginal(channel_a))]
+    # - central delay is then t0 + time[fwhm(marginal(channel_b))] - interpulse_delay
+
+    central_delay = t0
+
+    if buffer._type is _tangy.BufferType.Clocked:
+        index = buffer.lower_bound(buffer.time_in_buffer() - 1)
+        channels, clocks, deltas = buffer[index:buffer.count - 1]
+        temporal_window = int(buffer.resolution[0] / buffer.resolution[1])
+        bins = arange(temporal_window)
+        hist_a, edges = nphist(deltas[channels == channel_a], bins)
+        #hist_b = nphist(deltas[channels == channel_b], bins)
+        # bins -= (temporal_window // 2)
+        central_delay += mean(bins[:-1][hist_a > (0.5 * max(hist_a))]) * (1e-12)
+
     result = zero_delay_result(
         times=times,
         intensities=intensities,
@@ -596,6 +696,7 @@ def find_zero_delay(buffer: TagBuffer, channel_a: int, channel_b: int,
         tau1=opt[0],
         tau2=opt[1],
         t0=opt[2],
+        central_delay=central_delay,
         max_intensity=opt[3])
 
     return result
@@ -606,7 +707,7 @@ _Coinc_Measurement = cython.union(
     clocked=cython.pointer(_tangy.clk_cc_measurement))
 
 
-@cython.cclass
+@ cython.cclass
 class Coincidences:
     """Coincidence measurement
 
@@ -675,7 +776,7 @@ class Coincidences:
             _tangy.clk_coincidence_measurement_delete(self._measurement.clocked)
         return
 
-    @cython.ccall
+    @ cython.ccall
     def count(self, radius: float, read_time: float) -> int:
         """ Count number of coincidences
         Args:
@@ -699,7 +800,7 @@ class Coincidences:
                                                    radius, read_time)
         return result
 
-    @cython.ccall
+    @ cython.ccall
     def collect(self, radius: float, read_time: float):
         """ Collect timetags for coincidences
 
@@ -747,7 +848,19 @@ class Coincidences:
                                   asarray(self.channels), clocks, deltas)
 
 
-@cython.cclass
+@ cython.dataclasses.dataclass(frozen=True)
+class JointHistogram:
+    """JSI result
+    """
+
+    data: ndarray(uint64) = cython.dataclasses.field()
+    marginal_idler: ndarray(uint64) = cython.dataclasses.field()
+    marginal_signal: ndarray(uint64) = cython.dataclasses.field()
+    # axis_idler: ndarray(float64) = cython.dataclasses.field()
+    # axis_signal: ndarray(float64) = cython.dataclasses.field()
+
+
+@ cython.cclass
 class JointDelayHistogram:
     """Coincidence measurement
 
@@ -765,6 +878,7 @@ class JointDelayHistogram:
     _measurement = cython.declare(_tangy.delay_histogram_measurement)
     _measurement_ptr = cython.declare(cython.pointer(_tangy.delay_histogram_measurement))
     _radius: float
+    _central_bin: int
 
     _n: uint64
 
@@ -774,8 +888,8 @@ class JointDelayHistogram:
     _channels_view: cython.uchar[:]
     _delays_view: cython.double[:]
 
-    histogram: ndarray(uint64)
-    _histogram_dim: int
+    _histogram: ndarray(uint64)
+    _temporal_window: int
     _histogram_view: c_uint64_t[:, ::1]
     _histogram_ptrs: cython.pointer(cython.pointer(c_uint64_t))
 
@@ -799,12 +913,14 @@ class JointDelayHistogram:
         self._radius = radius
         radius_bins = buffer.bins_from_time(radius)
 
-        self._histogram_dim = radius_bins * 2
-        # self.histogram = zeros(self._histogram_dim * self._histogram_dim, dtype=uint32)
+        self._temporal_window = radius_bins * 2
+        self._central_bin = radius_bins
+        # self.histogram = zeros(self._temporal_window * self._temporal_window, dtype=uint32)
         # self._histogram_view = self.histogram
 
-        self.histogram = zeros([self._histogram_dim, self._histogram_dim], dtype=uint64, order='C')
-        self._histogram_view = self.histogram
+        self._histogram = zeros([self._temporal_window, self._temporal_window],
+                                dtype=uint64, order='C')
+        self._histogram_view = self._histogram
 
         channels_ptr = cython.address(self._channels_view[0])
 
@@ -833,10 +949,63 @@ class JointDelayHistogram:
         # free(self._histogram_ptrs)
         return
 
-    @property
-    def histogram(self):
-        # return self.histogram.reshape([self._histogram_dim, self._histogram_dim])
-        return self.histogram.copy()
+    @ cython.ccall
+    def histogram(self, bin_width: Optional[int] = 1,
+                  centre: bool = False) -> JointHistogram:
+        # TODO: add an inplace option, default to false and create new memory
+        # on each call
+
+        if bin_width < 1:
+            raise ValueError("bin_width must be >= 1")
+
+        temporal_window = self._temporal_window
+        central_bin = self._central_bin
+        if bin_width != 1:
+            temporal_window_scaled = self._temporal_window // bin_width
+            temporal_window = temporal_window_scaled
+            central_bin = temporal_window // 2
+
+            hist = zeros([temporal_window_scaled, temporal_window_scaled],
+                         dtype=uint64)
+
+            i: cython.Py_ssize_t
+            i_start: cython.Py_ssize_t
+            i_stop: cython.Py_ssize_t
+            j: cython.Py_ssize_t
+            j_start: cython.Py_ssize_t
+            j_stop: cython.Py_ssize_t
+            # TODO: should be able to accumulate marginals in this loop
+            # PERF: will make this quicker when binning the histogram
+            for i in range(temporal_window_scaled):
+                i_start = i * bin_width
+                i_stop = i_start + bin_width
+                for j in range(temporal_window_scaled):
+                    j_start = j * bin_width
+                    j_stop = j_start + bin_width
+                    hist[i][j] = npsum(self._histogram[i_start:i_stop, j_start:j_stop])
+        else:
+            hist = asarray(self._histogram.copy(), dtype=uint64)
+
+        marginal_idler = npsum(hist, axis=0)
+        marginal_signal = npsum(hist, axis=1)
+
+        if centre:
+            bins = arange(temporal_window) - central_bin
+
+            offset_idler: int = int(npround(
+                mean(bins[marginal_idler > (0.1 * marginal_idler.max())])))
+            offset_signal: int = int(npround(
+                mean(bins[marginal_signal > (0.1 * marginal_signal.max())])))
+
+            offset_idler *= (-1)
+            offset_signal *= (-1)
+
+            return JointHistogram(
+                roll(roll(hist, offset_idler, axis=0), offset_signal, axis=1),
+                marginal_idler,
+                marginal_signal)
+
+        return JointHistogram(hist, marginal_idler, marginal_signal)
 
     @ cython.ccall
     def collect(self, read_time: float):
@@ -850,10 +1019,10 @@ class JointDelayHistogram:
 
         self._histogram_ptrs = cython.cast(
             cython.pointer(cython.pointer(c_uint64_t)),
-            malloc(self._histogram_dim * cython.sizeof(c_uint64_t)))
+            malloc(self._temporal_window * cython.sizeof(c_uint64_t)))
 
         int: cython.Py_ssize_t = 0
-        for i in range(self._histogram_dim):
+        for i in range(self._temporal_window):
             self._histogram_ptrs[i] = cython.address(self._histogram_view[i, 0])
 
         print("entry point")
@@ -1137,7 +1306,6 @@ class PTUFile():
     #     if _tangy.BufferType.Clocked == self._buffer_type:
     #         return self._clk_buffer.__repr__()
 
-    @ property
     def buffer(self):
         return self._buffer
 

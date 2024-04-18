@@ -18,6 +18,7 @@ typedef struct std_slice {
     timetag* timestamp;
 } std_slice;
 
+
 #define VEC_T timetag
 #define VEC_NAME std_vec
 #include "vector.h"
@@ -37,6 +38,7 @@ typedef struct std_slice {
 #define TS timetag
 #define RESOLUTION std_res
 #define SLICE std_slice
+#define FIELD_PTRS std_slice
 #define TT_VECTOR vec_timetag
 #define TT_VECTOR_INIT(C) std_vec_init(C)
 #define TT_VECTOR_DEINIT(C) std_vec_deinit(C)
@@ -129,6 +131,31 @@ std_as_bins(standard record, std_res resolution) {
     return (u64)roundl((f64)record.timestamp * resolution);
 }
 
+usize
+std_slice_buffer(const std_buffer* const buffer,
+                 FIELD_PTRS ptrs,
+                 usize start,
+                 usize stop) {
+    if (ptrs.length == 0) {
+        return 0;
+    }
+
+    if ((stop - start) != ptrs.length) {
+        return 0;
+    }
+
+    usize capacity = *(buffer->capacity);
+    int j = 0;
+    usize idx = 0;
+    for (usize i = start; i < stop; i ++) {
+        idx = i % capacity;
+        ptrs.channel[j] = buffer->ptrs.channel[idx];
+        ptrs.timestamp[j] = buffer->ptrs.timestamp[idx];
+        j += 1;
+    }
+    return j;
+}
+
 bool
 std_equal(standard a, standard b) {
     return a.timestamp == b.timestamp;
@@ -197,3 +224,15 @@ std_dh_measurement_check(usize n_channels,
 }
 
 #endif
+
+#undef STUB
+#undef T
+#undef TS
+#undef RESOLUTION
+#undef SLICE
+#undef FIELD_PTRS
+#undef TT_VECTOR
+#undef TT_VECTOR_INI
+#undef TT_VECTOR_DEINI
+#undef TT_VECTOR_PUSH
+#undef TT_VECTOR_RESET

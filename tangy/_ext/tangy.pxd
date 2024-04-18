@@ -107,6 +107,11 @@ cdef extern from "./src/standard_buffer.h":
     f64 std_to_time(standard record, std_res resolution)
     u64 std_as_bins(standard record, std_res resolution)
 
+    usize std_slice_buffer(const std_buffer* const buffer,
+                 std_slice ptrs,
+                 usize start,
+                 usize stop)
+
     bint std_compare(standard a, standard b, std_res res_a, std_res res_b)
     bint std_equal(standard a, standard b, std_res res_a, std_res res_b)
 
@@ -248,6 +253,11 @@ cdef extern from "./src/clocked_buffer.h":
 
     f64 clk_to_time(clocked record, clk_res resolution)
     u64 clk_as_bins(clocked record, clk_res resolution)
+
+    usize clk_slice_buffer(const clk_buffer* const buffer,
+                 clk_slice ptrs,
+                 usize start,
+                 usize stop)
 
     bint clk_compare(standard a, standard b, clk_res res_a, clk_res res_b)
     bint clk_equal(standard a, standard b, clk_res res_a, clk_res res_b)

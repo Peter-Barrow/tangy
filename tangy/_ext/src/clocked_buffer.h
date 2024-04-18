@@ -25,6 +25,14 @@ typedef struct clk_slice {
     clk_timetag* timestamp;
 } clk_slice;
 
+typedef struct clk_field_ptrs clk_field_ptrs;
+struct clk_field_ptrs {
+    usize length;
+    u8* channels;
+    u64* clocks;
+    u64* deltas;
+};
+
 #define VEC_T clk_timetag
 typedef struct clk_timetag_slice clk_timetag_slice;
 struct clk_timetag_slice {
@@ -136,6 +144,7 @@ clk_vec_push(vec_clk_timetag* multivec, clk_timetag value) {
 #define TS clk_timetag
 #define RESOLUTION clk_res
 #define SLICE clk_slice
+#define FIELD_PTRS clk_field_ptrs
 #define TT_VECTOR vec_clk_timetag
 #define TT_VECTOR_INIT(C) clk_vec_init(C)
 #define TT_VECTOR_DEINIT(C) clk_vec_deinit(C)
@@ -269,6 +278,34 @@ clk_equal(clocked a, clocked b) {
             (true == (a.timestamp.delta == b.timestamp.delta)));
 }
 
+usize
+clk_slice_buffer(const clk_buffer* const buffer,
+                 FIELD_PTRS ptrs,
+                 usize start,
+                 usize stop) {
+    if (ptrs.length == 0) {
+        return 0;
+    }
+
+    if ((stop - start) != ptrs.length) {
+        return 0;
+    }
+
+    usize capacity = *(buffer->capacity);
+    int j = 0;
+    usize idx = 0;
+    clk_timetag timetag;
+    for (usize i = start; i < stop; i ++) {
+        idx = i % capacity;
+        ptrs.channels[j] = buffer->ptrs.channel[idx];
+        timetag = buffer->ptrs.timestamp[idx];
+        ptrs.clocks[idx] = timetag.clock;
+        ptrs.deltas[idx] = timetag.delta;
+        j += 1;
+    }
+    return j;
+}
+
 histogram2D_coords
 clk_calculate_joint_histogram_coordinates(
   delay_histogram_measurement* measurement,
@@ -315,7 +352,14 @@ clk_dh_measurement_check(usize n_channels,
 
 #undef STUB
 #undef T
+#undef TS
 #undef RESOLUTION
 #undef SLICE
+// #undef FIELD_PTRS
+// #undef TT_VECTOR
+// #undef TT_VECTOR_INI
+// #undef TT_VECTOR_DEINI
+// #undef TT_VECTOR_PUSH
+// #undef TT_VECTOR_RESET
 
 #endif
