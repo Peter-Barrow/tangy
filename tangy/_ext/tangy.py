@@ -672,11 +672,6 @@ def find_zero_delay(buffer: TagBuffer, channel_a: int, channel_b: int,
     [opt, cov] = curve_fit(double_decay, times, intensities, p0=guess)
     hist_fit = double_decay(times, *opt)
 
-    # TODO: calculate the central delay
-    # - histogram deltas for each channel (marginals)
-    # - interpulse_delay = time[fwhm(marginal(channel_b))] + time[fwhm(marginal(channel_a))]
-    # - central delay is then t0 + time[fwhm(marginal(channel_b))] - interpulse_delay
-
     central_delay = t0
 
     if buffer._type is _tangy.BufferType.Clocked:
@@ -685,8 +680,6 @@ def find_zero_delay(buffer: TagBuffer, channel_a: int, channel_b: int,
         temporal_window = int(buffer.resolution[0] / buffer.resolution[1])
         bins = arange(temporal_window)
         hist_a, edges = nphist(deltas[channels == channel_a], bins)
-        #hist_b = nphist(deltas[channels == channel_b], bins)
-        # bins -= (temporal_window // 2)
         central_delay += mean(bins[:-1][hist_a > (0.5 * max(hist_a))]) * (1e-12)
 
     result = zero_delay_result(
