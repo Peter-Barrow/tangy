@@ -18,6 +18,7 @@ extensions = [
         define_macros=[('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')],
         include_dirs=[get_include()],
         extra_compile_args=["-O2", "-march=native"],
+        optional=os.environ.get('CIBUILDWHEEL', '0') != '1',
     ),
 ]
 
