@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tangy"
-version = "0.1.0"
+version = "0.1.1"
 description = "A library to manage timetags"
 authors = ["Peter Thomas Barrow <peter.barrow.93@gmail.com>"]
 readme = "README.md"
