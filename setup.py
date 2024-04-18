@@ -1,3 +1,4 @@
+import platform
 import os
 import shutil
 from numpy import get_include
@@ -8,6 +9,10 @@ from setuptools import setup, Extension, Distribution
 
 cython_dir = os.path.join("tangy/_ext")
 
+compiler_flags = []
+if "Linux" in platform.platform():
+    compiler_flags = ["-O2", "-march=native"]
+
 extensions = [
     Extension(
         # "tangy._tangy",
@@ -17,7 +22,7 @@ extensions = [
         ],
         define_macros=[('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')],
         include_dirs=[get_include()],
-        extra_compile_args=["-O2", "-march=native"],
+        extra_compile_args=compiler_flags,
         optional=os.environ.get('CIBUILDWHEEL', '0') != '1',
     ),
 ]
