@@ -1,38 +1,33 @@
-stages:
-  - build
-
-
-variables:
-  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/release/${CI_COMMIT_TAG}/"
-
-
-build:
-  stage: build
-  image: python:3.9
-
-  #rules:
-  #  - if: $CI_COMMIT_TAG
-
-  #only:
-  #  - tags
-  except:
-    - branches
-
+linux:
+  image: python:3.9.13
+  # make a docker daemon available for cibuildwheel to use
+  services:
+    - name: docker:dind
+      entrypoint: ["env", "-u", "DOCKER_HOST"]
+      command: ["dockerd-entrypoint.sh"]
   variables:
-    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-
-  cache:
-    paths:
-      - .cache/pip
-
-  before_script:
-    - python --version ; pip --version  # For debugging
-    - pip install poetry
-    - poetry install
-    #- source `poetry env info --path`/bin/activate
-  
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
+    # See https://github.com/docker-library/docker/pull/166
+    DOCKER_TLS_CERTDIR: ""
   script:
-    - poetry build
-    - poetry config repositories.gitlab "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/packages/pypi"
-    - poetry config http-basic.gitlab gitlab-ci-token "$CI_JOB_TOKEN"
-    - poetry publish --repository gitlab
+    - curl -sSL https://get.docker.com/ | sh
+    - python -m pip install cibuildwheel==2.17.0
+    - cibuildwheel --output-dir wheelhouse
+  artifacts:
+    paths:
+      - wheelhouse/
+
+windows:
+  image: mcr.microsoft.com/windows/servercore:1809
+  before_script:
+    - choco install python -y --version 3.9.13
+    - choco install git.install -y
+    - py -m pip install cibuildwheel==2.17.0
+  script:
+    - py -m cibuildwheel --output-dir wheelhouse --platform windows
+  artifacts:
+    paths:
+      - wheelhouse/
+  tags:
+    - windows
