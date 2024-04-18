@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # stages:
 #   - build
 # 
@@ -37,6 +38,8 @@
 #     - poetry config http-basic.gitlab gitlab-ci-token "$CI_JOB_TOKEN"
 #     - poetry publish --repository gitlab
 
+=======
+>>>>>>> e64a73509986fdf512c7a8f531ad4a141de011f4
 linux:
   image: python:3.9.13
   # make a docker daemon available for cibuildwheel to use
