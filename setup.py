@@ -49,9 +49,9 @@ ext_modules = cythonize(
 
 dist = Distribution({"ext_modules": ext_modules})
 cmd = build_ext(dist)
-if "Windows" in platform.platform():
-    # required for local testing
-    # cmd = build_ext(dist, compiler="mingw32")
+# if "Windows" in platform.platform():
+#     required for local testing
+#     cmd = build_ext(dist, compiler="mingw32")
 cmd.ensure_finalized()
 cmd.run()
 
