@@ -1,6 +1,6 @@
 #distutils: language = c
 
-from numpy cimport int8_t as byte
+from numpy cimport int8_t as char
 
 from numpy cimport uint8_t as u8
 from numpy cimport uint32_t as u32
@@ -47,7 +47,7 @@ cdef extern from "./src/vector_impls.h":
     vec_u64* vector_u64_deinit(vec_u64* vector)
 
 cdef extern from "./src/shared_memory.c":
-    tbResult shmem_exists(byte *const map_name, bint *exists)
+    tbResult shmem_exists(char *const map_name, bint *exists)
 
 cdef extern from "./src/standard_buffer.h":
 
@@ -67,10 +67,10 @@ cdef extern from "./src/standard_buffer.h":
         timetag *timestamp
 
     ctypedef struct std_buffer:
-        byte *map_ptr
+        char *map_ptr
         std_slice ptrs
         fd_t file_descriptor
-        byte *name
+        char *name
         std_res *resolution
         u64 *capacity
         u64 *count
@@ -83,7 +83,7 @@ cdef extern from "./src/standard_buffer.h":
 
     u64 std_size_of()
 
-    void std_buffer_info_init(byte *data, std_buffer * buffer)
+    void std_buffer_info_init(char *data, std_buffer * buffer)
 
     standard std_record_at(const std_buffer *const buffer, u64 absolute_index)
 
@@ -212,10 +212,10 @@ cdef extern from "./src/clocked_buffer.h":
         clk_timetag *timestamp
 
     ctypedef struct clk_buffer:
-        byte *map_ptr
+        char *map_ptr
         clk_slice ptrs
         fd_t file_descriptor
-        byte *name
+        char *name
         clk_res *resolution
         u64 *capacity
         u64 *count
@@ -228,7 +228,7 @@ cdef extern from "./src/clocked_buffer.h":
 
     u64 clk_size_of()
 
-    void clk_buffer_info_init(byte *data, clk_buffer * buffer)
+    void clk_buffer_info_init(char *data, clk_buffer * buffer)
 
     clocked clk_record_at(const clk_buffer *const buffer, u64 absolute_index)
     u8 clk_channel_at(const clk_buffer *const buffer, const u64 absolute_index);

@@ -69,10 +69,10 @@
 #define BUFFER_INFO_PTRS JOIN(STUB, buffer_info_ptrs)
 
 typedef struct {
-    byte* map_ptr;
+    char* map_ptr;
     SLICE ptrs;
     fd_t file_descriptor;
-    byte* name; /* do we need a string type? */
+    char* name; /* do we need a string type? */
     RESOLUTION
     *resolution; // maybe it does make sense to have setters for fields that
                  // should be constant after initialisation
@@ -119,7 +119,7 @@ JOIN(STUB, buffer_new)() {
 
 // Buffer management
 static inline void
-JOIN(STUB, buffer_info_init)(byte* data, BUFFER* buffer) {
+JOIN(STUB, buffer_info_init)(char* data, BUFFER* buffer) {
 
     buffer->resolution = &((BUFFER_INFO*)data)->resolution;
     buffer->conversion_factor = &((BUFFER_INFO*)data)->conversion_factor;
@@ -135,7 +135,7 @@ static inline tbResult
 JOIN(STUB, buffer_init)(const u64 num_elements,
                         RESOLUTION resolution,
                         const u8 n_channels,
-                        byte* name,
+                        char* name,
                         BUFFER* buffer) {
 
     u64 num_bytes = JOIN(STUB, buffer_map_size)(num_elements);
@@ -185,7 +185,7 @@ JOIN(STUB, buffer_init)(const u64 num_elements,
 }
 
 static inline tbResult
-JOIN(STUB, buffer_connect)(byte* name, BUFFER* buffer) {
+JOIN(STUB, buffer_connect)(char* name, BUFFER* buffer) {
 
     bool exists = false;
     tbResult result = shmem_exists(name, &exists);
@@ -582,7 +582,7 @@ static inline bool
 JOIN(STUB, next_for_channel)(const BUFFER* const buffer,
                              circular_iterator* iter,
                              u8 channel,
-                             usize* index) {
+                             u64* index) {
 
     usize i = next(iter);
     if (i == 0) {

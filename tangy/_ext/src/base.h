@@ -18,7 +18,7 @@ typedef uint64_t u64;
 typedef float f32;
 typedef double f64;
 typedef uintptr_t uptr;
-typedef char byte;
+// typedef char byte;
 typedef unsigned char ubyte;
 typedef ptrdiff_t size;
 typedef size_t usize;
@@ -162,11 +162,11 @@ iterator_init(circular_iterator* iter,
 
 // TODO: add arrival_times field
 typedef struct {
-    usize length;
-    usize oldest; // not the best name for the result of argmin
+    u64 length;
+    u64 oldest; // not the best name for the result of argmin
     u8* channels;
-    usize* index;
-    usize* limit;
+    u64* index;
+    u64* limit;
     circular_iterator* iters;
 } pattern_iterator;
 

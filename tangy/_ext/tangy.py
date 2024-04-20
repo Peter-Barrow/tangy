@@ -7,7 +7,7 @@ from cython.cimports import tangy as _tangy
 import mmap
 from os import dup
 from os.path import getsize
-import time
+# import time
 from scipy.optimize import curve_fit
 from numpy import log2, mean, where, exp, roll, reshape, ravel
 from numpy import sum as npsum

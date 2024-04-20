@@ -21,7 +21,7 @@ tbResult shmem_create(u64 map_size, shared_mapping *map) {
         return result;
     }
 
-    byte *ptr = mmap(NULL, map_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    char *ptr = mmap(NULL, map_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 
     if (-1 == *ptr) {
         result.Error = MAPPING_FAILED;
@@ -41,7 +41,7 @@ tbResult shmem_create(u64 map_size, shared_mapping *map) {
     // }
 
     HANDLE handle = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE,
-                           win_int64.HighPart, win_int64.LowPart, mem_map_name);
+                           win_int64.HighPart, win_int64.LowPart, map->name);
 
     if (INVALID_HANDLE_VALUE == handle) {
         result.Error = SHARED_OPEN;
@@ -54,14 +54,14 @@ tbResult shmem_create(u64 map_size, shared_mapping *map) {
         return result;
     }
 
-    int ft = ftruncate(fd, map_size);
-    if (-1 == ft) {
-        result.Error = TRUNCATE_FAILED;
-        return result;
-    }
+    // int ft = ftruncate(fd, map_size);
+    // if (-1 == ft) {
+    //     result.Error = TRUNCATE_FAILED;
+    //     return result;
+    // }
 
-    byte *ptr =
-        MapViewOfFile(fd, FILE_MAP_ALL_ACCESS, 0, 0, win_int64.QuadPart);
+    char *ptr =
+        MapViewOfFile(handle, FILE_MAP_ALL_ACCESS, 0, 0, win_int64.QuadPart);
 
     if (-1 == *ptr) {
         result.Error = MAPPING_FAILED;
@@ -77,7 +77,7 @@ tbResult shmem_create(u64 map_size, shared_mapping *map) {
     return result;
 }
 
-//shmemBufferResult shmem_connect(byte *map_name, u64 expected_size) {
+//shmemBufferResult shmem_connect(char *map_name, u64 expected_size) {
 tbResult shmem_connect(shared_mapping *map) {
 
     tbResult result = {0};
@@ -99,7 +99,7 @@ tbResult shmem_connect(shared_mapping *map) {
     }
 
 
-    byte *ptr = mmap(NULL, file_status.st_size, PROT_READ | PROT_WRITE,
+    char *ptr = mmap(NULL, file_status.st_size, PROT_READ | PROT_WRITE,
                      MAP_SHARED, fd, 0);
 
     if (-1 == *ptr) {
@@ -129,7 +129,7 @@ tbResult shmem_connect(shared_mapping *map) {
         return result;
     }
 
-    byte *ptr = MapViewOfFile(fd, FILE_MAP_WRITE, 0, 0, 0);
+    char *ptr = MapViewOfFile(handle, FILE_MAP_WRITE, 0, 0, 0);
 
     if (-1 == *ptr) {
         result.Error = MAPPING_FAILED;
@@ -171,13 +171,13 @@ tbResult shmem_close(shared_mapping *map) {
     UnmapViewOfFile(map->data);
     //CloseHandle(map->file_descriptor);
 
-    HANDLE handle = (HANDLE)_get_osfhandle(_fileno(map->file_descriptor));
+    HANDLE handle = (HANDLE)_get_osfhandle(map->file_descriptor);
     if (INVALID_HANDLE_VALUE == handle) {
         //TODO: need close error for conversion from file to handle
         return result;
     }
 
-    CloseHandle(handle)
+    CloseHandle(handle);
     close(map->file_descriptor);
 
 #endif
@@ -187,7 +187,7 @@ tbResult shmem_close(shared_mapping *map) {
 }
 
 // TODO: shm_open and close can set errno, handle it!
-tbResult shmem_exists(byte *const map_name, bool *exists) {
+tbResult shmem_exists(char *const map_name, bool *exists) {
     tbResult result = {0};
 
 #ifdef __linux__
@@ -204,7 +204,9 @@ tbResult shmem_exists(byte *const map_name, bool *exists) {
     }
 
 #elif _WIN32
-    fd_t shm_descriptor = OpenFileMapping(FILE_MAP_WRITE, FALSE, map_name);
+
+    //int fd = _open_osfhandle((intptr_t)handle, 0);
+    HANDLE shm_descriptor = OpenFileMapping(FILE_MAP_WRITE, FALSE, map_name);
     if (!shm_descriptor) {
         return result;
     }
