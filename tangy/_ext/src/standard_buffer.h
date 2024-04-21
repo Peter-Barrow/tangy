@@ -133,25 +133,31 @@ std_as_bins(standard record, std_res resolution) {
 
 usize
 std_slice_buffer(const std_buffer* const buffer,
-                 FIELD_PTRS ptrs,
+                 FIELD_PTRS* ptrs,
                  usize start,
                  usize stop) {
-    if (ptrs.length == 0) {
+    if (ptrs->length == 0) {
         return 0;
     }
 
-    if ((stop - start) != ptrs.length) {
+    if ((stop - start) != ptrs->length) {
         return 0;
     }
 
     usize capacity = *(buffer->capacity);
+    circular_iterator iter = {0};
+    if (iterator_init(&iter, capacity, start, stop) == -1) {
+        return 0;
+    }
+
     int j = 0;
-    usize idx = 0;
-    for (usize i = start; i < stop; i ++) {
-        idx = i % capacity;
-        ptrs.channel[j] = buffer->ptrs.channel[idx];
-        ptrs.timestamp[j] = buffer->ptrs.timestamp[idx];
+    usize i = iter.lower.index;
+    ptrs->timestamp[j] = buffer->ptrs.timestamp[i];
+    ptrs->channel[j] = buffer->ptrs.channel[i];
+    while ((i = next(&iter)) != 0) {
         j += 1;
+        ptrs->timestamp[j] = buffer->ptrs.timestamp[i];
+        ptrs->channel[j] = buffer->ptrs.channel[i];
     }
     return j;
 }

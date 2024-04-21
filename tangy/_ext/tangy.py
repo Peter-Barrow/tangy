@@ -130,15 +130,11 @@ _Buffer = cython.union(
     standard=_tangy.std_buffer,
     clocked=_tangy.clk_buffer)
 
-TangyBuffer = cython.fused_type(_tangy.std_buffer, _tangy.clk_buffer)
-
-_Buffer = cython.union(
-    standard=_tangy.std_buffer,
-    clocked=_tangy.clk_buffer)
-
 _Buffer_Ptr = cython.union(
     standard=cython.pointer(_tangy.std_buffer),
     clocked=cython.pointer(_tangy.clk_buffer))
+
+TangyBuffer = cython.fused_type(_tangy.std_buffer, _tangy.clk_buffer)
 
 
 @cython.cclass
@@ -290,6 +286,74 @@ class TagBuffer:
     @cython.wraparound(False)
     def __getitem__(self, key):
         return self._get(key)
+
+    @cython.ccall
+    def _get_alt(self, key):
+        size: cython.ulonglong = self.capacity
+        count: cython.ulonglong = self.count
+        tail: cython.ulonglong
+        if size > count:
+            tail = 0
+        else:
+            tail = self.count
+
+        start: cython.ulonglong = 0
+        stop: cython.ulonglong = tail
+        step: cython.ulonglong = 1
+
+        n: uint64 = 1
+
+        if isinstance(key, slice):
+            start = cython.cast(cython.ulonglong, key.start) or 0
+            stop = cython.cast(cython.ulonglong, key.stop) or tail
+            step = cython.cast(cython.ulonglong, key.step) or 1
+            n = stop - start
+
+        if isinstance(key, int):
+            if key < 0:
+                key += size
+            if key < 0 or key >= size:
+                raise IndexError("Index out of range")
+            tail = self.count
+            key = (tail + key) % size
+            n = 1
+
+        count: uint64
+        channels: uint8[:] = zeros(n, dtype=uint8)
+        channels_view: cython.uchar[:] = channels
+
+        if self._type is _tangy.BufferType.Standard:
+            ptrs_std: _tangy.std_slice
+            ptrs_std.length = n
+            ptrs_std.channel = cython.address(channels_view[0])
+
+            timestamps: uint64[:] = zeros(n, dtype=uint64)
+            timestamps_view: c_uint64_t[:] = timestamps
+            ptrs_std.timestamp = cython.address(timestamps_view[0])
+
+            count = _tangy.std_slice_buffer(self._ptr.standard,
+                                            cython.address(ptrs_std),
+                                            start, stop)
+
+            return (channels[::step], timestamps[::step])
+
+        elif self._type is _tangy.BufferType.Clocked:
+            ptrs_clk: _tangy.clk_field_ptrs
+            ptrs_clk.length = n
+            ptrs_clk.channels = cython.address(channels_view[0])
+
+            clocks: uint64[:] = zeros(n, dtype=uint64)
+            clocks_view: c_uint64_t[:] = clocks
+            ptrs_clk.clocks = cython.address(clocks_view[0])
+
+            deltas: uint64[:] = zeros(n, dtype=uint64)
+            deltas_view: c_uint64_t[:] = deltas
+            ptrs_clk.deltas = cython.address(deltas_view[0])
+
+            count = _tangy.clk_slice_buffer(self._ptr.clocked,
+                                            cython.address(ptrs_clk),
+                                            start, stop)
+            return (channels[::step], clocks[::step], deltas[::step])
 
     @cython.ccall
     def _get(self, key):

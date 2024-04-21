@@ -17,8 +17,8 @@ if "Linux" in platform.platform():
 link_args = []
 if "Windows" in platform.platform():
     # these are needed for local development
-    # os.environ['PATH'] = 'C:\\mingw64\\bin'
-    # compiler_flags = ["-O2", "-march=native", "-DMS_WIN64"]
+    os.environ['PATH'] = 'C:\\mingw64\\bin'
+    compiler_flags = ["-O2", "-march=native", "-DMS_WIN64"]
 
     link_args = ['-static-libgcc',
                  '-static-libstdc++',
@@ -49,9 +49,9 @@ ext_modules = cythonize(
 
 dist = Distribution({"ext_modules": ext_modules})
 cmd = build_ext(dist)
-# if "Windows" in platform.platform():
-#     required for local testing
-#     cmd = build_ext(dist, compiler="mingw32")
+# required for local testing
+if "Windows" in platform.platform():
+    cmd = build_ext(dist, compiler="mingw32")
 cmd.ensure_finalized()
 cmd.run()
 

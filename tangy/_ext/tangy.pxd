@@ -17,6 +17,7 @@ cpdef enum BufferType:
     Standard,
     Clocked
 
+
 cdef extern from "./src/base.h":
     ctypedef enum tbError:
       NONE,
@@ -108,7 +109,7 @@ cdef extern from "./src/standard_buffer.h":
     u64 std_as_bins(standard record, std_res resolution)
 
     usize std_slice_buffer(const std_buffer* const buffer,
-                 std_slice ptrs,
+                 std_slice* ptrs,
                  usize start,
                  usize stop)
 
@@ -211,6 +212,12 @@ cdef extern from "./src/clocked_buffer.h":
         u8 *channel
         clk_timetag *timestamp
 
+    ctypedef struct clk_field_ptrs:
+        usize length
+        u8* channels
+        u64* clocks
+        u64* deltas
+
     ctypedef struct clk_buffer:
         char *map_ptr
         clk_slice ptrs
@@ -255,7 +262,7 @@ cdef extern from "./src/clocked_buffer.h":
     u64 clk_as_bins(clocked record, clk_res resolution)
 
     usize clk_slice_buffer(const clk_buffer* const buffer,
-                 clk_slice ptrs,
+                 clk_field_ptrs* ptrs,
                  usize start,
                  usize stop)
 

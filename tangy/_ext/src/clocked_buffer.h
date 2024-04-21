@@ -280,29 +280,37 @@ clk_equal(clocked a, clocked b) {
 
 usize
 clk_slice_buffer(const clk_buffer* const buffer,
-                 FIELD_PTRS ptrs,
+                 FIELD_PTRS* ptrs,
                  usize start,
                  usize stop) {
-    if (ptrs.length == 0) {
+    if (ptrs->length == 0) {
         return 0;
     }
 
-    if ((stop - start) != ptrs.length) {
+    if ((stop - start) != ptrs->length) {
         return 0;
     }
 
     usize capacity = *(buffer->capacity);
-    int j = 0;
-    usize idx = 0;
-    clk_timetag timetag;
-    for (usize i = start; i < stop; i ++) {
-        idx = i % capacity;
-        ptrs.channels[j] = buffer->ptrs.channel[idx];
-        timetag = buffer->ptrs.timestamp[idx];
-        ptrs.clocks[idx] = timetag.clock;
-        ptrs.deltas[idx] = timetag.delta;
-        j += 1;
+    circular_iterator iter = {0};
+    if (iterator_init(&iter, capacity, start, stop) == -1) {
+        return 0;
     }
+
+    int j = 0;
+    usize i = iter.lower.index;
+    clk_timetag timetag = buffer->ptrs.timestamp[i];
+    ptrs->clocks[j] = timetag.clock;
+    ptrs->deltas[j] = timetag.delta;
+    ptrs->channels[j] = buffer->ptrs.channel[i];
+    while ((i = next(&iter)) != 0) {
+        j += 1;
+        clk_timetag timetag = buffer->ptrs.timestamp[i];
+        ptrs->channels[j] = buffer->ptrs.channel[i];
+        ptrs->clocks[j] = timetag.clock;
+        ptrs->deltas[j] = timetag.delta;
+    }
+
     return j;
 }
 

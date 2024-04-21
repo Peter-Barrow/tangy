@@ -263,7 +263,7 @@ u64 JOIN(STUB, as_bins)(T record, RESOLUTION resolution);
 #define ToBins(RECORD, RES) JOIN(STUB, as_bins)(RECORD, RES)
 
 usize JOIN(STUB, slice_buffer)(const BUFFER* const buffer,
-                               FIELD_PTRS ptrs,
+                               FIELD_PTRS* ptrs,
                                usize start,
                                usize stop);
 
