@@ -335,17 +335,19 @@ clk_buffer_push(const clk_buffer* const buffer,
 
     int j = 0;
     usize i = iter.lower.index;
-    buffer->ptrs.timestamp[i] = {
+    clk_timetag timestamp = {
         .clock = slice.clocks[j],
         .delta = slice.deltas[j]
     };
+    buffer->ptrs.timestamp[i] = timestamp;
     buffer->ptrs.channel[i] = slice.channels[j];
     while ((i = next(&iter)) != 0) {
         j += 1;
-        buffer->ptrs.timestamp[i] = {
+        clk_timetag timestamp = {
             .clock = slice.clocks[j],
             .delta = slice.deltas[j]
         };
+        buffer->ptrs.timestamp[i] = timestamp;
         buffer->ptrs.channel[i] = slice.channels[j];
     }
 

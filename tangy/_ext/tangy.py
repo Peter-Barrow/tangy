@@ -287,6 +287,10 @@ class TagBuffer:
     def __getitem__(self, key):
         return self._get(key)
 
+    # TODO: define slicing semantics
+    def _make_slice(self, key: Union[slice, int]) -> slice:
+        return
+
     @cython.ccall
     def _get(self, key):
         size: cython.ulonglong = self.capacity
@@ -331,7 +335,7 @@ class TagBuffer:
             timestamps_view: c_uint64_t[:] = timestamps
             ptrs_std.timestamp = cython.address(timestamps_view[0])
 
-            count = _tangy.std_slice_buffer(self._ptr.standard,
+            count = _tangy.std_buffer_slice(self._ptr.standard,
                                             cython.address(ptrs_std),
                                             start, stop)
 
@@ -350,10 +354,52 @@ class TagBuffer:
             deltas_view: c_uint64_t[:] = deltas
             ptrs_clk.deltas = cython.address(deltas_view[0])
 
-            count = _tangy.clk_slice_buffer(self._ptr.clocked,
+            count = _tangy.clk_buffer_slice(self._ptr.clocked,
                                             cython.address(ptrs_clk),
                                             start, stop)
             return (channels[::step], clocks[::step], deltas[::step])
+
+    @cython.ccall
+    def push(self, channels: ndarray(uint8),
+             timetags: Union[ndarray(uint64),
+                             Tuple(ndarray(uint64), ndarray(uint64))]):
+
+        count: uint64 = 0
+        n_channels: int = len(channels)
+
+        start: uint64 = self.count
+        stop: uint64 = start + n_channels
+
+        if type(timetags) is ndarray(uint64):
+            n_timetags: int = len(timetags)
+            if n_channels != n_timetags:
+                ValueError
+            channels_view: cython.uchar[:] = channels
+            timetags_view: c_uint64_t[:] = timetags
+            ptrs_std: _tangy.std_slice
+            ptrs_std.length = n_channels
+            ptrs_std.channel = cython.address(channels_view[0])
+            ptrs_std.timestamp = cython.address(timetags_view[0])
+            count = _tangy.std_buffer_push(self._ptr.standard,
+                                           ptrs_std, start, stop)
+
+        elif type(timetags) is Tuple[ndarray(uint64), ndarray(uint64)]:
+            (clocks, deltas) = timetags
+            n_clocks: int = len(clocks)
+            n_deltas: int = len(deltas)
+            if (n_channels != n_clocks) or (n_channels != n_deltas):
+                ValueError
+            channels_view: cython.uchar[:] = channels
+            clocks_view: c_uint64_t[:] = clocks
+            deltas_view: c_uint64_t[:] = deltas
+            ptrs_clk: _tangy.clk_field_ptrs
+            ptrs_clk.length = n_channels
+            ptrs_clk.channels = cython.address(channels_view[0])
+            ptrs_clk.clocks = cython.address(clocks_view[0])
+            ptrs_clk.deltas = cython.address(deltas_view[0])
+            count = _tangy.clk_buffer_push(self._ptr.clocked,
+                                           ptrs_clk, start, stop)
+        return
 
     @property
     def name(self):
@@ -427,11 +473,6 @@ class TagBuffer:
             return _tangy.std_time_in_buffer(self._ptr.standard)
         elif self._type is _tangy.BufferType.Clocked:
             return _tangy.clk_time_in_buffer(self._ptr.clocked)
-
-    @cython.ccall
-    def push(self, channels: ndarray(uint8),
-             timetags: Union[ndarray(uint64), Tuple(ndarray(uint64), ndarray(uint64))]):
-        print(len(channels))
 
     @cython.ccall
     def bins_from_time(self, time: float) -> int:

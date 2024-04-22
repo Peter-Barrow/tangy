@@ -132,7 +132,7 @@ std_as_bins(standard record, std_res resolution) {
 }
 
 usize
-std_slice_buffer(const std_buffer* const buffer,
+std_buffer_slice(const std_buffer* const buffer,
                  FIELD_PTRS* ptrs,
                  usize start,
                  usize stop) {
