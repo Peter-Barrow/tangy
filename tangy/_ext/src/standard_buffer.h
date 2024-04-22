@@ -162,6 +162,38 @@ std_slice_buffer(const std_buffer* const buffer,
     return j;
 }
 
+usize
+std_buffer_push(const std_buffer* const buffer,
+                 FIELD_PTRS slice,
+                 usize start,
+                 usize stop) {
+    if (slice.length == 0) {
+        return 0;
+    }
+
+    if ((stop - start) != slice.length) {
+        return 0;
+    }
+
+    usize capacity = *(buffer->capacity);
+    circular_iterator iter = {0};
+    if (iterator_init(&iter, capacity, start, stop) == -1) {
+        return 0;
+    }
+
+    int j = 0;
+    usize i = iter.lower.index;
+    buffer->ptrs.timestamp[i] = slice.timestamp[j];
+    buffer->ptrs.channel[i] = slice.channel[j];
+    while ((i = next(&iter)) != 0) {
+        j += 1;
+        buffer->ptrs.timestamp[i] = slice.timestamp[j];
+        buffer->ptrs.channel[i] = slice.channel[j];
+    }
+
+    return j;
+}
+
 bool
 std_equal(standard a, standard b) {
     return a.timestamp == b.timestamp;

@@ -262,10 +262,15 @@ u64 JOIN(STUB, as_bins)(T record, RESOLUTION resolution);
 #define ToTime(RECORD, RES) JOIN(STUB, to_time)(RECORD, RES)
 #define ToBins(RECORD, RES) JOIN(STUB, as_bins)(RECORD, RES)
 
-usize JOIN(STUB, slice_buffer)(const BUFFER* const buffer,
+usize JOIN(STUB, buffer_slice)(const BUFFER* const buffer,
                                FIELD_PTRS* ptrs,
                                usize start,
                                usize stop);
+
+usize JOIN(STUB, buffer_push)(const BUFFER* const buffer,
+                              FIELD_PTRS slice,
+                              usize start,
+                              usize stop);
 
 // comparisons
 static inline bool

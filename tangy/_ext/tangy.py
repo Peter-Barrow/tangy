@@ -288,7 +288,7 @@ class TagBuffer:
         return self._get(key)
 
     @cython.ccall
-    def _get_alt(self, key):
+    def _get(self, key):
         size: cython.ulonglong = self.capacity
         count: cython.ulonglong = self.count
         tail: cython.ulonglong
@@ -354,70 +354,6 @@ class TagBuffer:
                                             cython.address(ptrs_clk),
                                             start, stop)
             return (channels[::step], clocks[::step], deltas[::step])
-
-    @cython.ccall
-    def _get(self, key):
-        size: int = self.capacity
-        count: int = self.count
-        tail: int
-        if size > count:
-            tail = 0
-        else:
-            tail = self.count
-
-        if isinstance(key, slice):
-            start: int = key.start or 0
-            stop: int = key.stop or tail
-            step: int = key.step or 1
-
-            indices = zeros(abs(stop) - abs(start), dtype=int)
-            if step == -1:
-                indices = asarray([i % size for i in range(
-                    stop - 1, start, step)], dtype=int)
-            else:
-                indices = asarray(
-                    [i % size for i in range(start, stop, step)], dtype=int)
-
-            indices = indices % len(self)
-            channels = zeros(len(indices), dtype=uint8)
-
-            if self._type is _tangy.BufferType.Standard:
-                timetags = zeros(len(indices), dtype=uint64)
-                for i, j in enumerate(indices):
-                    channels[i] = self._buffer.standard.ptrs.channel[j]
-                    timetags[i] = self._buffer.standard.ptrs.timestamp[j]
-                return (channels, timetags)
-            elif self._type is _tangy.BufferType.Clocked:
-                clocks = zeros(len(indices), dtype=uint64)
-                deltas = zeros(len(indices), dtype=uint64)
-                for i, j in enumerate(indices):
-                    channels[i] = self._buffer.clocked.ptrs.channel[j]
-                    clocks[i] = self._buffer.clocked.ptrs.timestamp[j].clock
-                    deltas[i] = self._buffer.clocked.ptrs.timestamp[j].delta
-                return (channels, clocks, deltas)
-
-        if key < 0:
-            key += size
-        if key < 0 or key >= size:
-            raise IndexError("Index out of range")
-        channel = zeros(1, dtype=uint8)
-        timetag = zeros(1, dtype=uint64)
-        tail = self.count
-        key = (tail + key) % size
-        if self._type is _tangy.BufferType.Standard:
-            channel = zeros(1, dtype=uint8)
-            timetag = zeros(1, dtype=uint64)
-            channel[0] = self._buffer.standard.ptrs.channel[key]
-            timetag[0] = self._buffer.standard.ptrs.timestamp[key]
-            return (channel, timetag)
-        elif self._type is _tangy.BufferType.Clocked:
-            channel = zeros(1, dtype=uint8)
-            clock = zeros(1, dtype=uint64)
-            delta = zeros(1, dtype=uint64)
-            channel[0] = self._buffer.clocked.ptrs.channel[key]
-            clock[0] = self._buffer.clocked.ptrs.timestamp[key].clock
-            delta[0] = self._buffer.clocked.ptrs.timestamp[key].delta
-            return (channel, clock, delta)
 
     @property
     def name(self):
@@ -491,6 +427,11 @@ class TagBuffer:
             return _tangy.std_time_in_buffer(self._ptr.standard)
         elif self._type is _tangy.BufferType.Clocked:
             return _tangy.clk_time_in_buffer(self._ptr.clocked)
+
+    @cython.ccall
+    def push(self, channels: ndarray(uint8),
+             timetags: Union[ndarray(uint64), Tuple(ndarray(uint64), ndarray(uint64))]):
+        print(len(channels))
 
     @cython.ccall
     def bins_from_time(self, time: float) -> int:
