@@ -2,7 +2,7 @@ import datetime
 from numpy import ndarray, asarray, zeros, uint64, uint32, uint8, float64
 import cython
 from cython.cimports.cython import view
-from cython.cimports import tangy as _tangy
+from cython.cimports import _tangy as _tangy
 
 import mmap
 from os import dup
@@ -28,9 +28,10 @@ from typing import List, Tuple, Optional, Union
 from enum import Enum
 
 
-# __all__ = [standard_records, clocked_records, stdbuffer, BufferClocked, PTUFile,
-#            singles, coincidences, timetrace, find_zero_delay,
-#            coincidence_measurement]
+# __all__ = ["RecordsStandard", "RecordsClocked", "TagBuffer", "singles",
+#            "timetrace", "find_zero_delay", "zero_delay_result", "Coincidences",
+#            "JointDelayHistogram", "JointHistogram", "PTUFile"]
+
 
 
 @cython.dataclasses.dataclass(frozen=True)
@@ -287,11 +288,29 @@ class TagBuffer:
     def __getitem__(self, key):
         return self._get(key)
 
+    @cython.ccall
+    def oldest_index(self) -> int:
+        if self._type is _tangy.BufferType.Standard:
+            return _tangy.std_oldest_index(self._ptr.standard)
+        if self._type is _tangy.BufferType.Clocked:
+            return _tangy.clk_oldest_index(self._ptr.clocked)
+
     # TODO: define slicing semantics
     def _make_slice(self, key: Union[slice, int]) -> slice:
-        return
+        if type(key) is int:
+            if abs(key) > self.capacity:
+                raise IndexError("TODO[Better error message] index must be in range")
+            if key < 0:
+                return self.count + key
+            return self.oldest_index() + key
 
-    @cython.ccall
+        start = self._make_slice(key.start)
+        stop = self._make_slice(key.stop)
+        step = key.step  # ignored for now
+
+        return (start, stop, step)
+
+    # @cython.ccall
     def _get(self, key):
         size: cython.ulonglong = self.capacity
         count: cython.ulonglong = self.count
@@ -1427,3 +1446,4 @@ class PTUFile():
     #             self._status, bins)
 
     #     return res
+

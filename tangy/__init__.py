@@ -1,12 +1,18 @@
-from .tangy import RecordsStandard, RecordsClocked
-from .tangy import TagBuffer
-from .tangy import singles, Coincidences, JointDelayHistogram, find_zero_delay
-from .tangy import timetrace, PTUFile
+from ._tangy import RecordsStandard, RecordsClocked
+from ._tangy import TagBuffer
+from ._tangy import singles, Coincidences
+from ._tangy import JointDelayHistogram, JointHistogram
+from ._tangy import find_zero_delay, zero_delay_result
+from ._tangy import timetrace, PTUFile
 # from .tangy import singles, coincidences, timetrace, find_zero_delay
 # from .tangy import coincidence_measurement
 
 # __all__ - ["standard_records", "clocked_records", "stdbuffer", "clkbuffer",
 #            "PTUFile"]
+
+__all__ = ["RecordsStandard", "RecordsClocked", "TagBuffer", "singles",
+           "timetrace", "find_zero_delay", "zero_delay_result", "Coincidences",
+           "JointDelayHistogram", "JointHistogram", "PTUFile"]
 
 # from sys import platform
 # from ctypes.util import find_library

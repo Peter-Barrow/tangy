@@ -251,6 +251,16 @@ u64 JOIN(STUB, arrival_time_at_next)(u64 conversion_factor, TS timestamp);
 #define ArrivalTimeAt(BUF, ABS_IDX) JOIN(STUB, arrival_time_at)(BUF, ABS_IDX)
 #define ArrivalTimeAtNext(CF, TT) JOIN(STUB, arrival_time_at_next)(CF, TT)
 
+usize
+JOIN(STUB, oldest_index)(const BUFFER* const buffer) {
+    usize count = *(buffer->count);
+    usize capacity = *(buffer->capacity);
+    if (count > capacity) {
+        return (count - capacity) % capacity;
+    }
+    return 0;
+}
+
 // tag conversion
 u64 JOIN(STUB, bins_from_time)(const RESOLUTION resolution, const f64 time);
 f64 JOIN(STUB, time_from_bins)(const RESOLUTION resolution, const u64 bins);

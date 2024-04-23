@@ -1,45 +1,68 @@
-[tool.poetry]
+#[tool.poetry]
+[project]
 name = "tangy"
 version = "0.1.1"
 description = "A library to manage timetags"
-authors = ["Peter Thomas Barrow <peter.barrow.93@gmail.com>"]
-readme = "README.md"
-exclude = [
-    "tangy/_ext/*",
-    "tangy/_ext/src/*",
-    "tangy/_ext/*.html"
-    ]
-include = [
-    "tangy/*.a",
-    "tangy/*.so",
-    "tangy/*.dll",
-    "tangy/*.lib",
+authors = [
+    {name = "Peter Thomas Barrow", email = "peter.barrow.93@gmail.com"}
 ]
+readme = "README.md"
+# exclude = [
+#     "tangy/_ext/*",
+#     "tangy/_ext/src/*",
+#     "tangy/_ext/*.html"
+#     ]
+# include = [
+#     "tangy/*.a",
+#     "tangy/*.so",
+#     "tangy/*.dll",
+#     "tangy/*.lib",
+# ]
 
-[tool.poetry.dependencies]
-python = "^3.9"
-setuptools = "^69.1.1"
-cython = "^3.0.9"
-numpy = "^1.26.4"
-scipy = "^1.12.0"
-pytkdocs = "^0.16.1"
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["tangy", "*.py*", "*.typed"]
+# exclude = [
+#     "tangy/_ext",
+#     ]
 
-[tool.poetry.group.docs.dependencies]
-mkdocs = "^1.4.2"
-mkdocs-material = "^8.5.10"
-mkdocstrings = "^0.23.0"
-mkdoxy = "^1.1.7"
+# [tool.poetry.dependencies]
+# python = "^3.8"
+# setuptools = "^69.1.1"
+# cython = "^3.0.9"
+# numpy = "^1.26.4"
+# scipy = "^1.12.0"
+# pytkdocs = "^0.16.1"
+
+# [tool.poetry.group.docs.dependencies]
+# mkdocs = "^1.4.2"
+# mkdocs-material = "^8.5.10"
+# mkdocstrings = "^0.23.0"
+# mkdoxy = "^1.1.7"
 
 [build-system]
-requires = ["poetry-core", "setuptools", "Cython", "numpy"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.build]
-generate-setup-file = false
-script = "setup.py"
+requires = ["setuptools", "wheel", "Cython", "numpy"]
+build-backend = "setuptools.build_meta"
 
 [tool.cibuildwheel]
+skip = "pp"
+archs = ["auto64"]
+
 build = [
+    "cp38-manylinux_x86_64",
     "cp39-manylinux_x86_64",
+    "cp310-manylinux_x86_64",
+    "cp311-manylinux_x86_64",
+    "cp38-macos_x86_64",
+    "cp38-macos_arm64",
+    "cp39-macos_x86_64",
+    "cp39-macos_arm64",
+    "cp310-macos_x86_64",
+    "cp310-macos_arm64",
+    "cp311-macos_x86_64",
+    "cp311-macos_arm64",
+    "cp38-win_amd64",
     "cp39-win_amd64",
+    "cp310-win_amd64",
+    "cp311-win_amd64",
     ]

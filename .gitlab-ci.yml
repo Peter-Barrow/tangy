@@ -18,6 +18,29 @@ linux:
     paths:
       - wheelhouse/
 
+macos:
+  image: python:3.9.13
+  # make a docker daemon available for cibuildwheel to use
+  services:
+    - name: docker:dind
+      entrypoint: ["env", "-u", "DOCKER_HOST"]
+      command: ["dockerd-entrypoint.sh"]
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
+    # See https://github.com/docker-library/docker/pull/166
+    DOCKER_TLS_CERTDIR: ""
+  script:
+    - curl -sSL https://get.docker.com/ | sh
+    - python -m pip install cibuildwheel==2.10.2
+    - git submodule update --init
+    - cibuildwheel --output-dir wheelhouse --platform macos
+  artifacts:
+    paths:
+      - wheelhouse/
+  tags:
+    - shared-macos-amd64
+
 windows:
   image: mcr.microsoft.com/windows/servercore:1809
   before_script:

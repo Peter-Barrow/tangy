@@ -3,5 +3,10 @@ build
 dist
 site
 __pycache__
+*.egg-info
 *.so
+*.a
+*.lib
+*.dll
 *.html
+wheelhouse

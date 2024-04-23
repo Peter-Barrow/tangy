@@ -102,6 +102,8 @@ cdef extern from "./src/standard_buffer.h":
 
     tbResult std_buffer_deinit(std_buffer * buffer)
 
+    usize std_oldest_index(const std_buffer* const buffer)
+
     u64 std_bins_from_time(const std_res resolution, const f64 time)
     f64 std_time_from_bins(const std_res resolution, const u64 bins)
 
@@ -259,6 +261,8 @@ cdef extern from "./src/clocked_buffer.h":
     tbResult clk_buffer_connect(char *name, clk_buffer * buffer)
 
     tbResult clk_buffer_deinit(clk_buffer * buffer)
+
+    usize clk_oldest_index(const clk_buffer* const buffer)
 
     u64 clk_bins_from_time(const clk_res resolution, const f64 time)
     f64 clk_time_from_bins(const clk_res resolution, const u64 bins)
