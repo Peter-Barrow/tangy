@@ -295,51 +295,58 @@ class TagBuffer:
         if self._type is _tangy.BufferType.Clocked:
             return _tangy.clk_oldest_index(self._ptr.clocked)
 
-    # TODO: define slicing semantics
-    def _make_slice(self, key: Union[slice, int]) -> slice:
+    @cython.ccall
+    def _make_slice(self, key):
+        start: int
+        stop: int
+        step: int = 1
+
+        if type(key) is slice:
+            dist: int = abs(abs(key.stop) - abs(key.start))
+            if dist > self.capacity:
+                raise IndexError("out of range")
+
+            if (key.start > self.capacity) or (key.stop > self.capacity):
+                start = key.start
+                stop = key.stop
+                return (start, stop, step)
+
+            if key.start < 0:
+                start = self.count - (key.start)
+            elif key.start > self.capacity:
+                start = key.start
+            else:
+                start = self.oldest_index() + (key.start)
+
+            if key.stop < 0:
+                stop = self.count - (key.start)
+            elif key.stop > self.capacity:
+                stop = key.stop
+            else:
+                stop = self.oldest_index() + (key.stop)
+
         if type(key) is int:
             if abs(key) > self.capacity:
-                raise IndexError("TODO[Better error message] index must be in range")
-            if key < 0:
-                return self.count + key
-            return self.oldest_index() + key
+                raise IndexError("out of range")
 
-        start = self._make_slice(key.start)
-        stop = self._make_slice(key.stop)
-        step = key.step  # ignored for now
+            if key < 0:
+                start = self.count - key.start
+                stop = start + 1
+            else:
+                start = self.oldest_index() + key.start
+                stop = start + 1
 
         return (start, stop, step)
 
-    # @cython.ccall
+    @cython.ccall
     def _get(self, key):
-        size: cython.ulonglong = self.capacity
-        count: cython.ulonglong = self.count
-        tail: cython.ulonglong
-        if size > count:
-            tail = 0
-        else:
-            tail = self.count
+        start: int
+        stop: int
+        step: int
 
-        start: cython.ulonglong = 0
-        stop: cython.ulonglong = tail
-        step: cython.ulonglong = 1
-
-        n: uint64 = 1
-
-        if isinstance(key, slice):
-            start = cython.cast(cython.ulonglong, key.start) or 0
-            stop = cython.cast(cython.ulonglong, key.stop) or tail
-            step = cython.cast(cython.ulonglong, key.step) or 1
-            n = stop - start
-
-        if isinstance(key, int):
-            if key < 0:
-                key += size
-            if key < 0 or key >= size:
-                raise IndexError("Index out of range")
-            tail = self.count
-            key = (tail + key) % size
-            n = 1
+        (start, stop, step) = self._make_slice(key)
+        print("slice: ", start, stop, step)
+        n: uint64 = abs(stop - start)
 
         count: uint64
         channels: uint8[:] = zeros(n, dtype=uint8)
@@ -357,6 +364,7 @@ class TagBuffer:
             count = _tangy.std_buffer_slice(self._ptr.standard,
                                             cython.address(ptrs_std),
                                             start, stop)
+            print(count)
 
             return (channels[::step], timestamps[::step])
 
@@ -376,6 +384,7 @@ class TagBuffer:
             count = _tangy.clk_buffer_slice(self._ptr.clocked,
                                             cython.address(ptrs_clk),
                                             start, stop)
+            print("count: ", count)
             return (channels[::step], clocks[::step], deltas[::step])
 
     @cython.ccall
@@ -741,6 +750,7 @@ def find_zero_delay(buffer: TagBuffer, channel_a: int, channel_b: int,
 
     if buffer._type is _tangy.BufferType.Clocked:
         index = buffer.lower_bound(buffer.time_in_buffer() - 1)
+        print("target slice :", index, buffer.count - 1)
         channels, clocks, deltas = buffer[index:buffer.count - 1]
         temporal_window = int(buffer.resolution[0] / buffer.resolution[1])
         bins = arange(temporal_window)

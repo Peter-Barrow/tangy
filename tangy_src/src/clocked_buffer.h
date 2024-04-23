@@ -297,21 +297,27 @@ clk_buffer_slice(const clk_buffer* const buffer,
         return 0;
     }
 
-    int j = 0;
-    usize i = iter.lower.index;
-    clk_timetag timetag = buffer->ptrs.timestamp[i];
-    ptrs->clocks[j] = timetag.clock;
-    ptrs->deltas[j] = timetag.delta;
-    ptrs->channels[j] = buffer->ptrs.channel[i];
-    while ((i = next(&iter)) != 0) {
-        j += 1;
+    printf("attempting slice\n");
+
+    //int j = 0;
+    // usize i = iter.lower.index;
+    usize i = next(&iter);
+    //printf("i[%lu]\tj[%d]\n", i, j);
+    // clk_timetag timetag = buffer->ptrs.timestamp[i];
+    // ptrs->clocks[j] = timetag.clock;
+    // ptrs->deltas[j] = timetag.delta;
+    // ptrs->channels[j] = buffer->ptrs.channel[i];
+    //while (i != 0) {
+    for (usize j = 0; j < ptrs->length; j ++) {
+        printf("i[%lu]\tj[%lu]\n", i, j);
         clk_timetag timetag = buffer->ptrs.timestamp[i];
         ptrs->channels[j] = buffer->ptrs.channel[i];
         ptrs->clocks[j] = timetag.clock;
         ptrs->deltas[j] = timetag.delta;
+        i = next(&iter);
     }
 
-    return j;
+    return i;
 }
 
 usize

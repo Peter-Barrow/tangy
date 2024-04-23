@@ -150,16 +150,14 @@ std_buffer_slice(const std_buffer* const buffer,
         return 0;
     }
 
-    int j = 0;
     usize i = iter.lower.index;
-    ptrs->timestamp[j] = buffer->ptrs.timestamp[i];
-    ptrs->channel[j] = buffer->ptrs.channel[i];
-    while ((i = next(&iter)) != 0) {
+    for (usize j = 0; j < ptrs->length; j ++) {
         j += 1;
         ptrs->timestamp[j] = buffer->ptrs.timestamp[i];
         ptrs->channel[j] = buffer->ptrs.channel[i];
+        i = next(&iter);
     }
-    return j;
+    return i;
 }
 
 usize
