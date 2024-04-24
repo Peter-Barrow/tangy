@@ -33,7 +33,6 @@ from enum import Enum
 #            "JointDelayHistogram", "JointHistogram", "PTUFile"]
 
 
-
 @cython.dataclasses.dataclass(frozen=True)
 class RecordsStandard:
     """Container for Standard format Timetags
@@ -215,30 +214,39 @@ class TagBuffer:
     _name = cython.declare(bytes)
 
     def __init__(self, name: str,
-                 resolution: Union[float, Tuple[float, float]],
+                 resolution: Optional(Union[float, Tuple[float, float]]) = 1e-12,
                  length: int = 10_000_000,
                  n_channels: int = 8):
 
         self._name = name.encode('utf-8')
         c_name: cython.p_char = self._name
 
-        result: _tangy.tbResult
+        # First check if there is a buffer with the expected name and connect to it
+        # If there are two buffers with the same top level pick the one prefixed
+        # as a standard buffer i.e. clk_*name*
 
+        result: _tangy.tbResult
+        result = _tangy.std_buffer_connect(c_name, cython.address(self._buffer.standard))
+        if result.Ok is True:
+            self._type = _tangy.BufferType.Standard
+            self._ptr = _Buffer_Ptr(standard=cython.address(self._buffer.standard))
+            return
+
+        # If that failed now check for a clocked buffer
+        result = _tangy.clk_buffer_connect(c_name, cython.address(self._buffer.clocked))
+        if result.Ok is True:
+            self._type = _tangy.BufferType.Clocked
+            self._ptr = _Buffer_Ptr(clocked=cython.address(self._buffer.clocked))
+            return
+
+        # No buffer has been found so make one
         if type(resolution) is float:
             self._type = _tangy.BufferType.Standard
-            result = _tangy.std_buffer_connect(
-                c_name, cython.address(self._buffer.standard))
-            if True is result.Ok:
-                print("connected")
-                self._ptr = _Buffer_Ptr(
-                    standard=cython.address(self._buffer.standard))
-                return
-
             result = _tangy.std_buffer_init(length, resolution, n_channels, c_name,
                                             cython.address(self._buffer.standard))
             if False is result.Ok:
                 # raise an error
-                print("buffer creation failed")
+                raise MemoryError
 
             _tangy.std_buffer_info_init(self._buffer.standard.map_ptr,
                                         cython.address(self._buffer.standard))
@@ -248,14 +256,6 @@ class TagBuffer:
 
         elif type(resolution) is tuple:
             self._type = _tangy.BufferType.Clocked
-            result = _tangy.clk_buffer_connect(
-                c_name, cython.address(self._buffer.clocked))
-            if True is result.Ok:
-                self._ptr = _Buffer_Ptr(
-                    clocked=cython.address(self._buffer.clocked))
-                print("connected")
-                return
-
             _resolution: _tangy.clk_res
             _resolution.coarse = resolution[0]
             _resolution.fine = resolution[1]
@@ -264,13 +264,16 @@ class TagBuffer:
                                             cython.address(self._buffer.clocked))
             if False is result.Ok:
                 # raise an error
-                print("buffer creation failed")
+                raise MemoryError
 
             _tangy.clk_buffer_info_init(self._buffer.clocked.map_ptr,
                                         cython.address(self._buffer.clocked))
             self._ptr = _Buffer_Ptr(
                 clocked=cython.address(self._buffer.clocked))
             return
+
+        # This should never get this far, if it does then the arguments aren't valid
+        raise ValueError
 
     def __del__(self):
         result: _tangy.tbResult
@@ -345,7 +348,6 @@ class TagBuffer:
         step: int
 
         (start, stop, step) = self._make_slice(key)
-        print("slice: ", start, stop, step)
         n: uint64 = abs(stop - start)
 
         count: uint64
@@ -364,7 +366,6 @@ class TagBuffer:
             count = _tangy.std_buffer_slice(self._ptr.standard,
                                             cython.address(ptrs_std),
                                             start, stop)
-            print(count)
 
             return (channels[::step], timestamps[::step])
 
@@ -384,7 +385,6 @@ class TagBuffer:
             count = _tangy.clk_buffer_slice(self._ptr.clocked,
                                             cython.address(ptrs_clk),
                                             start, stop)
-            print("count: ", count)
             return (channels[::step], clocks[::step], deltas[::step])
 
     @cython.ccall
@@ -750,7 +750,6 @@ def find_zero_delay(buffer: TagBuffer, channel_a: int, channel_b: int,
 
     if buffer._type is _tangy.BufferType.Clocked:
         index = buffer.lower_bound(buffer.time_in_buffer() - 1)
-        print("target slice :", index, buffer.count - 1)
         channels, clocks, deltas = buffer[index:buffer.count - 1]
         temporal_window = int(buffer.resolution[0] / buffer.resolution[1])
         bins = arange(temporal_window)
@@ -1093,9 +1092,7 @@ class JointDelayHistogram:
         for i in range(self._temporal_window):
             self._histogram_ptrs[i] = cython.address(self._histogram_view[i, 0])
 
-        print("entry point")
         if self._type is _tangy.BufferType.Standard:
-            print("making call (std)")
             count = _tangy.std_joint_delay_histogram(
                 self._buffer_ptr.standard,
                 cython.address(self._delays_view[0]),
@@ -1103,10 +1100,8 @@ class JointDelayHistogram:
                 read_time,
                 self._measurement_ptr,
                 cython.address(self._histogram_ptrs[0]))
-            print("done (std)")
 
         elif self._type is _tangy.BufferType.Clocked:
-            print("making call (clk)")
             count = _tangy.clk_joint_delay_histogram(
                 self._buffer_ptr.clocked,
                 cython.address(self._delays_view[0]),
@@ -1114,10 +1109,8 @@ class JointDelayHistogram:
                 read_time,
                 self._measurement_ptr,
                 cython.address(self._histogram_ptrs[0]))
-            print("done (clk)")
 
         # free(self._measurement_ptr)
-        print("returning")
         return count
 
 

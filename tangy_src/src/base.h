@@ -28,6 +28,9 @@ typedef size_t usize;
 #define JOIN(prefix, name) PASTE(prefix, PASTE(_, name))
 #define _JOIN(prefix, name) PASTE(_, PASTE(prefix, PASTE(_, name)))
 
+#define STRINGIFY(T) #T
+#define TOSTRING(T) STRINGIFY(T)
+
 #define lengthOf(array) (sizeof(array) / sizeof(array[0]));
 
 /** \enum Error cases for creating shared memory
@@ -50,7 +53,6 @@ typedef struct index_range {
     u64 end;
 } index_range;
 
-
 /** @struct iterator
  * @brief simple iterator a contiguous block of memory
  */
@@ -58,7 +60,6 @@ typedef struct iterator {
     usize index; /**< current index */
     usize count; /**< number of elements remaining */
 } iterator;
-
 
 typedef enum iterator_state {
     lower,
@@ -84,13 +85,12 @@ typedef struct circular_iterator {
                        @see{iterator} */
 } circular_iterator;
 
-
 /**
  * @brief next value of iterator for ring buffer
  *
  * Allows accessing items sequentially from a ring buffer without the need to
- * use modulo division (%-operator) to access each position. Decrements the 
- * count for relevent iterator field and own count field on each invocation to 
+ * use modulo division (%-operator) to access each position. Decrements the
+ * count for relevent iterator field and own count field on each invocation to
  * track the number of elements left to visit.
  *
  * @param[in] iter pointer to circular_iterator struct
@@ -112,7 +112,6 @@ next(circular_iterator* iter) {
     }
     return 0;
 }
-
 
 /**
  * @brief Initialise a new iterator for a ring buffer
@@ -193,5 +192,21 @@ struct histogram2D_coords {
     usize x;
     usize y;
 };
+
+static inline char*
+buffer_name(char* prefix, char* name) {
+    size_t len_prefix = strlen(prefix);
+    size_t len_name = strlen(name);
+    size_t len_buffer = len_prefix + len_name + 2; // additional "_" and "\0"
+
+    char* buffer = (char*)malloc(sizeof(char) * len_buffer);
+
+    int len = snprintf(buffer, len_buffer, "%s_%s", prefix, name);
+
+    printf("target[%lu]\tactual[%d]\n", len_buffer, len);
+
+    return buffer;
+}
+
 
 #endif

@@ -62,6 +62,13 @@
 
 #define alignof(x) (size) _Alignof(x)
 
+#define prefix _str(STUB)
+#define buffer_name_len(name) (sizeof(prefix) + strlen(name) + 2)
+#define buffer_name_new(name)                                                  \
+    (char*)malloc(buffer_name_len(name) * sizeof(char))
+#define buffer_name_init(name, name_buffer)                                    \
+    snprintf(name_buffer, buffer_name_len(name), "%s_%s", prefix, name)
+
 #define name_length 10
 
 #define BUFFER JOIN(STUB, buffer)
@@ -135,19 +142,22 @@ static inline tbResult
 JOIN(STUB, buffer_init)(const u64 num_elements,
                         RESOLUTION resolution,
                         const u8 n_channels,
-                        char* name,
+                        char* name, // TODO: prefix name with STUB
                         BUFFER* buffer) {
 
     u64 num_bytes = JOIN(STUB, buffer_map_size)(num_elements);
     shared_mapping map = { 0 };
-    map.name = name;
+    // map.name = name;
+    char* full_name = buffer_name_new(name);
+    buffer_name_init(name, full_name);
+    map.name = full_name;
     tbResult result = shmem_create(num_bytes, &map);
     if (false == result.Ok) {
         return result;
     }
 
     buffer->map_ptr = map.data;
-    buffer->name = name;
+    buffer->name = full_name;
     buffer->file_descriptor = map.file_descriptor;
 
     usize offset = 0;
@@ -187,21 +197,25 @@ JOIN(STUB, buffer_init)(const u64 num_elements,
 static inline tbResult
 JOIN(STUB, buffer_connect)(char* name, BUFFER* buffer) {
 
+    char* full_name = buffer_name_new(name);
+    buffer_name_init(name, full_name);
+
     bool exists = false;
-    tbResult result = shmem_exists(name, &exists);
+    tbResult result = shmem_exists(full_name, &exists);
     if (false == result.Ok) {
         return result;
     }
 
     shared_mapping map = { 0 };
-    map.name = name;
+    // map.name = name;
+    map.name = full_name;
     result = shmem_connect(&map);
     if (false == result.Ok) {
         return result;
     }
 
     buffer->map_ptr = map.data;
-    buffer->name = name;
+    buffer->name = full_name;
     buffer->file_descriptor = map.file_descriptor;
 
     // JOIN(STUB, buffer_info_init)(buffer->map_ptr, info);
@@ -230,6 +244,8 @@ JOIN(STUB, buffer_deinit)(BUFFER* buffer) {
             return result;
         }
     }
+
+    free((char*)map.name);
 
     result.Ok = true;
     return result;
@@ -1222,6 +1238,7 @@ JOIN(STUB, find_zero_delay)(const BUFFER* const buffer,
 #undef TT_VECTOR_RESET
 // #undef CC_RESULT
 //
+#undef buffer_name
 // #undef REC_VEC
 #undef BUFFER
 #undef BUFFER_INFO
