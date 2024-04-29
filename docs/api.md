@@ -44,7 +44,17 @@
         show_root_heading: true
         show_source: false
 
-### :::tangy.TagBuffer
+### :::tangy.TangyBuffer
+    options:
+        show_root_heading: true
+        show_source: false
+
+### :::tangy.TangyBufferStandard
+    options:
+        show_root_heading: true
+        show_source: false
+
+### :::tangy.TangyBufferClocked
     options:
         show_root_heading: true
         show_source: false
@@ -65,16 +75,6 @@
         show_root_heading: true
         show_source: false
 
-### :::tangy.Coincidences
-    options:
-        show_root_heading: true
-        show_source: false
-
-### :::tangy.JointDelayHistogram
-    options:
-        show_root_heading: true
-        show_source: false
-
 ## File Readers
 ### :::tangy.PTUFile
     options:
@@ -84,3 +84,32 @@
             - read_seconds
         show_root_heading: true
         show_source: false
+
+## Devices
+### :::tangy.UQD
+    options:
+        show_root_heading: true
+        show_source: false
+        members:
+            - is_open
+            - calibrate
+            - led_brightness
+            - fpga_version
+            - resolution
+            - number_of_channels
+            - input_threshold
+            - inversion
+            - input_delay
+            - function_generator
+            - external_10MHz_reference
+            - start_timetags
+            - stop_timetags
+            - read_tags
+            - filter_min_count
+            - filter_max_time
+            - exclusion
+            - level_gate
+            - time_gating
+            - time_gate_width
+            - buffer
+            - write_to_buffer

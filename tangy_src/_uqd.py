@@ -9,6 +9,8 @@ from cython.cimports.libc.stdint import uint64_t as u64
 from cython.cimports.libc.stdint import int64_t as i64
 from numpy import ndarray, zeros, uint8, uint64, float64
 
+from ._tangy import TangyBufferStandard
+
 
 UQD_ERROR_FLAG = {
     1: {
@@ -60,6 +62,20 @@ UQD_ERROR_FLAG = {
 
 @cython.cclass
 class UQD:
+    """
+
+    NOTE:
+        Linux users will need to add the following file to their system, \
+        ``/etc/udev/rules.d/UQDLogic16.rules`` that contains the following line \
+        ``ATTR{idVendor}=="0bd0", ATTR{idProduct}=="f100", MODE="666"``. This \
+        will ensure that the device does not need additional root privaledges to \
+        operate. After this file has been created the user will have to log out \
+        and the log in again or run the following command \
+        ``sudo udevadm control --reload-rules && udevadm trigger`` to update the \
+        current device rules.
+
+    """
+
     _c_timetag: _uqd.CTimeTag
     _c_logic: cython.pointer(_uqd.CLogic)
 
@@ -82,8 +98,11 @@ class UQD:
     _10MHz: bool = False
     _time_gate: bool = False
     _gate_width: int
+    _buffer: TangyBufferStandard
 
-    def __init__(self, device_id: int = 1, calibrate: bool = True):
+    def __init__(self, device_id: int = 1, calibrate: bool = True,
+                 add_buffer: bool = False,
+                 buffer_size: Optional[int] = 10_000_000):
 
         if device_id < 1:
             raise ValueError("device_id must be >= 1")
@@ -104,6 +123,11 @@ class UQD:
         if calibrate:
             self.calibrate()
 
+        if add_buffer:
+            self._buffer = TangyBufferStandard(f"uqdbuffer{self._device_id}",
+                                               self.resolution,
+                                               buffer_size,
+                                               self.number_of_channels)
         return
 
     def is_open(self) -> bool:
@@ -169,6 +193,7 @@ class UQD:
             (float): resolution
         """
         res: cython.double = self._c_timetag.GetResolution()
+        return res
 
     @property
     def number_of_channels(self) -> int:
@@ -436,3 +461,12 @@ class UQD:
 
     def error_text(self):
         ...
+
+    def buffer(self) -> TangyBufferStandard:
+        return self._buffer
+
+    @cython.ccall
+    def write_to_buffer(self):
+        (count, channels, tags) = self.read_tags()
+        self._buffer.push(channels, tags)
+

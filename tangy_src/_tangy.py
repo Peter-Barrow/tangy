@@ -622,12 +622,12 @@ class TangyBufferStandard(TangyBuffer):
 
     Args:
         name (str): Name of buffer to be created or attached to.
-        resolution (Union[float, Tuple[float, float]]): Resolution \
+        resolution (float): Resolution \
         of timetags in seconds. A single float for the "standard timetags". A \
         pair of floats for "clocked timetags" with a "coarse" and "fine" \
         timing structure. Unused if connecting. In seconds.
-        n_channels (Optional[int]): Number of channels
-        length (Optional[int] = 10_000_000): Length of buffer to create. \
+        n_channels (int): Number of channels
+        length (int): Length of buffer to create. \
         Unused if connecting.
 
     Attributes:
@@ -871,12 +871,12 @@ class TangyBufferClocked(TangyBuffer):
 
     Args:
         name (str): Name of buffer to be created or attached to.
-        resolution (Union[float, Tuple[float, float]]): Resolution \
+        resolution (Tuple[float, float]): Resolution \
         of timetags in seconds. A single float for the "standard timetags". A \
         pair of floats for "clocked timetags" with a "coarse" and "fine" \
         timing structure. Unused if connecting. In seconds.
-        n_channels (Optional[int]): Number of channels
-        length (Optional[int] = 10_000_000): Length of buffer to create. \
+        n_channels (int): Number of channels
+        length (int): Length of buffer to create. \
         Unused if connecting.
 
     Attributes:

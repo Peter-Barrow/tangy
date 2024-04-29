@@ -1,5 +1,5 @@
 from ._tangy import RecordsStandard, RecordsClocked
-from ._tangy import TangyBuffer
+from ._tangy import TangyBuffer, TangyBufferStandard, TangyBufferClocked
 from ._tangy import singles  # , Coincidences
 # from ._tangy import JointDelayHistogram, JointHistogram
 from ._tangy import find_zero_delay, zero_delay_result

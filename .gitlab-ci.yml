@@ -18,39 +18,39 @@ linux:
     paths:
       - wheelhouse/
 
-macos:
-  image: macos-13-xcode-14
-  # make a docker daemon available for cibuildwheel to use
-  services:
-    - name: docker:dind
-      entrypoint: ["env", "-u", "DOCKER_HOST"]
-      command: ["dockerd-entrypoint.sh"]
-  variables:
-    DOCKER_HOST: tcp://docker:2375/
-    DOCKER_DRIVER: overlay2
-    # See https://github.com/docker-library/docker/pull/166
-    DOCKER_TLS_CERTDIR: ""
-  script:
-    - curl -sSL https://get.docker.com/ | sh
-    - python -m pip install cibuildwheel==2.17.0
-    - git submodule update --init
-    - cibuildwheel --output-dir wheelhouse --platform macos
-  artifacts:
-    paths:
-      - wheelhouse/
-  tags:
-    - saas-macos-medium-m1
+        # macos:
+        #   image: macos-13-xcode-14
+        #   # make a docker daemon available for cibuildwheel to use
+        #   services:
+        #     - name: docker:dind
+        #       entrypoint: ["env", "-u", "DOCKER_HOST"]
+        #       command: ["dockerd-entrypoint.sh"]
+        #   variables:
+        #     DOCKER_HOST: tcp://docker:2375/
+        #     DOCKER_DRIVER: overlay2
+        #     # See https://github.com/docker-library/docker/pull/166
+        #     DOCKER_TLS_CERTDIR: ""
+        #   script:
+        #     - curl -sSL https://get.docker.com/ | sh
+        #     - python -m pip install cibuildwheel==2.17.0
+        #     - git submodule update --init
+        #     - cibuildwheel --output-dir wheelhouse --platform macos
+        #   artifacts:
+        #     paths:
+        #       - wheelhouse/
+        #   tags:
+        #     - saas-macos-medium-m1
 
-windows:
-  image: mcr.microsoft.com/windows/servercore:1809
-  before_script:
-    - choco install python -y --version 3.9.13
-    - choco install git.install -y
-    - py -m pip install cibuildwheel==2.17.0
-  script:
-    - py -m cibuildwheel --output-dir wheelhouse --platform windows
-  artifacts:
-    paths:
-      - wheelhouse/
-  tags:
-    - windows
+# windows:
+#   image: mcr.microsoft.com/windows/servercore:1809
+#   before_script:
+#     - choco install python -y --version 3.9.13
+#     - choco install git.install -y
+#     - py -m pip install cibuildwheel==2.17.0
+#   script:
+#     - py -m cibuildwheel --output-dir wheelhouse --platform windows
+#   artifacts:
+#     paths:
+#       - wheelhouse/
+#   tags:
+#     - windows
