@@ -1,7 +1,7 @@
 #[tool.poetry]
 [project]
 name = "tangy"
-version = "0.1.1"
+version = "0.2.0"
 description = "A library to manage timetags"
 authors = [
     {name = "Peter Thomas Barrow", email = "peter.barrow.93@gmail.com"}

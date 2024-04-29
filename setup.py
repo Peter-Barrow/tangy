@@ -12,8 +12,8 @@ cython_dir = os.path.join("tangy_src")
 # os.environ["CC"] = "x86_64-w64-mingw32-gcc"
 
 compiler_flags = []
-#if "Linux" in platform.platform():
-    #compiler_flags = ["-O2", "-march=native"]
+if "Linux" in platform.platform():
+    compiler_flags = ["-O2", "-march=native"]
 
 link_args = []
 if "Windows" in platform.platform():
@@ -40,6 +40,18 @@ extensions = [
         extra_link_args=link_args,
         optional=os.environ.get('CIBUILDWHEEL', '0') != '1',
     ),
+    Extension(
+        "tangy._uqd",
+        sources=[
+            os.path.join(cython_dir, "_uqd.py")],
+        define_macros=[('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')],
+        include_dirs=[get_include()],
+        libraries=['usb-1.0', 'timetag64'],
+        library_dirs=['.', './CTimeTag/Linux'],
+        extra_compile_args=["-std=c++11"] + compiler_flags,
+        language="c++",
+        optional=os.environ.get('CIBUILDWHEEL', '0') != '1',
+    ),
 ]
 
 ext_modules = cythonize(
@@ -57,7 +69,7 @@ setup(ext_modules=ext_modules)
 #     cmd = build_ext(dist, compiler="mingw32")
 # cmd.ensure_finalized()
 # cmd.run()
-# 
+#
 # for output in cmd.get_outputs():
 #     relative_extension = os.path.relpath(output, cmd.build_lib)
 #     shutil.copyfile(output, relative_extension)

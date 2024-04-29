@@ -1605,6 +1605,14 @@ class PTUFile():
     #         return self._clk_buffer.__repr__()
 
     def buffer(self):
+        """
+        Acquire the buffer being written to
+
+        Returns:
+            TangyBuffer: Instance of buffer for the openend file. Where the \
+                buffer is an instance of TangyBuffer (either TangyBufferStandard\
+                or TangyBufferClocked).
+        """
         return self._buffer
 
     @ property
