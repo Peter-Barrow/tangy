@@ -271,10 +271,7 @@ usize
 JOIN(STUB, oldest_index)(const BUFFER* const buffer) {
     usize count = *(buffer->count);
     usize capacity = *(buffer->capacity);
-    if (count > capacity) {
-        return (count - capacity) % capacity;
-    }
-    return 0;
+    return count > capacity ? count - capacity : 0;
 }
 
 // tag conversion

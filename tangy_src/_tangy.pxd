@@ -88,6 +88,8 @@ cdef extern from "./src/standard_buffer.h":
 
     standard std_record_at(const std_buffer *const buffer, u64 absolute_index)
 
+    timetag std_timestamp_at(const std_buffer* const buffer, const u64 absolute_index)
+
     std_slice std_init_base_ptrs(const std_buffer *const buffer)
 
     # std_slice std_get_slice(const std_buffer *const buffer, const u64 capacity, u64 start, u64 stop)
@@ -245,6 +247,7 @@ cdef extern from "./src/clocked_buffer.h":
     void clk_buffer_info_init(char *data, clk_buffer * buffer)
 
     clocked clk_record_at(const clk_buffer *const buffer, u64 absolute_index)
+    clk_timetag clk_timestamp_at(const clk_buffer* const buffer, const u64 absolute_index)
     u8 clk_channel_at(const clk_buffer *const buffer, const u64 absolute_index);
     u64 clk_arrival_time_at(const clk_buffer *const buffer, const u64 absolute_index);
 
