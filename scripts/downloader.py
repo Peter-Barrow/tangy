@@ -39,8 +39,8 @@ if "Linux" in platform.platform():
     zip_qutag = "QUTAG-LX64QT5-V1.5.10.tgz"
     download_url(url_qutag, zip_qutag)
     with tarfile.open(zip_qutag, 'r') as tar:
-        for item in tar:
-            tar.extract(item, os.path.join(opt_path, item.name))
+        tar.extractall(opt_path)
+    os.rename(os.path.join(opt_path, zip_qutag.replace(".tgz", "")), os.path.join(opt_path, "QUTAG"))
 
 if "Windows" in platform.platform():
     url_qutag = "https://qutools.com/files/quTAG/QUTAG-WIN64QT5-V1.5.10.zip"
