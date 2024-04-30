@@ -241,92 +241,31 @@ class JointHistogram:
     """JSI result
     """
 
+    central_bin: int = cython.dataclasses.field()
+    temporal_window: float = cython.dataclasses.field()
+    bin_size: Tuple[int, int] = cython.dataclasses.field()
     data: ndarray(u64n) = cython.dataclasses.field()
     marginal_idler: ndarray(u64n) = cython.dataclasses.field()
     marginal_signal: ndarray(u64n) = cython.dataclasses.field()
     # axis_idler: ndarray(f64n) = cython.dataclasses.field()
     # axis_signal: ndarray(f64n) = cython.dataclasses.field()
 
+    # def centre(self) -> JointHistogram:
+    #     bins: arange(self.temporal_window) - self.central_bin
+    #     offset_idler: int = int(npround(
+    #         mean(bins[self.marginal_idler > (0.1 * self.marginal_idler.max())])))
+    #     offset_signal: int = int(npround(
+    #         mean(bins[self.marginal_signal > (0.1 * self.marginal_signal.max())])))
 
-@cython.cclass
-class test_class:
+    #     offset_idler *= (-1)
+    #     offset_signal *= (-1)
 
-    @staticmethod
-    def from_single(data: float) -> test_impl_a:
-        return test_impl_a(data)
-
-    @staticmethod
-    def from_pair(data: Tuple[float, float]) -> test_impl_b:
-        return test_impl_b(data)
-
-    @property
-    def resolution(self):
-        """sets resolution"""
-        ...
-
-    @cython.ccall
-    def prints_resolution(self):
-        print(self.resolution)
-
-    @cython.ccall
-    def prints_resolution_fused(self):
-        if isinstance(self, test_impl_a):
-            print_resolution_fused[test_impl_a](self)
-        if isinstance(self, test_impl_b):
-            print_resolution_fused[test_impl_b](self)
-
-
-@cython.cclass
-class test_impl_a(test_class):
-
-    _resolution: cython.double
-
-    def __init__(self, resolution: cython.double):
-        self._resolution = resolution
-
-    @property
-    def resolution(self) -> cython.double:
-        """sets resolution"""
-        return self._resolution
-
-
-@cython.cclass
-class test_impl_b(test_class):
-
-    _resolution: Tuple[cython.double, cython.double]
-
-    def __init__(self, resolution: Tuple[cython.double, cython.double]):
-        self._resolution = resolution
-
-    @property
-    def resolution(self) -> Tuple[cython.double, cython.double]:
-        """doc"""
-        return self._resolution
-
-
-def print_resolution(impl: test_class) -> None:
-    print(impl.resolution)
-
-
-@cython.ccall
-def print_resolution_cy(impl: test_class) -> cython.void:
-    res: Union[cython.double, Tuple[cython.double, cython.double]] = impl._resolution
-    print(res)
-
-
-test_fused = cython.fused_type(test_impl_a, test_impl_b)
-
-
-@cython.ccall
-def print_resolution_fused(impl: test_fused) -> cython.void:
-    if test_fused is test_impl_a:
-        res: cython.double
-        res = impl._resolution
-        print("from 'a'\t", res)
-    if test_fused is test_impl_b:
-        res: Tuple[cython.double, cython.double]
-        res = impl._resolution
-        print("from 'b'\t", res)
+    #     return JointHistogram(self.central_bin,
+    #                           self.temporal_window,
+    #                           self.bin_size,
+    #                           roll(roll(self.data, offset_idler, axis=0),
+    #                                offset_signal, axis=1),
+    #                           self.marginal_idler, self.marginal_signal)
 
 
 @cython.cclass
@@ -404,10 +343,10 @@ class TangyBuffer:
 #                  resolution: Optional(Union[float, Tuple[float, float]]) = 1e-12,
 #                  length: int = 10_000_000,
 #                  n_channels: int = 8):
-# 
+#
 #         if type(resolution) is float:
 #             super(self, TangyBufferStandard).__init__(name, resolution, length, n_channels)
-# 
+#
 #         elif type(resolution) is Tuple[float, float]:
 #             super(self, TangyBufferClocked).__init__(name, resolution, length, n_channels)
 
@@ -1183,6 +1122,203 @@ def singles(buffer: TangyBufferT, read_time: Optional[float] = None,
                                    cython.address(counters_view[0]))
 
     return (total, counters)
+
+
+@cython.cclass
+class CoincidenceMeasurement:
+    _n_channels: u8n
+    _window: f64n
+    _channels: ndarray(u8n)
+    _delays: ndarray(f64n)
+    _channels_view: cython.uchar[:]
+    _delays_view: cython.double[:]
+    _measurement = cython.declare(_Coinc_Measurement)
+
+    def __init__(self, window: float, channels: List[int],
+                 resolution: Union[float: Tuple[float, float]],
+                 delays: Optional[List[float]] = None):
+
+        self._n_channels = len(channels)
+
+        self._channels = asarray(channels, dtype=u8n)
+        self._delays = zeros(self._n_channels, dtype=f64n)
+
+        if delays:
+            i: cython.Py_ssize_t
+            for i in range(self._n_channels):
+                self._delays[i] = delays[i]
+
+        self._channels_view = self._channels
+        self._delays_view = self._delays
+        self._window = window
+
+        channels_ptr = cython.address(self._channels_view[0])
+
+        if type(resolution) is float:
+            _res_std: _tangy.std_res = resolution
+            self._measurement = _Coinc_Measurement(
+                standard=_tangy.std_coincidence_measurement_new(
+                    _res_std, n, channels_ptr))
+
+        elif type(resolution) is tuple:
+            _res_clk: _tangy.clk_res
+            _res_clk.coarse = resolution[0]
+            _res_clk.fine = resolution[1]
+            self._measurement = _Coinc_Measurement(
+                clocked=_tangy.clk_coincidence_measurement_new(
+                    _res_clk, n, channels_ptr))
+
+
+@cython.ccall
+def coincidences_count(buffer: TangyBufferT,
+                       read_time: float,
+                       config: Optional[CoincidenceMeasurement] = None,
+                       channels: Optional[List[float]] = None,
+                       delays: Optional[List[float]] = None,
+                       window: Optional[float] = None) -> int:
+
+    if (config is None):
+        if (channels is not None) and (window is not None):
+            raise ValueError("No valid arguments given")
+
+        if (delays is None):
+            delays = zeros(len(channels), dtype=u8n)
+
+        config: CoincidenceMeasurement = CoincidenceMeasurement(window, channels, delays)
+
+    count: u64n = 0
+
+    if TangyBufferT is TangyBufferStandard:
+        count = _tangy.std_coincidences_count(buffer._ptr,
+                                              config._n_channels,
+                                              cython.address(config._channels_view[0]),
+                                              cython.address(config._delays_view[0]),
+                                              config.window,
+                                              read_time)
+
+    elif TangyBufferT is TangyBufferClocked:
+        count = _tangy.clk_coincidences_count(buffer._ptr,
+                                              config._n_channels,
+                                              cython.address(config._channels_view[0]),
+                                              cython.address(config._delays_view[0]),
+                                              config.window,
+                                              read_time)
+    return count
+
+
+# TODO: add resolution!!
+@cython.ccall
+def coincidences_collect(buffer: TangyBufferT,
+                         read_time: float,
+                         config: Optional[CoincidenceMeasurement] = None,
+                         channels: Optional[List[float]] = None,
+                         delays: Optional[List[float]] = None,
+                         window: Optional[float] = None) -> int:
+
+    if (config is None):
+        if (channels is not None) and (window is not None):
+            raise ValueError("No valid arguments given")
+
+        if (delays is None):
+            delays = zeros(len(channels), dtype=u8n)
+
+        config: CoincidenceMeasurement = CoincidenceMeasurement(window, channels, delays)
+
+    i: cython.Py_ssize_t
+    count: u64n = 0
+    total: u64n = 0
+    if TangyBufferT is TangyBufferStandard:
+        count = _tangy.std_coincidences_records(buffer._ptr,
+                                                cython.address(config._delays_view[0]),
+                                                config._window,
+                                                read_time,
+                                                config._measurement.standard)
+        total = config._measurement.standard.total_records
+        records: ndarray(u64n) = zeros(total, dtype=u64n)
+        for i in range(total):
+            records[i] = config._measurement.standard.records.data[i]
+
+        return RecordsStandard(total, config._measurement.standard.resolution,
+                               asarray(config._channels), records)
+
+    elif TangyBufferT is TangyBufferClocked:
+        count = _tangy.clk_coincidences_records(buffer._ptr,
+                                                cython.address(config._delays_view[0]),
+                                                config._window,
+                                                read_time,
+                                                config._measurement.clocked)
+
+        total = config._measurement.clocked.total_records
+
+        clocks: ndarray(u64n) = zeros(total, dtype=u64n)
+        deltas: ndarray(u64n) = zeros(total, dtype=u64n)
+        for i in range(total):
+            clocks[i] = config._measurement.clocked.records.data.clock[i]
+            deltas[i] = config._measurement.clocked.records.data.delta[i]
+
+        return RecordsClocked(total,
+                              config._measurement.clocked.resolution.coarse,
+                              config._measurement.clocked.resolution.fine,
+                              asarray(config._channels), clocks, deltas)
+
+
+@cython.cclass
+class JointHistogramMeasurement:
+    _n_channels: u8n
+    _window: float
+    _central_bin: int
+    _channels: ndarray(u8n)
+    _delays: ndarray(f64n)
+    _channels_view: cython.uchar[:]
+    _delays_view: cython.double[:]
+    _measurement: _tangy.delay_histogram_measurement
+    _measurement_ptr: cython.pointer(_tangy.delay_histogram_measurement)
+    _temporal_window: int
+    _histogram_view: u64[:, ::1]
+    _histogram_ptrs: cython.pointer(cython.pointer(u64))
+
+    def __init__(self, buffer: TangyBuffer, channels: List[int], signal: int,
+                 idler: int, radius: cython.double, clock: Optional[int] = 0,
+                 delays: Optional[List[float]] = None):
+
+        n: u64n = len(channels)
+        self._n = n
+
+        self.channels = asarray(channels, dtype=u8n)
+        self.delays = zeros(n, dtype=f64n)
+
+        if delays:
+            for i in range(n):
+                self.delays[i] = delays[i]
+
+        self._channels_view = self.channels
+        self._delays_view = self.delays
+
+        self._radius = radius
+        radius_bins = buffer.bins_from_time(radius)
+
+        self._temporal_window = radius_bins * 2
+        self._central_bin = radius_bins
+        # self.histogram = zeros(self._temporal_window * self._temporal_window, dtype=uint32)
+        # self._histogram_view = self.histogram
+
+        self._histogram = zeros([self._temporal_window, self._temporal_window],
+                                dtype=u64n, order='C')
+        self._histogram_view = self._histogram
+
+        channels_ptr = cython.address(self._channels_view[0])
+
+        resolution = buffer.resolution
+
+        if type(resolution) is float:
+            self._measurement = _tangy.std_dh_measurement_new(n, clock, signal, idler, channels_ptr)
+            self._measurement_ptr = cython.address(self._measurement)
+
+        elif type(resolution) is tuple:
+            self._measurement = _tangy.clk_dh_measurement_new(n, clock, signal, idler, channels_ptr)
+            self._measurement_ptr = cython.address(self._measurement)
+
+        return
 
 
 @cython.ccall

@@ -1650,7 +1650,7 @@ typedef struct {
 /* #### Code section: type_declarations ### */
 
 /*--- Type declarations ---*/
-struct __pyx_obj_5tangy_4_uqd_UQD;
+struct __pyx_obj_5tangy_4_uqd_UQDLogic16;
 struct __pyx_array_obj;
 struct __pyx_MemviewEnum_obj;
 struct __pyx_memoryview_obj;
@@ -1659,13 +1659,13 @@ struct __pyx_memoryviewslice_obj;
 /* "tangy_src/_uqd.py":64
  * 
  * @cython.cclass
- * class UQD:             # <<<<<<<<<<<<<<
+ * class UQDLogic16:             # <<<<<<<<<<<<<<
  *     """
  * 
  */
-struct __pyx_obj_5tangy_4_uqd_UQD {
+struct __pyx_obj_5tangy_4_uqd_UQDLogic16 {
   PyObject_HEAD
-  struct __pyx_vtabstruct_5tangy_4_uqd_UQD *__pyx_vtab;
+  struct __pyx_vtabstruct_5tangy_4_uqd_UQDLogic16 *__pyx_vtab;
   TimeTag::CTimeTag _c_timetag;
   TimeTag::CLogic *_c_logic;
   uint8_t *_channel_ptr;
@@ -1768,16 +1768,16 @@ struct __pyx_memoryviewslice_obj {
 /* "tangy_src/_uqd.py":64
  * 
  * @cython.cclass
- * class UQD:             # <<<<<<<<<<<<<<
+ * class UQDLogic16:             # <<<<<<<<<<<<<<
  *     """
  * 
  */
 
-struct __pyx_vtabstruct_5tangy_4_uqd_UQD {
-  PyObject *(*read_tags)(struct __pyx_obj_5tangy_4_uqd_UQD *, int __pyx_skip_dispatch);
-  PyObject *(*write_to_buffer)(struct __pyx_obj_5tangy_4_uqd_UQD *, int __pyx_skip_dispatch);
+struct __pyx_vtabstruct_5tangy_4_uqd_UQDLogic16 {
+  PyObject *(*read_tags)(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *, int __pyx_skip_dispatch);
+  PyObject *(*write_to_buffer)(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *, int __pyx_skip_dispatch);
 };
-static struct __pyx_vtabstruct_5tangy_4_uqd_UQD *__pyx_vtabptr_5tangy_4_uqd_UQD;
+static struct __pyx_vtabstruct_5tangy_4_uqd_UQDLogic16 *__pyx_vtabptr_5tangy_4_uqd_UQDLogic16;
 
 
 /* "View.MemoryView":114
@@ -2820,8 +2820,8 @@ static PyObject *__pyx_memoryview__get_base(struct __pyx_memoryview_obj *__pyx_v
 static PyObject *__pyx_memoryviewslice_convert_item_to_object(struct __pyx_memoryviewslice_obj *__pyx_v_self, char *__pyx_v_itemp); /* proto*/
 static PyObject *__pyx_memoryviewslice_assign_item_from_object(struct __pyx_memoryviewslice_obj *__pyx_v_self, char *__pyx_v_itemp, PyObject *__pyx_v_value); /* proto*/
 static PyObject *__pyx_memoryviewslice__get_base(struct __pyx_memoryviewslice_obj *__pyx_v_self); /* proto*/
-static PyObject *__pyx_f_5tangy_4_uqd_3UQD_read_tags(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, int __pyx_skip_dispatch); /* proto*/
-static PyObject *__pyx_f_5tangy_4_uqd_3UQD_write_to_buffer(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, int __pyx_skip_dispatch); /* proto*/
+static PyObject *__pyx_f_5tangy_4_uqd_10UQDLogic16_read_tags(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, int __pyx_skip_dispatch); /* proto*/
+static PyObject *__pyx_f_5tangy_4_uqd_10UQDLogic16_write_to_buffer(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, int __pyx_skip_dispatch); /* proto*/
 
 /* Module declarations from "cython.view" */
 
@@ -2918,7 +2918,6 @@ static const char __pyx_k__6[] = "'";
 static const char __pyx_k__7[] = ")";
 static const char __pyx_k_gc[] = "gc";
 static const char __pyx_k_id[] = "id";
-static const char __pyx_k_UQD[] = "UQD";
 static const char __pyx_k__41[] = "?";
 static const char __pyx_k_abc[] = "abc";
 static const char __pyx_k_and[] = " and ";
@@ -3005,8 +3004,7 @@ static const char __pyx_k_time_gate[] = "_time_gate";
 static const char __pyx_k_uqdbuffer[] = "uqdbuffer";
 static const char __pyx_k_IndexError[] = "IndexError";
 static const char __pyx_k_OutTooLate[] = "OutTooLate";
-static const char __pyx_k_UQD___exit[] = "UQD.__exit__";
-static const char __pyx_k_UQD_buffer[] = "UQD.buffer";
+static const char __pyx_k_UQDLogic16[] = "UQDLogic16";
 static const char __pyx_k_ValueError[] = "ValueError";
 static const char __pyx_k_add_buffer[] = "add_buffer";
 static const char __pyx_k_error_text[] = "error_text";
@@ -3017,8 +3015,6 @@ static const char __pyx_k_tangy__uqd[] = "tangy._uqd";
 static const char __pyx_k_DoubleError[] = "DoubleError";
 static const char __pyx_k_MemoryError[] = "MemoryError";
 static const char __pyx_k_PickleError[] = "PickleError";
-static const char __pyx_k_UQD___close[] = "UQD.__close__";
-static const char __pyx_k_UQD_is_open[] = "UQD.is_open";
 static const char __pyx_k_buffer_size[] = "buffer_size";
 static const char __pyx_k_collections[] = "collections";
 static const char __pyx_k_time_gating[] = "_time_gating";
@@ -3028,8 +3024,6 @@ static const char __pyx_k_is_coroutine[] = "_is_coroutine";
 static const char __pyx_k_pyx_checksum[] = "__pyx_checksum";
 static const char __pyx_k_stringsource[] = "<stringsource>";
 static const char __pyx_k_version_info[] = "version_info";
-static const char __pyx_k_UQD_calibrate[] = "UQD.calibrate";
-static const char __pyx_k_UQD_read_tags[] = "UQD.read_tags";
 static const char __pyx_k_class_getitem[] = "__class_getitem__";
 static const char __pyx_k_reduce_cython[] = "__reduce_cython__";
 static const char __pyx_k_stop_timetags[] = "stop_timetags";
@@ -3039,7 +3033,6 @@ static const char __pyx_k_AssertionError[] = "AssertionError";
 static const char __pyx_k_Device_with_id[] = "Device with id=";
 static const char __pyx_k_OutDoublePulse[] = "OutDoublePulse";
 static const char __pyx_k_UQD_ERROR_FLAG[] = "UQD_ERROR_FLAG";
-static const char __pyx_k_UQD_error_text[] = "UQD.error_text";
 static const char __pyx_k_start_timetags[] = "start_timetags";
 static const char __pyx_k_NegFifoOverflow[] = "NegFifoOverflow";
 static const char __pyx_k_OutFifoOverflow[] = "OutFifoOverflow";
@@ -3054,32 +3047,39 @@ static const char __pyx_k_setstate_cython[] = "__setstate_cython__";
 static const char __pyx_k_time_gate_width[] = "_time_gate_width";
 static const char __pyx_k_write_to_buffer[] = "write_to_buffer";
 static const char __pyx_k_InputFifoOverflow[] = "InputFifoOverflow";
-static const char __pyx_k_UQD_stop_timetags[] = "UQD.stop_timetags";
+static const char __pyx_k_UQDLogic16___exit[] = "UQDLogic16.__exit__";
+static const char __pyx_k_UQDLogic16_buffer[] = "UQDLogic16.buffer";
 static const char __pyx_k_pyx_unpickle_Enum[] = "__pyx_unpickle_Enum";
 static const char __pyx_k_tangy_src__uqd_py[] = "tangy_src/_uqd.py";
-static const char __pyx_k_UQD_start_timetags[] = "UQD.start_timetags";
+static const char __pyx_k_UQDLogic16___close[] = "UQDLogic16.__close__";
+static const char __pyx_k_UQDLogic16_is_open[] = "UQDLogic16.is_open";
 static const char __pyx_k_asyncio_coroutines[] = "asyncio.coroutines";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_number_of_channels[] = "number_of_channels";
 static const char __pyx_k_strided_and_direct[] = "<strided and direct>";
 static const char __pyx_k_TangyBufferStandard[] = "TangyBufferStandard";
-static const char __pyx_k_UQD___reduce_cython[] = "UQD.__reduce_cython__";
-static const char __pyx_k_UQD_write_to_buffer[] = "UQD.write_to_buffer";
 static const char __pyx_k_device_id_must_be_1[] = "device_id must be >= 1";
+static const char __pyx_k_UQDLogic16_calibrate[] = "UQDLogic16.calibrate";
+static const char __pyx_k_UQDLogic16_read_tags[] = "UQDLogic16.read_tags";
 static const char __pyx_k_strided_and_indirect[] = "<strided and indirect>";
 static const char __pyx_k_Invalid_shape_in_axis[] = "Invalid shape in axis ";
-static const char __pyx_k_UQD___setstate_cython[] = "UQD.__setstate_cython__";
+static const char __pyx_k_UQDLogic16_error_text[] = "UQDLogic16.error_text";
 static const char __pyx_k_contiguous_and_direct[] = "<contiguous and direct>";
 static const char __pyx_k_Cannot_index_with_type[] = "Cannot index with type '";
 static const char __pyx_k_MemoryView_of_r_object[] = "<MemoryView of %r object>";
 static const char __pyx_k_abs_voltage_must_be_2V[] = "abs(voltage) must be <= 2V";
 static const char __pyx_k_MemoryView_of_r_at_0x_x[] = "<MemoryView of %r at 0x%x>";
 static const char __pyx_k_contiguous_and_indirect[] = "<contiguous and indirect>";
+static const char __pyx_k_UQDLogic16_stop_timetags[] = "UQDLogic16.stop_timetags";
 static const char __pyx_k_external_10MHz_reference[] = "_external_10MHz_reference";
 static const char __pyx_k_Dimension_d_is_not_direct[] = "Dimension %d is not direct";
+static const char __pyx_k_UQDLogic16_start_timetags[] = "UQDLogic16.start_timetags";
 static const char __pyx_k_Index_out_of_bounds_axis_d[] = "Index out of bounds (axis %d)";
+static const char __pyx_k_UQDLogic16___reduce_cython[] = "UQDLogic16.__reduce_cython__";
+static const char __pyx_k_UQDLogic16_write_to_buffer[] = "UQDLogic16.write_to_buffer";
 static const char __pyx_k_Step_may_not_be_zero_axis_d[] = "Step may not be zero (axis %d)";
 static const char __pyx_k_itemsize_0_for_cython_array[] = "itemsize <= 0 for cython.array";
+static const char __pyx_k_UQDLogic16___setstate_cython[] = "UQDLogic16.__setstate_cython__";
 static const char __pyx_k_unable_to_allocate_array_data[] = "unable to allocate array data.";
 static const char __pyx_k_strided_and_direct_or_indirect[] = "<strided and direct or indirect>";
 static const char __pyx_k_An_overflow_in_the_512_k_values[] = "An overflow in the 512 k values SRAM FIFO has been detected.         The time-tag generation rate is higher than the USB transmission rate.";
@@ -3153,47 +3153,47 @@ static void __pyx_memoryviewslice___pyx_pf_15View_dot_MemoryView_16_memoryviewsl
 static PyObject *__pyx_pf___pyx_memoryviewslice___reduce_cython__(CYTHON_UNUSED struct __pyx_memoryviewslice_obj *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf___pyx_memoryviewslice_2__setstate_cython__(CYTHON_UNUSED struct __pyx_memoryviewslice_obj *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
 static PyObject *__pyx_pf_15View_dot_MemoryView___pyx_unpickle_Enum(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v___pyx_type, long __pyx_v___pyx_checksum, PyObject *__pyx_v___pyx_state); /* proto */
-static int __pyx_pf_5tangy_4_uqd_3UQD___init__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_device_id, PyObject *__pyx_v_calibrate, PyObject *__pyx_v_add_buffer, PyObject *__pyx_v_buffer_size); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_2is_open(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_4__close__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_6__exit__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_8calibrate(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_14led_brightness___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static int __pyx_pf_5tangy_4_uqd_3UQD_14led_brightness_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_percent); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_12fpga_version___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_10resolution___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_18number_of_channels___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_15input_threshold___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static int __pyx_pf_5tangy_4_uqd_3UQD_15input_threshold_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_9inversion___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static int __pyx_pf_5tangy_4_uqd_3UQD_9inversion_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_channel); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_11input_delay___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static int __pyx_pf_5tangy_4_uqd_3UQD_11input_delay_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_18function_generator___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static int __pyx_pf_5tangy_4_uqd_3UQD_18function_generator_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_24external_10MHz_reference___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static int __pyx_pf_5tangy_4_uqd_3UQD_24external_10MHz_reference_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_10start_timetags(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_12stop_timetags(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_14read_tags(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_16filter_min_count___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static int __pyx_pf_5tangy_4_uqd_3UQD_16filter_min_count_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_count); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_15filter_max_time___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static int __pyx_pf_5tangy_4_uqd_3UQD_15filter_max_time_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, double __pyx_v_time); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_9exclusion___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static int __pyx_pf_5tangy_4_uqd_3UQD_9exclusion_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_10level_gate___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static int __pyx_pf_5tangy_4_uqd_3UQD_10level_gate_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_11time_gating___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static int __pyx_pf_5tangy_4_uqd_3UQD_11time_gating_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_15time_gate_width___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static int __pyx_pf_5tangy_4_uqd_3UQD_15time_gate_width_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_duration); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_16error_text(CYTHON_UNUSED struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_18buffer(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_20write_to_buffer(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_22__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_24__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
-static PyObject *__pyx_tp_new_5tangy_4_uqd_UQD(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16___init__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_device_id, PyObject *__pyx_v_calibrate, PyObject *__pyx_v_add_buffer, PyObject *__pyx_v_buffer_size); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_2is_open(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_4__close__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_6__exit__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_8calibrate(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_14led_brightness___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_14led_brightness_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_percent); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_12fpga_version___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_10resolution___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_18number_of_channels___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_15input_threshold___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_15input_threshold_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_9inversion___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_9inversion_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_channel); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_11input_delay___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_11input_delay_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_18function_generator___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_18function_generator_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_24external_10MHz_reference___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_24external_10MHz_reference_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_10start_timetags(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_12stop_timetags(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_14read_tags(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_16filter_min_count___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_16filter_min_count_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_count); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_15filter_max_time___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_15filter_max_time_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, double __pyx_v_time); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_9exclusion___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_9exclusion_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_10level_gate___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_10level_gate_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_11time_gating___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_11time_gating_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_15time_gate_width___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_15time_gate_width_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_duration); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_16error_text(CYTHON_UNUSED struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_18buffer(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_20write_to_buffer(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_22__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_24__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
+static PyObject *__pyx_tp_new_5tangy_4_uqd_UQDLogic16(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_array(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_Enum(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_memoryview(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
@@ -3244,13 +3244,13 @@ typedef struct {
   #if CYTHON_USE_MODULE_STATE
   #endif
   #if CYTHON_USE_MODULE_STATE
-  PyObject *__pyx_type_5tangy_4_uqd_UQD;
+  PyObject *__pyx_type_5tangy_4_uqd_UQDLogic16;
   PyObject *__pyx_type___pyx_array;
   PyObject *__pyx_type___pyx_MemviewEnum;
   PyObject *__pyx_type___pyx_memoryview;
   PyObject *__pyx_type___pyx_memoryviewslice;
   #endif
-  PyTypeObject *__pyx_ptype_5tangy_4_uqd_UQD;
+  PyTypeObject *__pyx_ptype_5tangy_4_uqd_UQDLogic16;
   PyTypeObject *__pyx_array_type;
   PyTypeObject *__pyx_MemviewEnum_type;
   PyTypeObject *__pyx_memoryview_type;
@@ -3311,20 +3311,20 @@ typedef struct {
   PyObject *__pyx_kp_u_The_internal_processing_was_too;
   PyObject *__pyx_n_s_Tuple;
   PyObject *__pyx_n_s_TypeError;
-  PyObject *__pyx_n_s_UQD;
+  PyObject *__pyx_n_s_UQDLogic16;
+  PyObject *__pyx_n_s_UQDLogic16___close;
+  PyObject *__pyx_n_s_UQDLogic16___exit;
+  PyObject *__pyx_n_s_UQDLogic16___reduce_cython;
+  PyObject *__pyx_n_s_UQDLogic16___setstate_cython;
+  PyObject *__pyx_n_s_UQDLogic16_buffer;
+  PyObject *__pyx_n_s_UQDLogic16_calibrate;
+  PyObject *__pyx_n_s_UQDLogic16_error_text;
+  PyObject *__pyx_n_s_UQDLogic16_is_open;
+  PyObject *__pyx_n_s_UQDLogic16_read_tags;
+  PyObject *__pyx_n_s_UQDLogic16_start_timetags;
+  PyObject *__pyx_n_s_UQDLogic16_stop_timetags;
+  PyObject *__pyx_n_s_UQDLogic16_write_to_buffer;
   PyObject *__pyx_n_s_UQD_ERROR_FLAG;
-  PyObject *__pyx_n_s_UQD___close;
-  PyObject *__pyx_n_s_UQD___exit;
-  PyObject *__pyx_n_s_UQD___reduce_cython;
-  PyObject *__pyx_n_s_UQD___setstate_cython;
-  PyObject *__pyx_n_s_UQD_buffer;
-  PyObject *__pyx_n_s_UQD_calibrate;
-  PyObject *__pyx_n_s_UQD_error_text;
-  PyObject *__pyx_n_s_UQD_is_open;
-  PyObject *__pyx_n_s_UQD_read_tags;
-  PyObject *__pyx_n_s_UQD_start_timetags;
-  PyObject *__pyx_n_s_UQD_stop_timetags;
-  PyObject *__pyx_n_s_UQD_write_to_buffer;
   PyObject *__pyx_kp_s_Unable_to_convert_item_to_object;
   PyObject *__pyx_n_s_Union;
   PyObject *__pyx_n_s_ValueError;
@@ -3556,8 +3556,8 @@ static int __pyx_m_clear(PyObject *m) {
   #ifdef __Pyx_FusedFunction_USED
   Py_CLEAR(clear_module_state->__pyx_FusedFunctionType);
   #endif
-  Py_CLEAR(clear_module_state->__pyx_ptype_5tangy_4_uqd_UQD);
-  Py_CLEAR(clear_module_state->__pyx_type_5tangy_4_uqd_UQD);
+  Py_CLEAR(clear_module_state->__pyx_ptype_5tangy_4_uqd_UQDLogic16);
+  Py_CLEAR(clear_module_state->__pyx_type_5tangy_4_uqd_UQDLogic16);
   Py_CLEAR(clear_module_state->__pyx_array_type);
   Py_CLEAR(clear_module_state->__pyx_type___pyx_array);
   Py_CLEAR(clear_module_state->__pyx_MemviewEnum_type);
@@ -3622,20 +3622,20 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_kp_u_The_internal_processing_was_too);
   Py_CLEAR(clear_module_state->__pyx_n_s_Tuple);
   Py_CLEAR(clear_module_state->__pyx_n_s_TypeError);
-  Py_CLEAR(clear_module_state->__pyx_n_s_UQD);
+  Py_CLEAR(clear_module_state->__pyx_n_s_UQDLogic16);
+  Py_CLEAR(clear_module_state->__pyx_n_s_UQDLogic16___close);
+  Py_CLEAR(clear_module_state->__pyx_n_s_UQDLogic16___exit);
+  Py_CLEAR(clear_module_state->__pyx_n_s_UQDLogic16___reduce_cython);
+  Py_CLEAR(clear_module_state->__pyx_n_s_UQDLogic16___setstate_cython);
+  Py_CLEAR(clear_module_state->__pyx_n_s_UQDLogic16_buffer);
+  Py_CLEAR(clear_module_state->__pyx_n_s_UQDLogic16_calibrate);
+  Py_CLEAR(clear_module_state->__pyx_n_s_UQDLogic16_error_text);
+  Py_CLEAR(clear_module_state->__pyx_n_s_UQDLogic16_is_open);
+  Py_CLEAR(clear_module_state->__pyx_n_s_UQDLogic16_read_tags);
+  Py_CLEAR(clear_module_state->__pyx_n_s_UQDLogic16_start_timetags);
+  Py_CLEAR(clear_module_state->__pyx_n_s_UQDLogic16_stop_timetags);
+  Py_CLEAR(clear_module_state->__pyx_n_s_UQDLogic16_write_to_buffer);
   Py_CLEAR(clear_module_state->__pyx_n_s_UQD_ERROR_FLAG);
-  Py_CLEAR(clear_module_state->__pyx_n_s_UQD___close);
-  Py_CLEAR(clear_module_state->__pyx_n_s_UQD___exit);
-  Py_CLEAR(clear_module_state->__pyx_n_s_UQD___reduce_cython);
-  Py_CLEAR(clear_module_state->__pyx_n_s_UQD___setstate_cython);
-  Py_CLEAR(clear_module_state->__pyx_n_s_UQD_buffer);
-  Py_CLEAR(clear_module_state->__pyx_n_s_UQD_calibrate);
-  Py_CLEAR(clear_module_state->__pyx_n_s_UQD_error_text);
-  Py_CLEAR(clear_module_state->__pyx_n_s_UQD_is_open);
-  Py_CLEAR(clear_module_state->__pyx_n_s_UQD_read_tags);
-  Py_CLEAR(clear_module_state->__pyx_n_s_UQD_start_timetags);
-  Py_CLEAR(clear_module_state->__pyx_n_s_UQD_stop_timetags);
-  Py_CLEAR(clear_module_state->__pyx_n_s_UQD_write_to_buffer);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Unable_to_convert_item_to_object);
   Py_CLEAR(clear_module_state->__pyx_n_s_Union);
   Py_CLEAR(clear_module_state->__pyx_n_s_ValueError);
@@ -3845,8 +3845,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   #ifdef __Pyx_FusedFunction_USED
   Py_VISIT(traverse_module_state->__pyx_FusedFunctionType);
   #endif
-  Py_VISIT(traverse_module_state->__pyx_ptype_5tangy_4_uqd_UQD);
-  Py_VISIT(traverse_module_state->__pyx_type_5tangy_4_uqd_UQD);
+  Py_VISIT(traverse_module_state->__pyx_ptype_5tangy_4_uqd_UQDLogic16);
+  Py_VISIT(traverse_module_state->__pyx_type_5tangy_4_uqd_UQDLogic16);
   Py_VISIT(traverse_module_state->__pyx_array_type);
   Py_VISIT(traverse_module_state->__pyx_type___pyx_array);
   Py_VISIT(traverse_module_state->__pyx_MemviewEnum_type);
@@ -3911,20 +3911,20 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_kp_u_The_internal_processing_was_too);
   Py_VISIT(traverse_module_state->__pyx_n_s_Tuple);
   Py_VISIT(traverse_module_state->__pyx_n_s_TypeError);
-  Py_VISIT(traverse_module_state->__pyx_n_s_UQD);
+  Py_VISIT(traverse_module_state->__pyx_n_s_UQDLogic16);
+  Py_VISIT(traverse_module_state->__pyx_n_s_UQDLogic16___close);
+  Py_VISIT(traverse_module_state->__pyx_n_s_UQDLogic16___exit);
+  Py_VISIT(traverse_module_state->__pyx_n_s_UQDLogic16___reduce_cython);
+  Py_VISIT(traverse_module_state->__pyx_n_s_UQDLogic16___setstate_cython);
+  Py_VISIT(traverse_module_state->__pyx_n_s_UQDLogic16_buffer);
+  Py_VISIT(traverse_module_state->__pyx_n_s_UQDLogic16_calibrate);
+  Py_VISIT(traverse_module_state->__pyx_n_s_UQDLogic16_error_text);
+  Py_VISIT(traverse_module_state->__pyx_n_s_UQDLogic16_is_open);
+  Py_VISIT(traverse_module_state->__pyx_n_s_UQDLogic16_read_tags);
+  Py_VISIT(traverse_module_state->__pyx_n_s_UQDLogic16_start_timetags);
+  Py_VISIT(traverse_module_state->__pyx_n_s_UQDLogic16_stop_timetags);
+  Py_VISIT(traverse_module_state->__pyx_n_s_UQDLogic16_write_to_buffer);
   Py_VISIT(traverse_module_state->__pyx_n_s_UQD_ERROR_FLAG);
-  Py_VISIT(traverse_module_state->__pyx_n_s_UQD___close);
-  Py_VISIT(traverse_module_state->__pyx_n_s_UQD___exit);
-  Py_VISIT(traverse_module_state->__pyx_n_s_UQD___reduce_cython);
-  Py_VISIT(traverse_module_state->__pyx_n_s_UQD___setstate_cython);
-  Py_VISIT(traverse_module_state->__pyx_n_s_UQD_buffer);
-  Py_VISIT(traverse_module_state->__pyx_n_s_UQD_calibrate);
-  Py_VISIT(traverse_module_state->__pyx_n_s_UQD_error_text);
-  Py_VISIT(traverse_module_state->__pyx_n_s_UQD_is_open);
-  Py_VISIT(traverse_module_state->__pyx_n_s_UQD_read_tags);
-  Py_VISIT(traverse_module_state->__pyx_n_s_UQD_start_timetags);
-  Py_VISIT(traverse_module_state->__pyx_n_s_UQD_stop_timetags);
-  Py_VISIT(traverse_module_state->__pyx_n_s_UQD_write_to_buffer);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Unable_to_convert_item_to_object);
   Py_VISIT(traverse_module_state->__pyx_n_s_Union);
   Py_VISIT(traverse_module_state->__pyx_n_s_ValueError);
@@ -4161,13 +4161,13 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #if CYTHON_USE_MODULE_STATE
 #endif
 #if CYTHON_USE_MODULE_STATE
-#define __pyx_type_5tangy_4_uqd_UQD __pyx_mstate_global->__pyx_type_5tangy_4_uqd_UQD
+#define __pyx_type_5tangy_4_uqd_UQDLogic16 __pyx_mstate_global->__pyx_type_5tangy_4_uqd_UQDLogic16
 #define __pyx_type___pyx_array __pyx_mstate_global->__pyx_type___pyx_array
 #define __pyx_type___pyx_MemviewEnum __pyx_mstate_global->__pyx_type___pyx_MemviewEnum
 #define __pyx_type___pyx_memoryview __pyx_mstate_global->__pyx_type___pyx_memoryview
 #define __pyx_type___pyx_memoryviewslice __pyx_mstate_global->__pyx_type___pyx_memoryviewslice
 #endif
-#define __pyx_ptype_5tangy_4_uqd_UQD __pyx_mstate_global->__pyx_ptype_5tangy_4_uqd_UQD
+#define __pyx_ptype_5tangy_4_uqd_UQDLogic16 __pyx_mstate_global->__pyx_ptype_5tangy_4_uqd_UQDLogic16
 #define __pyx_array_type __pyx_mstate_global->__pyx_array_type
 #define __pyx_MemviewEnum_type __pyx_mstate_global->__pyx_MemviewEnum_type
 #define __pyx_memoryview_type __pyx_mstate_global->__pyx_memoryview_type
@@ -4228,20 +4228,20 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_kp_u_The_internal_processing_was_too __pyx_mstate_global->__pyx_kp_u_The_internal_processing_was_too
 #define __pyx_n_s_Tuple __pyx_mstate_global->__pyx_n_s_Tuple
 #define __pyx_n_s_TypeError __pyx_mstate_global->__pyx_n_s_TypeError
-#define __pyx_n_s_UQD __pyx_mstate_global->__pyx_n_s_UQD
+#define __pyx_n_s_UQDLogic16 __pyx_mstate_global->__pyx_n_s_UQDLogic16
+#define __pyx_n_s_UQDLogic16___close __pyx_mstate_global->__pyx_n_s_UQDLogic16___close
+#define __pyx_n_s_UQDLogic16___exit __pyx_mstate_global->__pyx_n_s_UQDLogic16___exit
+#define __pyx_n_s_UQDLogic16___reduce_cython __pyx_mstate_global->__pyx_n_s_UQDLogic16___reduce_cython
+#define __pyx_n_s_UQDLogic16___setstate_cython __pyx_mstate_global->__pyx_n_s_UQDLogic16___setstate_cython
+#define __pyx_n_s_UQDLogic16_buffer __pyx_mstate_global->__pyx_n_s_UQDLogic16_buffer
+#define __pyx_n_s_UQDLogic16_calibrate __pyx_mstate_global->__pyx_n_s_UQDLogic16_calibrate
+#define __pyx_n_s_UQDLogic16_error_text __pyx_mstate_global->__pyx_n_s_UQDLogic16_error_text
+#define __pyx_n_s_UQDLogic16_is_open __pyx_mstate_global->__pyx_n_s_UQDLogic16_is_open
+#define __pyx_n_s_UQDLogic16_read_tags __pyx_mstate_global->__pyx_n_s_UQDLogic16_read_tags
+#define __pyx_n_s_UQDLogic16_start_timetags __pyx_mstate_global->__pyx_n_s_UQDLogic16_start_timetags
+#define __pyx_n_s_UQDLogic16_stop_timetags __pyx_mstate_global->__pyx_n_s_UQDLogic16_stop_timetags
+#define __pyx_n_s_UQDLogic16_write_to_buffer __pyx_mstate_global->__pyx_n_s_UQDLogic16_write_to_buffer
 #define __pyx_n_s_UQD_ERROR_FLAG __pyx_mstate_global->__pyx_n_s_UQD_ERROR_FLAG
-#define __pyx_n_s_UQD___close __pyx_mstate_global->__pyx_n_s_UQD___close
-#define __pyx_n_s_UQD___exit __pyx_mstate_global->__pyx_n_s_UQD___exit
-#define __pyx_n_s_UQD___reduce_cython __pyx_mstate_global->__pyx_n_s_UQD___reduce_cython
-#define __pyx_n_s_UQD___setstate_cython __pyx_mstate_global->__pyx_n_s_UQD___setstate_cython
-#define __pyx_n_s_UQD_buffer __pyx_mstate_global->__pyx_n_s_UQD_buffer
-#define __pyx_n_s_UQD_calibrate __pyx_mstate_global->__pyx_n_s_UQD_calibrate
-#define __pyx_n_s_UQD_error_text __pyx_mstate_global->__pyx_n_s_UQD_error_text
-#define __pyx_n_s_UQD_is_open __pyx_mstate_global->__pyx_n_s_UQD_is_open
-#define __pyx_n_s_UQD_read_tags __pyx_mstate_global->__pyx_n_s_UQD_read_tags
-#define __pyx_n_s_UQD_start_timetags __pyx_mstate_global->__pyx_n_s_UQD_start_timetags
-#define __pyx_n_s_UQD_stop_timetags __pyx_mstate_global->__pyx_n_s_UQD_stop_timetags
-#define __pyx_n_s_UQD_write_to_buffer __pyx_mstate_global->__pyx_n_s_UQD_write_to_buffer
 #define __pyx_kp_s_Unable_to_convert_item_to_object __pyx_mstate_global->__pyx_kp_s_Unable_to_convert_item_to_object
 #define __pyx_n_s_Union __pyx_mstate_global->__pyx_n_s_Union
 #define __pyx_n_s_ValueError __pyx_mstate_global->__pyx_n_s_ValueError
@@ -18124,8 +18124,8 @@ static CYTHON_INLINE void __pyx_f_4_uqd_clogic_new(TimeTag::CTimeTag *__pyx_v_ct
  */
 
 /* Python wrapper */
-static int __pyx_pw_5tangy_4_uqd_3UQD_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static int __pyx_pw_5tangy_4_uqd_3UQD_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_device_id = 0;
   PyObject *__pyx_v_calibrate = 0;
   PyObject *__pyx_v_add_buffer = 0;
@@ -18238,13 +18238,13 @@ static int __pyx_pw_5tangy_4_uqd_3UQD_1__init__(PyObject *__pyx_v_self, PyObject
       __Pyx_Arg_XDECREF_VARARGS(values[__pyx_temp]);
     }
   }
-  __Pyx_AddTraceback("tangy._uqd.UQD.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_device_id), (&PyInt_Type), 0, "device_id", 1))) __PYX_ERR(0, 103, __pyx_L1_error)
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_buffer_size), (&PyInt_Type), 1, "buffer_size", 1))) __PYX_ERR(0, 105, __pyx_L1_error)
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD___init__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self), __pyx_v_device_id, __pyx_v_calibrate, __pyx_v_add_buffer, __pyx_v_buffer_size);
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16___init__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self), __pyx_v_device_id, __pyx_v_calibrate, __pyx_v_add_buffer, __pyx_v_buffer_size);
 
   /* "tangy_src/_uqd.py":103
  *     _buffer: TangyBufferStandard
@@ -18269,7 +18269,7 @@ static int __pyx_pw_5tangy_4_uqd_3UQD_1__init__(PyObject *__pyx_v_self, PyObject
   return __pyx_r;
 }
 
-static int __pyx_pf_5tangy_4_uqd_3UQD___init__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_device_id, PyObject *__pyx_v_calibrate, PyObject *__pyx_v_add_buffer, PyObject *__pyx_v_buffer_size) {
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16___init__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_device_id, PyObject *__pyx_v_calibrate, PyObject *__pyx_v_add_buffer, PyObject *__pyx_v_buffer_size) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -18744,7 +18744,7 @@ static int __pyx_pf_5tangy_4_uqd_3UQD___init__(struct __pyx_obj_5tangy_4_uqd_UQD
   __Pyx_XDECREF(__pyx_t_8);
   __Pyx_XDECREF(__pyx_t_9);
   __Pyx_XDECREF(__pyx_t_10);
-  __Pyx_AddTraceback("tangy._uqd.UQD.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
@@ -18760,15 +18760,15 @@ static int __pyx_pf_5tangy_4_uqd_3UQD___init__(struct __pyx_obj_5tangy_4_uqd_UQD
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_3is_open(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_3is_open(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_5tangy_4_uqd_3UQD_3is_open = {"is_open", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_3UQD_3is_open, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_3is_open(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_5tangy_4_uqd_10UQDLogic16_3is_open = {"is_open", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_10UQDLogic16_3is_open, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_3is_open(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -18793,14 +18793,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   if (unlikely(__pyx_nargs > 0)) {
     __Pyx_RaiseArgtupleInvalid("is_open", 1, 0, 0, __pyx_nargs); return NULL;}
   if (unlikely(__pyx_kwds) && __Pyx_NumKwargs_FASTCALL(__pyx_kwds) && unlikely(!__Pyx_CheckKeywordStrings(__pyx_kwds, "is_open", 0))) return NULL;
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_2is_open(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_2is_open(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_2is_open(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_2is_open(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_v_res = 0;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -18880,7 +18880,7 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_2is_open(struct __pyx_obj_5tangy_4_u
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("tangy._uqd.UQD.is_open", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.is_open", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_res);
@@ -18898,15 +18898,15 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_2is_open(struct __pyx_obj_5tangy_4_u
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_5__close__(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_5__close__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_5tangy_4_uqd_3UQD_5__close__ = {"__close__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_3UQD_5__close__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_5__close__(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_5tangy_4_uqd_10UQDLogic16_5__close__ = {"__close__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_10UQDLogic16_5__close__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_5__close__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -18931,14 +18931,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   if (unlikely(__pyx_nargs > 0)) {
     __Pyx_RaiseArgtupleInvalid("__close__", 1, 0, 0, __pyx_nargs); return NULL;}
   if (unlikely(__pyx_kwds) && __Pyx_NumKwargs_FASTCALL(__pyx_kwds) && unlikely(!__Pyx_CheckKeywordStrings(__pyx_kwds, "__close__", 0))) return NULL;
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_4__close__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_4__close__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_4__close__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_4__close__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -18980,7 +18980,7 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_4__close__(struct __pyx_obj_5tangy_4
   goto __pyx_L0;
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("tangy._uqd.UQD.__close__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.__close__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -18997,15 +18997,15 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_4__close__(struct __pyx_obj_5tangy_4
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_7__exit__(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_7__exit__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_5tangy_4_uqd_3UQD_7__exit__ = {"__exit__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_3UQD_7__exit__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_7__exit__(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_5tangy_4_uqd_10UQDLogic16_7__exit__ = {"__exit__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_10UQDLogic16_7__exit__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_7__exit__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -19030,14 +19030,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   if (unlikely(__pyx_nargs > 0)) {
     __Pyx_RaiseArgtupleInvalid("__exit__", 1, 0, 0, __pyx_nargs); return NULL;}
   if (unlikely(__pyx_kwds) && __Pyx_NumKwargs_FASTCALL(__pyx_kwds) && unlikely(!__Pyx_CheckKeywordStrings(__pyx_kwds, "__exit__", 0))) return NULL;
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_6__exit__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_6__exit__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_6__exit__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_6__exit__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -19079,7 +19079,7 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_6__exit__(struct __pyx_obj_5tangy_4_
   goto __pyx_L0;
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("tangy._uqd.UQD.__exit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.__exit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -19096,15 +19096,15 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_6__exit__(struct __pyx_obj_5tangy_4_
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_9calibrate(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_9calibrate(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_5tangy_4_uqd_3UQD_9calibrate = {"calibrate", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_3UQD_9calibrate, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_9calibrate(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_5tangy_4_uqd_10UQDLogic16_9calibrate = {"calibrate", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_10UQDLogic16_9calibrate, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_9calibrate(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -19129,14 +19129,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   if (unlikely(__pyx_nargs > 0)) {
     __Pyx_RaiseArgtupleInvalid("calibrate", 1, 0, 0, __pyx_nargs); return NULL;}
   if (unlikely(__pyx_kwds) && __Pyx_NumKwargs_FASTCALL(__pyx_kwds) && unlikely(!__Pyx_CheckKeywordStrings(__pyx_kwds, "calibrate", 0))) return NULL;
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_8calibrate(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_8calibrate(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_8calibrate(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_8calibrate(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("calibrate", 1);
@@ -19174,21 +19174,21 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_8calibrate(struct __pyx_obj_5tangy_4
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_14led_brightness_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_14led_brightness_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_14led_brightness_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_14led_brightness_1__get__(PyObject *__pyx_v_self) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_14led_brightness___get__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_14led_brightness___get__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_14led_brightness___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_14led_brightness___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -19222,7 +19222,7 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_14led_brightness___get__(struct __py
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("tangy._uqd.UQD.led_brightness.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.led_brightness.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -19239,8 +19239,8 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_14led_brightness___get__(struct __py
  */
 
 /* Python wrapper */
-static int __pyx_pw_5tangy_4_uqd_3UQD_14led_brightness_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_percent); /*proto*/
-static int __pyx_pw_5tangy_4_uqd_3UQD_14led_brightness_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_percent) {
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_14led_brightness_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_percent); /*proto*/
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_14led_brightness_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_percent) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
@@ -19250,7 +19250,7 @@ static int __pyx_pw_5tangy_4_uqd_3UQD_14led_brightness_3__set__(PyObject *__pyx_
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_percent), (&PyInt_Type), 0, "percent", 1))) __PYX_ERR(0, 162, __pyx_L1_error)
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_14led_brightness_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self), ((PyObject*)__pyx_v_percent));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_14led_brightness_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self), ((PyObject*)__pyx_v_percent));
 
   /* function exit code */
   goto __pyx_L0;
@@ -19261,7 +19261,7 @@ static int __pyx_pw_5tangy_4_uqd_3UQD_14led_brightness_3__set__(PyObject *__pyx_
   return __pyx_r;
 }
 
-static int __pyx_pf_5tangy_4_uqd_3UQD_14led_brightness_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_percent) {
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_14led_brightness_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_percent) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
@@ -19350,7 +19350,7 @@ static int __pyx_pf_5tangy_4_uqd_3UQD_14led_brightness_2__set__(struct __pyx_obj
   goto __pyx_L0;
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_AddTraceback("tangy._uqd.UQD.led_brightness.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.led_brightness.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
@@ -19366,21 +19366,21 @@ static int __pyx_pf_5tangy_4_uqd_3UQD_14led_brightness_2__set__(struct __pyx_obj
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_12fpga_version_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_12fpga_version_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_12fpga_version_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_12fpga_version_1__get__(PyObject *__pyx_v_self) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_12fpga_version___get__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_12fpga_version___get__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_12fpga_version___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_12fpga_version___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -19414,7 +19414,7 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_12fpga_version___get__(struct __pyx_
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("tangy._uqd.UQD.fpga_version.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.fpga_version.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -19431,21 +19431,21 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_12fpga_version___get__(struct __pyx_
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_10resolution_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_10resolution_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_10resolution_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_10resolution_1__get__(PyObject *__pyx_v_self) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_10resolution___get__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_10resolution___get__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_10resolution___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_10resolution___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   double __pyx_v_res;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -19489,7 +19489,7 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_10resolution___get__(struct __pyx_ob
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("tangy._uqd.UQD.resolution.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.resolution.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -19506,21 +19506,21 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_10resolution___get__(struct __pyx_ob
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_18number_of_channels_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_18number_of_channels_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_18number_of_channels_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_18number_of_channels_1__get__(PyObject *__pyx_v_self) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_18number_of_channels___get__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_18number_of_channels___get__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_18number_of_channels___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_18number_of_channels___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -19554,7 +19554,7 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_18number_of_channels___get__(struct 
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("tangy._uqd.UQD.number_of_channels.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.number_of_channels.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -19571,21 +19571,21 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_18number_of_channels___get__(struct 
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_15input_threshold_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_15input_threshold_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_15input_threshold_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_15input_threshold_1__get__(PyObject *__pyx_v_self) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_15input_threshold___get__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_15input_threshold___get__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_15input_threshold___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_15input_threshold___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__", 1);
@@ -19626,8 +19626,8 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_15input_threshold___get__(struct __p
  */
 
 /* Python wrapper */
-static int __pyx_pw_5tangy_4_uqd_3UQD_15input_threshold_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
-static int __pyx_pw_5tangy_4_uqd_3UQD_15input_threshold_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_15input_threshold_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_15input_threshold_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
@@ -19637,7 +19637,7 @@ static int __pyx_pw_5tangy_4_uqd_3UQD_15input_threshold_3__set__(PyObject *__pyx
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_value), (&PyTuple_Type), 0, "value", 1))) __PYX_ERR(0, 221, __pyx_L1_error)
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_15input_threshold_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self), ((PyObject*)__pyx_v_value));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_15input_threshold_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self), ((PyObject*)__pyx_v_value));
 
   /* function exit code */
   goto __pyx_L0;
@@ -19648,7 +19648,7 @@ static int __pyx_pw_5tangy_4_uqd_3UQD_15input_threshold_3__set__(PyObject *__pyx
   return __pyx_r;
 }
 
-static int __pyx_pf_5tangy_4_uqd_3UQD_15input_threshold_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_15input_threshold_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_value) {
   PyObject *__pyx_v_n = 0;
   PyObject *__pyx_v_channel = 0;
   PyObject *__pyx_v_voltage = NULL;
@@ -19824,7 +19824,7 @@ static int __pyx_pf_5tangy_4_uqd_3UQD_15input_threshold_2__set__(struct __pyx_ob
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_AddTraceback("tangy._uqd.UQD.input_threshold.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.input_threshold.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_n);
@@ -19843,21 +19843,21 @@ static int __pyx_pf_5tangy_4_uqd_3UQD_15input_threshold_2__set__(struct __pyx_ob
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_9inversion_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_9inversion_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_9inversion_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_9inversion_1__get__(PyObject *__pyx_v_self) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_9inversion___get__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_9inversion___get__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_9inversion___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_9inversion___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__", 1);
@@ -19898,21 +19898,21 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_9inversion___get__(struct __pyx_obj_
  */
 
 /* Python wrapper */
-static int __pyx_pw_5tangy_4_uqd_3UQD_9inversion_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_channel); /*proto*/
-static int __pyx_pw_5tangy_4_uqd_3UQD_9inversion_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_channel) {
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_9inversion_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_channel); /*proto*/
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_9inversion_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_channel) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_9inversion_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self), ((PyObject *)__pyx_v_channel));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_9inversion_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self), ((PyObject *)__pyx_v_channel));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static int __pyx_pf_5tangy_4_uqd_3UQD_9inversion_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_channel) {
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_9inversion_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_channel) {
   PyObject *__pyx_v_n = 0;
   int __pyx_r;
   __Pyx_RefNannyDeclarations
@@ -20011,7 +20011,7 @@ static int __pyx_pf_5tangy_4_uqd_3UQD_9inversion_2__set__(struct __pyx_obj_5tang
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_AddTraceback("tangy._uqd.UQD.inversion.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.inversion.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_n);
@@ -20028,21 +20028,21 @@ static int __pyx_pf_5tangy_4_uqd_3UQD_9inversion_2__set__(struct __pyx_obj_5tang
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_11input_delay_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_11input_delay_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_11input_delay_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_11input_delay_1__get__(PyObject *__pyx_v_self) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_11input_delay___get__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_11input_delay___get__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_11input_delay___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_11input_delay___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__", 1);
@@ -20083,8 +20083,8 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_11input_delay___get__(struct __pyx_o
  */
 
 /* Python wrapper */
-static int __pyx_pw_5tangy_4_uqd_3UQD_11input_delay_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
-static int __pyx_pw_5tangy_4_uqd_3UQD_11input_delay_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_11input_delay_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_11input_delay_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
@@ -20094,7 +20094,7 @@ static int __pyx_pw_5tangy_4_uqd_3UQD_11input_delay_3__set__(PyObject *__pyx_v_s
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_value), (&PyTuple_Type), 0, "value", 1))) __PYX_ERR(0, 281, __pyx_L1_error)
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_11input_delay_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self), ((PyObject*)__pyx_v_value));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_11input_delay_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self), ((PyObject*)__pyx_v_value));
 
   /* function exit code */
   goto __pyx_L0;
@@ -20105,7 +20105,7 @@ static int __pyx_pw_5tangy_4_uqd_3UQD_11input_delay_3__set__(PyObject *__pyx_v_s
   return __pyx_r;
 }
 
-static int __pyx_pf_5tangy_4_uqd_3UQD_11input_delay_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_11input_delay_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_value) {
   PyObject *__pyx_v_n = 0;
   PyObject *__pyx_v_channel = 0;
   double __pyx_v_max_delay;
@@ -20333,7 +20333,7 @@ static int __pyx_pf_5tangy_4_uqd_3UQD_11input_delay_2__set__(struct __pyx_obj_5t
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_6);
-  __Pyx_AddTraceback("tangy._uqd.UQD.input_delay.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.input_delay.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_n);
@@ -20352,21 +20352,21 @@ static int __pyx_pf_5tangy_4_uqd_3UQD_11input_delay_2__set__(struct __pyx_obj_5t
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_18function_generator_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_18function_generator_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_18function_generator_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_18function_generator_1__get__(PyObject *__pyx_v_self) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_18function_generator___get__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_18function_generator___get__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_18function_generator___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_18function_generator___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -20406,7 +20406,7 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_18function_generator___get__(struct 
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("tangy._uqd.UQD.function_generator.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.function_generator.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -20423,8 +20423,8 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_18function_generator___get__(struct 
  */
 
 /* Python wrapper */
-static int __pyx_pw_5tangy_4_uqd_3UQD_18function_generator_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
-static int __pyx_pw_5tangy_4_uqd_3UQD_18function_generator_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_18function_generator_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_18function_generator_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
@@ -20434,7 +20434,7 @@ static int __pyx_pw_5tangy_4_uqd_3UQD_18function_generator_3__set__(PyObject *__
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_value), (&PyTuple_Type), 0, "value", 1))) __PYX_ERR(0, 309, __pyx_L1_error)
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_18function_generator_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self), ((PyObject*)__pyx_v_value));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_18function_generator_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self), ((PyObject*)__pyx_v_value));
 
   /* function exit code */
   goto __pyx_L0;
@@ -20445,7 +20445,7 @@ static int __pyx_pw_5tangy_4_uqd_3UQD_18function_generator_3__set__(PyObject *__
   return __pyx_r;
 }
 
-static int __pyx_pf_5tangy_4_uqd_3UQD_18function_generator_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_18function_generator_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_value) {
   PyObject *__pyx_v_period = 0;
   PyObject *__pyx_v_high = 0;
   int __pyx_r;
@@ -20534,7 +20534,7 @@ static int __pyx_pf_5tangy_4_uqd_3UQD_18function_generator_2__set__(struct __pyx
   goto __pyx_L0;
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("tangy._uqd.UQD.function_generator.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.function_generator.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_period);
@@ -20552,21 +20552,21 @@ static int __pyx_pf_5tangy_4_uqd_3UQD_18function_generator_2__set__(struct __pyx
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_24external_10MHz_reference_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_24external_10MHz_reference_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_24external_10MHz_reference_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_24external_10MHz_reference_1__get__(PyObject *__pyx_v_self) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_24external_10MHz_reference___get__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_24external_10MHz_reference___get__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_24external_10MHz_reference___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_24external_10MHz_reference___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -20600,7 +20600,7 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_24external_10MHz_reference___get__(s
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("tangy._uqd.UQD.external_10MHz_reference.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.external_10MHz_reference.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -20617,21 +20617,21 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_24external_10MHz_reference___get__(s
  */
 
 /* Python wrapper */
-static int __pyx_pw_5tangy_4_uqd_3UQD_24external_10MHz_reference_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
-static int __pyx_pw_5tangy_4_uqd_3UQD_24external_10MHz_reference_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_24external_10MHz_reference_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_24external_10MHz_reference_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_24external_10MHz_reference_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self), ((PyObject *)__pyx_v_value));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_24external_10MHz_reference_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self), ((PyObject *)__pyx_v_value));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static int __pyx_pf_5tangy_4_uqd_3UQD_24external_10MHz_reference_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_24external_10MHz_reference_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_value) {
   bool __pyx_v_use;
   int __pyx_r;
   int __pyx_t_1;
@@ -20710,7 +20710,7 @@ static int __pyx_pf_5tangy_4_uqd_3UQD_24external_10MHz_reference_2__set__(struct
   __pyx_r = 0;
   goto __pyx_L0;
   __pyx_L1_error:;
-  __Pyx_AddTraceback("tangy._uqd.UQD.external_10MHz_reference.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.external_10MHz_reference.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   return __pyx_r;
@@ -20725,16 +20725,16 @@ static int __pyx_pf_5tangy_4_uqd_3UQD_24external_10MHz_reference_2__set__(struct
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_11start_timetags(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_11start_timetags(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-PyDoc_STRVAR(__pyx_doc_5tangy_4_uqd_3UQD_10start_timetags, "\n        Start transmitting timetags from the device to the host computer\n        ");
-static PyMethodDef __pyx_mdef_5tangy_4_uqd_3UQD_11start_timetags = {"start_timetags", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_3UQD_11start_timetags, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_5tangy_4_uqd_3UQD_10start_timetags};
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_11start_timetags(PyObject *__pyx_v_self, 
+PyDoc_STRVAR(__pyx_doc_5tangy_4_uqd_10UQDLogic16_10start_timetags, "\n        Start transmitting timetags from the device to the host computer\n        ");
+static PyMethodDef __pyx_mdef_5tangy_4_uqd_10UQDLogic16_11start_timetags = {"start_timetags", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_10UQDLogic16_11start_timetags, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_5tangy_4_uqd_10UQDLogic16_10start_timetags};
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_11start_timetags(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -20759,14 +20759,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   if (unlikely(__pyx_nargs > 0)) {
     __Pyx_RaiseArgtupleInvalid("start_timetags", 1, 0, 0, __pyx_nargs); return NULL;}
   if (unlikely(__pyx_kwds) && __Pyx_NumKwargs_FASTCALL(__pyx_kwds) && unlikely(!__Pyx_CheckKeywordStrings(__pyx_kwds, "start_timetags", 0))) return NULL;
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_10start_timetags(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_10start_timetags(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_10start_timetags(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_10start_timetags(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("start_timetags", 1);
@@ -20804,16 +20804,16 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_10start_timetags(struct __pyx_obj_5t
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_13stop_timetags(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_13stop_timetags(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-PyDoc_STRVAR(__pyx_doc_5tangy_4_uqd_3UQD_12stop_timetags, "\n        Stop transmitting timetags from the device to the host computer\n        ");
-static PyMethodDef __pyx_mdef_5tangy_4_uqd_3UQD_13stop_timetags = {"stop_timetags", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_3UQD_13stop_timetags, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_5tangy_4_uqd_3UQD_12stop_timetags};
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_13stop_timetags(PyObject *__pyx_v_self, 
+PyDoc_STRVAR(__pyx_doc_5tangy_4_uqd_10UQDLogic16_12stop_timetags, "\n        Stop transmitting timetags from the device to the host computer\n        ");
+static PyMethodDef __pyx_mdef_5tangy_4_uqd_10UQDLogic16_13stop_timetags = {"stop_timetags", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_10UQDLogic16_13stop_timetags, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_5tangy_4_uqd_10UQDLogic16_12stop_timetags};
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_13stop_timetags(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -20838,14 +20838,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   if (unlikely(__pyx_nargs > 0)) {
     __Pyx_RaiseArgtupleInvalid("stop_timetags", 1, 0, 0, __pyx_nargs); return NULL;}
   if (unlikely(__pyx_kwds) && __Pyx_NumKwargs_FASTCALL(__pyx_kwds) && unlikely(!__Pyx_CheckKeywordStrings(__pyx_kwds, "stop_timetags", 0))) return NULL;
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_12stop_timetags(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_12stop_timetags(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_12stop_timetags(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_12stop_timetags(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("stop_timetags", 1);
@@ -20882,14 +20882,14 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_12stop_timetags(struct __pyx_obj_5ta
  *         count: int = self._c_timetag.ReadTags(self._channel_ptr, self._timetag_ptr)
  */
 
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_15read_tags(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_15read_tags(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyObject *__pyx_f_5tangy_4_uqd_3UQD_read_tags(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, int __pyx_skip_dispatch) {
+static PyObject *__pyx_f_5tangy_4_uqd_10UQDLogic16_read_tags(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, int __pyx_skip_dispatch) {
   PyObject *__pyx_v_count = 0;
   PyObject *__pyx_v_channel_arr = NULL;
   PyObject *__pyx_v_timetag_arr = NULL;
@@ -20926,7 +20926,7 @@ static PyObject *__pyx_f_5tangy_4_uqd_3UQD_read_tags(struct __pyx_obj_5tangy_4_u
       #endif
       __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_read_tags); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 346, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      if (!__Pyx_IsSameCFunction(__pyx_t_1, (void*) __pyx_pw_5tangy_4_uqd_3UQD_15read_tags)) {
+      if (!__Pyx_IsSameCFunction(__pyx_t_1, (void*) __pyx_pw_5tangy_4_uqd_10UQDLogic16_15read_tags)) {
         __Pyx_XDECREF(__pyx_r);
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_3 = __pyx_t_1; __pyx_t_4 = NULL;
@@ -21161,7 +21161,7 @@ static PyObject *__pyx_f_5tangy_4_uqd_3UQD_read_tags(struct __pyx_obj_5tangy_4_u
   __Pyx_XDECREF(__pyx_t_4);
   __PYX_XCLEAR_MEMVIEW(&__pyx_t_6, 1);
   __PYX_XCLEAR_MEMVIEW(&__pyx_t_7, 1);
-  __Pyx_AddTraceback("tangy._uqd.UQD.read_tags", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.read_tags", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_count);
@@ -21175,15 +21175,15 @@ static PyObject *__pyx_f_5tangy_4_uqd_3UQD_read_tags(struct __pyx_obj_5tangy_4_u
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_15read_tags(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_15read_tags(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_5tangy_4_uqd_3UQD_15read_tags = {"read_tags", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_3UQD_15read_tags, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_15read_tags(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_5tangy_4_uqd_10UQDLogic16_15read_tags = {"read_tags", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_10UQDLogic16_15read_tags, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_15read_tags(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -21208,14 +21208,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   if (unlikely(__pyx_nargs > 0)) {
     __Pyx_RaiseArgtupleInvalid("read_tags", 1, 0, 0, __pyx_nargs); return NULL;}
   if (unlikely(__pyx_kwds) && __Pyx_NumKwargs_FASTCALL(__pyx_kwds) && unlikely(!__Pyx_CheckKeywordStrings(__pyx_kwds, "read_tags", 0))) return NULL;
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_14read_tags(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_14read_tags(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_14read_tags(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_14read_tags(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -21224,7 +21224,7 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_14read_tags(struct __pyx_obj_5tangy_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("read_tags", 1);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5tangy_4_uqd_3UQD_read_tags(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 346, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tangy_4_uqd_10UQDLogic16_read_tags(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 346, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -21233,7 +21233,7 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_14read_tags(struct __pyx_obj_5tangy_
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("tangy._uqd.UQD.read_tags", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.read_tags", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -21250,21 +21250,21 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_14read_tags(struct __pyx_obj_5tangy_
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_16filter_min_count_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_16filter_min_count_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_16filter_min_count_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_16filter_min_count_1__get__(PyObject *__pyx_v_self) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_16filter_min_count___get__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_16filter_min_count___get__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_16filter_min_count___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_16filter_min_count___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -21298,7 +21298,7 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_16filter_min_count___get__(struct __
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("tangy._uqd.UQD.filter_min_count.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.filter_min_count.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -21315,8 +21315,8 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_16filter_min_count___get__(struct __
  */
 
 /* Python wrapper */
-static int __pyx_pw_5tangy_4_uqd_3UQD_16filter_min_count_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_count); /*proto*/
-static int __pyx_pw_5tangy_4_uqd_3UQD_16filter_min_count_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_count) {
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_16filter_min_count_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_count); /*proto*/
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_16filter_min_count_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_count) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
@@ -21326,7 +21326,7 @@ static int __pyx_pw_5tangy_4_uqd_3UQD_16filter_min_count_3__set__(PyObject *__py
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_count), (&PyInt_Type), 0, "count", 1))) __PYX_ERR(0, 373, __pyx_L1_error)
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_16filter_min_count_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self), ((PyObject*)__pyx_v_count));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_16filter_min_count_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self), ((PyObject*)__pyx_v_count));
 
   /* function exit code */
   goto __pyx_L0;
@@ -21337,7 +21337,7 @@ static int __pyx_pw_5tangy_4_uqd_3UQD_16filter_min_count_3__set__(PyObject *__py
   return __pyx_r;
 }
 
-static int __pyx_pf_5tangy_4_uqd_3UQD_16filter_min_count_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_count) {
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_16filter_min_count_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_count) {
   int __pyx_r;
   int __pyx_t_1;
   int __pyx_lineno = 0;
@@ -21366,7 +21366,7 @@ static int __pyx_pf_5tangy_4_uqd_3UQD_16filter_min_count_2__set__(struct __pyx_o
   __pyx_r = 0;
   goto __pyx_L0;
   __pyx_L1_error:;
-  __Pyx_AddTraceback("tangy._uqd.UQD.filter_min_count.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.filter_min_count.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   return __pyx_r;
@@ -21381,21 +21381,21 @@ static int __pyx_pf_5tangy_4_uqd_3UQD_16filter_min_count_2__set__(struct __pyx_o
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_15filter_max_time_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_15filter_max_time_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_15filter_max_time_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_15filter_max_time_1__get__(PyObject *__pyx_v_self) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_15filter_max_time___get__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_15filter_max_time___get__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_15filter_max_time___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_15filter_max_time___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -21429,7 +21429,7 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_15filter_max_time___get__(struct __p
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("tangy._uqd.UQD.filter_max_time.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.filter_max_time.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -21446,8 +21446,8 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_15filter_max_time___get__(struct __p
  */
 
 /* Python wrapper */
-static int __pyx_pw_5tangy_4_uqd_3UQD_15filter_max_time_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_arg_time); /*proto*/
-static int __pyx_pw_5tangy_4_uqd_3UQD_15filter_max_time_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_arg_time) {
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_15filter_max_time_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_arg_time); /*proto*/
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_15filter_max_time_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_arg_time) {
   double __pyx_v_time;
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   int __pyx_lineno = 0;
@@ -21462,18 +21462,18 @@ static int __pyx_pw_5tangy_4_uqd_3UQD_15filter_max_time_3__set__(PyObject *__pyx
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
-  __Pyx_AddTraceback("tangy._uqd.UQD.filter_max_time.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.filter_max_time.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_15filter_max_time_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self), ((double)__pyx_v_time));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_15filter_max_time_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self), ((double)__pyx_v_time));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static int __pyx_pf_5tangy_4_uqd_3UQD_15filter_max_time_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, double __pyx_v_time) {
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_15filter_max_time_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, double __pyx_v_time) {
   CYTHON_UNUSED PyObject *__pyx_v_bins = 0;
   int __pyx_r;
   __Pyx_RefNannyDeclarations
@@ -21528,7 +21528,7 @@ static int __pyx_pf_5tangy_4_uqd_3UQD_15filter_max_time_2__set__(struct __pyx_ob
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_AddTraceback("tangy._uqd.UQD.filter_max_time.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.filter_max_time.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_bins);
@@ -21545,21 +21545,21 @@ static int __pyx_pf_5tangy_4_uqd_3UQD_15filter_max_time_2__set__(struct __pyx_ob
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_9exclusion_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_9exclusion_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_9exclusion_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_9exclusion_1__get__(PyObject *__pyx_v_self) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_9exclusion___get__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_9exclusion___get__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_9exclusion___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_9exclusion___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__", 1);
@@ -21600,8 +21600,8 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_9exclusion___get__(struct __pyx_obj_
  */
 
 /* Python wrapper */
-static int __pyx_pw_5tangy_4_uqd_3UQD_9exclusion_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
-static int __pyx_pw_5tangy_4_uqd_3UQD_9exclusion_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_9exclusion_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_9exclusion_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
@@ -21611,7 +21611,7 @@ static int __pyx_pw_5tangy_4_uqd_3UQD_9exclusion_3__set__(PyObject *__pyx_v_self
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_value), (&PyInt_Type), 0, "value", 1))) __PYX_ERR(0, 410, __pyx_L1_error)
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_9exclusion_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self), ((PyObject*)__pyx_v_value));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_9exclusion_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self), ((PyObject*)__pyx_v_value));
 
   /* function exit code */
   goto __pyx_L0;
@@ -21622,7 +21622,7 @@ static int __pyx_pw_5tangy_4_uqd_3UQD_9exclusion_3__set__(PyObject *__pyx_v_self
   return __pyx_r;
 }
 
-static int __pyx_pf_5tangy_4_uqd_3UQD_9exclusion_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_9exclusion_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_value) {
   PyObject *__pyx_v_n = 0;
   PyObject *__pyx_v_channel = 0;
   int __pyx_r;
@@ -21746,7 +21746,7 @@ static int __pyx_pf_5tangy_4_uqd_3UQD_9exclusion_2__set__(struct __pyx_obj_5tang
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_AddTraceback("tangy._uqd.UQD.exclusion.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.exclusion.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_n);
@@ -21764,21 +21764,21 @@ static int __pyx_pf_5tangy_4_uqd_3UQD_9exclusion_2__set__(struct __pyx_obj_5tang
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_10level_gate_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_10level_gate_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_10level_gate_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_10level_gate_1__get__(PyObject *__pyx_v_self) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_10level_gate___get__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_10level_gate___get__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_10level_gate___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_10level_gate___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -21812,7 +21812,7 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_10level_gate___get__(struct __pyx_ob
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("tangy._uqd.UQD.level_gate.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.level_gate.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -21829,21 +21829,21 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_10level_gate___get__(struct __pyx_ob
  */
 
 /* Python wrapper */
-static int __pyx_pw_5tangy_4_uqd_3UQD_10level_gate_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
-static int __pyx_pw_5tangy_4_uqd_3UQD_10level_gate_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_10level_gate_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_10level_gate_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_10level_gate_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self), ((PyObject *)__pyx_v_value));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_10level_gate_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self), ((PyObject *)__pyx_v_value));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static int __pyx_pf_5tangy_4_uqd_3UQD_10level_gate_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_10level_gate_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_value) {
   bool __pyx_v_use;
   int __pyx_r;
   int __pyx_t_1;
@@ -21920,21 +21920,21 @@ static int __pyx_pf_5tangy_4_uqd_3UQD_10level_gate_2__set__(struct __pyx_obj_5ta
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_11time_gating_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_11time_gating_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_11time_gating_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_11time_gating_1__get__(PyObject *__pyx_v_self) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_11time_gating___get__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_11time_gating___get__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_11time_gating___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_11time_gating___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -21968,7 +21968,7 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_11time_gating___get__(struct __pyx_o
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("tangy._uqd.UQD.time_gating.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.time_gating.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -21985,21 +21985,21 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_11time_gating___get__(struct __pyx_o
  */
 
 /* Python wrapper */
-static int __pyx_pw_5tangy_4_uqd_3UQD_11time_gating_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
-static int __pyx_pw_5tangy_4_uqd_3UQD_11time_gating_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_11time_gating_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_11time_gating_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_11time_gating_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self), ((PyObject *)__pyx_v_value));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_11time_gating_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self), ((PyObject *)__pyx_v_value));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static int __pyx_pf_5tangy_4_uqd_3UQD_11time_gating_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_11time_gating_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_value) {
   bool __pyx_v_use;
   int __pyx_r;
   int __pyx_t_1;
@@ -22078,7 +22078,7 @@ static int __pyx_pf_5tangy_4_uqd_3UQD_11time_gating_2__set__(struct __pyx_obj_5t
   __pyx_r = 0;
   goto __pyx_L0;
   __pyx_L1_error:;
-  __Pyx_AddTraceback("tangy._uqd.UQD.time_gating.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.time_gating.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   return __pyx_r;
@@ -22093,21 +22093,21 @@ static int __pyx_pf_5tangy_4_uqd_3UQD_11time_gating_2__set__(struct __pyx_obj_5t
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_15time_gate_width_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_15time_gate_width_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_15time_gate_width_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_15time_gate_width_1__get__(PyObject *__pyx_v_self) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_15time_gate_width___get__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_15time_gate_width___get__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_15time_gate_width___get__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_15time_gate_width___get__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -22141,7 +22141,7 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_15time_gate_width___get__(struct __p
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("tangy._uqd.UQD.time_gate_width.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.time_gate_width.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -22158,8 +22158,8 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_15time_gate_width___get__(struct __p
  */
 
 /* Python wrapper */
-static int __pyx_pw_5tangy_4_uqd_3UQD_15time_gate_width_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_duration); /*proto*/
-static int __pyx_pw_5tangy_4_uqd_3UQD_15time_gate_width_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_duration) {
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_15time_gate_width_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_duration); /*proto*/
+static int __pyx_pw_5tangy_4_uqd_10UQDLogic16_15time_gate_width_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_duration) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
@@ -22169,7 +22169,7 @@ static int __pyx_pw_5tangy_4_uqd_3UQD_15time_gate_width_3__set__(PyObject *__pyx
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
   __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_duration), (&PyInt_Type), 0, "duration", 1))) __PYX_ERR(0, 458, __pyx_L1_error)
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_15time_gate_width_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self), ((PyObject*)__pyx_v_duration));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_15time_gate_width_2__set__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self), ((PyObject*)__pyx_v_duration));
 
   /* function exit code */
   goto __pyx_L0;
@@ -22180,7 +22180,7 @@ static int __pyx_pw_5tangy_4_uqd_3UQD_15time_gate_width_3__set__(PyObject *__pyx
   return __pyx_r;
 }
 
-static int __pyx_pf_5tangy_4_uqd_3UQD_15time_gate_width_2__set__(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, PyObject *__pyx_v_duration) {
+static int __pyx_pf_5tangy_4_uqd_10UQDLogic16_15time_gate_width_2__set__(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, PyObject *__pyx_v_duration) {
   int __pyx_r;
   int __pyx_t_1;
   int __pyx_lineno = 0;
@@ -22218,7 +22218,7 @@ static int __pyx_pf_5tangy_4_uqd_3UQD_15time_gate_width_2__set__(struct __pyx_ob
   __pyx_r = 0;
   goto __pyx_L0;
   __pyx_L1_error:;
-  __Pyx_AddTraceback("tangy._uqd.UQD.time_gate_width.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.time_gate_width.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   return __pyx_r;
@@ -22233,15 +22233,15 @@ static int __pyx_pf_5tangy_4_uqd_3UQD_15time_gate_width_2__set__(struct __pyx_ob
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_17error_text(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_17error_text(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_5tangy_4_uqd_3UQD_17error_text = {"error_text", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_3UQD_17error_text, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_17error_text(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_5tangy_4_uqd_10UQDLogic16_17error_text = {"error_text", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_10UQDLogic16_17error_text, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_17error_text(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -22266,14 +22266,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   if (unlikely(__pyx_nargs > 0)) {
     __Pyx_RaiseArgtupleInvalid("error_text", 1, 0, 0, __pyx_nargs); return NULL;}
   if (unlikely(__pyx_kwds) && __Pyx_NumKwargs_FASTCALL(__pyx_kwds) && unlikely(!__Pyx_CheckKeywordStrings(__pyx_kwds, "error_text", 0))) return NULL;
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_16error_text(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_16error_text(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_16error_text(CYTHON_UNUSED struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_16error_text(CYTHON_UNUSED struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("error_text", 1);
@@ -22289,20 +22289,21 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_16error_text(CYTHON_UNUSED struct __
  *         ...
  * 
  *     def buffer(self) -> TangyBufferStandard:             # <<<<<<<<<<<<<<
- *         return self._buffer
- * 
+ *         """
+ *         Acquire buffer
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_19buffer(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_19buffer(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_5tangy_4_uqd_3UQD_19buffer = {"buffer", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_3UQD_19buffer, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_19buffer(PyObject *__pyx_v_self, 
+PyDoc_STRVAR(__pyx_doc_5tangy_4_uqd_10UQDLogic16_18buffer, "\n        Acquire buffer\n        ");
+static PyMethodDef __pyx_mdef_5tangy_4_uqd_10UQDLogic16_19buffer = {"buffer", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_10UQDLogic16_19buffer, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_5tangy_4_uqd_10UQDLogic16_18buffer};
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_19buffer(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -22327,21 +22328,21 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   if (unlikely(__pyx_nargs > 0)) {
     __Pyx_RaiseArgtupleInvalid("buffer", 1, 0, 0, __pyx_nargs); return NULL;}
   if (unlikely(__pyx_kwds) && __Pyx_NumKwargs_FASTCALL(__pyx_kwds) && unlikely(!__Pyx_CheckKeywordStrings(__pyx_kwds, "buffer", 0))) return NULL;
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_18buffer(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_18buffer(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_18buffer(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_18buffer(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("buffer", 1);
 
-  /* "tangy_src/_uqd.py":466
- * 
- *     def buffer(self) -> TangyBufferStandard:
+  /* "tangy_src/_uqd.py":469
+ *         Acquire buffer
+ *         """
  *         return self._buffer             # <<<<<<<<<<<<<<
  * 
  *     @cython.ccall
@@ -22355,8 +22356,8 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_18buffer(struct __pyx_obj_5tangy_4_u
  *         ...
  * 
  *     def buffer(self) -> TangyBufferStandard:             # <<<<<<<<<<<<<<
- *         return self._buffer
- * 
+ *         """
+ *         Acquire buffer
  */
 
   /* function exit code */
@@ -22366,22 +22367,22 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_18buffer(struct __pyx_obj_5tangy_4_u
   return __pyx_r;
 }
 
-/* "tangy_src/_uqd.py":468
+/* "tangy_src/_uqd.py":471
  *         return self._buffer
  * 
  *     @cython.ccall             # <<<<<<<<<<<<<<
  *     def write_to_buffer(self):
- *         (count, channels, tags) = self.read_tags()
+ *         """
  */
 
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_21write_to_buffer(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_21write_to_buffer(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyObject *__pyx_f_5tangy_4_uqd_3UQD_write_to_buffer(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, int __pyx_skip_dispatch) {
+static PyObject *__pyx_f_5tangy_4_uqd_10UQDLogic16_write_to_buffer(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, int __pyx_skip_dispatch) {
   CYTHON_UNUSED PyObject *__pyx_v_count = NULL;
   PyObject *__pyx_v_channels = NULL;
   PyObject *__pyx_v_tags = NULL;
@@ -22405,9 +22406,9 @@ static PyObject *__pyx_f_5tangy_4_uqd_3UQD_write_to_buffer(struct __pyx_obj_5tan
     if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
       PY_UINT64_T __pyx_typedict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_write_to_buffer); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 468, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_write_to_buffer); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 471, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      if (!__Pyx_IsSameCFunction(__pyx_t_1, (void*) __pyx_pw_5tangy_4_uqd_3UQD_21write_to_buffer)) {
+      if (!__Pyx_IsSameCFunction(__pyx_t_1, (void*) __pyx_pw_5tangy_4_uqd_10UQDLogic16_21write_to_buffer)) {
         __Pyx_XDECREF(__pyx_r);
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_3 = __pyx_t_1; __pyx_t_4 = NULL;
@@ -22428,7 +22429,7 @@ static PyObject *__pyx_f_5tangy_4_uqd_3UQD_write_to_buffer(struct __pyx_obj_5tan
           PyObject *__pyx_callargs[2] = {__pyx_t_4, NULL};
           __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 0+__pyx_t_5);
           __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 468, __pyx_L1_error)
+          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 471, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         }
@@ -22450,14 +22451,14 @@ static PyObject *__pyx_f_5tangy_4_uqd_3UQD_write_to_buffer(struct __pyx_obj_5tan
     #endif
   }
 
-  /* "tangy_src/_uqd.py":470
- *     @cython.ccall
- *     def write_to_buffer(self):
+  /* "tangy_src/_uqd.py":476
+ *         Write tags directly into buffer
+ *         """
  *         (count, channels, tags) = self.read_tags()             # <<<<<<<<<<<<<<
  *         self._buffer.push(channels, tags)
  * 
  */
-  __pyx_t_1 = ((struct __pyx_vtabstruct_5tangy_4_uqd_UQD *)__pyx_v_self->__pyx_vtab)->read_tags(__pyx_v_self, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 470, __pyx_L1_error)
+  __pyx_t_1 = ((struct __pyx_vtabstruct_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self->__pyx_vtab)->read_tags(__pyx_v_self, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 476, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (likely(__pyx_t_1 != Py_None)) {
     PyObject* sequence = __pyx_t_1;
@@ -22465,7 +22466,7 @@ static PyObject *__pyx_f_5tangy_4_uqd_3UQD_write_to_buffer(struct __pyx_obj_5tan
     if (unlikely(size != 3)) {
       if (size > 3) __Pyx_RaiseTooManyValuesError(3);
       else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-      __PYX_ERR(0, 470, __pyx_L1_error)
+      __PYX_ERR(0, 476, __pyx_L1_error)
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
     __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0); 
@@ -22475,16 +22476,16 @@ static PyObject *__pyx_f_5tangy_4_uqd_3UQD_write_to_buffer(struct __pyx_obj_5tan
     __Pyx_INCREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_t_4);
     #else
-    __pyx_t_2 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 470, __pyx_L1_error)
+    __pyx_t_2 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 476, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 470, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 476, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 470, __pyx_L1_error)
+    __pyx_t_4 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 476, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     #endif
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   } else {
-    __Pyx_RaiseNoneNotIterableError(); __PYX_ERR(0, 470, __pyx_L1_error)
+    __Pyx_RaiseNoneNotIterableError(); __PYX_ERR(0, 476, __pyx_L1_error)
   }
   __pyx_v_count = __pyx_t_2;
   __pyx_t_2 = 0;
@@ -22493,13 +22494,13 @@ static PyObject *__pyx_f_5tangy_4_uqd_3UQD_write_to_buffer(struct __pyx_obj_5tan
   __pyx_v_tags = __pyx_t_4;
   __pyx_t_4 = 0;
 
-  /* "tangy_src/_uqd.py":471
- *     def write_to_buffer(self):
+  /* "tangy_src/_uqd.py":477
+ *         """
  *         (count, channels, tags) = self.read_tags()
  *         self._buffer.push(channels, tags)             # <<<<<<<<<<<<<<
  * 
  */
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->_buffer, __pyx_n_s_push); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 471, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->_buffer, __pyx_n_s_push); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 477, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_3 = NULL;
   __pyx_t_5 = 0;
@@ -22519,18 +22520,18 @@ static PyObject *__pyx_f_5tangy_4_uqd_3UQD_write_to_buffer(struct __pyx_obj_5tan
     PyObject *__pyx_callargs[3] = {__pyx_t_3, __pyx_v_channels, __pyx_v_tags};
     __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+1-__pyx_t_5, 2+__pyx_t_5);
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 471, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 477, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tangy_src/_uqd.py":468
+  /* "tangy_src/_uqd.py":471
  *         return self._buffer
  * 
  *     @cython.ccall             # <<<<<<<<<<<<<<
  *     def write_to_buffer(self):
- *         (count, channels, tags) = self.read_tags()
+ *         """
  */
 
   /* function exit code */
@@ -22541,7 +22542,7 @@ static PyObject *__pyx_f_5tangy_4_uqd_3UQD_write_to_buffer(struct __pyx_obj_5tan
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_AddTraceback("tangy._uqd.UQD.write_to_buffer", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.write_to_buffer", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_count);
@@ -22553,15 +22554,16 @@ static PyObject *__pyx_f_5tangy_4_uqd_3UQD_write_to_buffer(struct __pyx_obj_5tan
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_21write_to_buffer(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_21write_to_buffer(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_5tangy_4_uqd_3UQD_21write_to_buffer = {"write_to_buffer", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_3UQD_21write_to_buffer, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_21write_to_buffer(PyObject *__pyx_v_self, 
+PyDoc_STRVAR(__pyx_doc_5tangy_4_uqd_10UQDLogic16_20write_to_buffer, "\n        Write tags directly into buffer\n        ");
+static PyMethodDef __pyx_mdef_5tangy_4_uqd_10UQDLogic16_21write_to_buffer = {"write_to_buffer", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_10UQDLogic16_21write_to_buffer, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_5tangy_4_uqd_10UQDLogic16_20write_to_buffer};
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_21write_to_buffer(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -22586,14 +22588,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   if (unlikely(__pyx_nargs > 0)) {
     __Pyx_RaiseArgtupleInvalid("write_to_buffer", 1, 0, 0, __pyx_nargs); return NULL;}
   if (unlikely(__pyx_kwds) && __Pyx_NumKwargs_FASTCALL(__pyx_kwds) && unlikely(!__Pyx_CheckKeywordStrings(__pyx_kwds, "write_to_buffer", 0))) return NULL;
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_20write_to_buffer(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_20write_to_buffer(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_20write_to_buffer(struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_20write_to_buffer(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -22602,7 +22604,7 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_20write_to_buffer(struct __pyx_obj_5
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("write_to_buffer", 1);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5tangy_4_uqd_3UQD_write_to_buffer(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 468, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tangy_4_uqd_10UQDLogic16_write_to_buffer(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 471, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -22611,7 +22613,7 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_20write_to_buffer(struct __pyx_obj_5
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("tangy._uqd.UQD.write_to_buffer", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.write_to_buffer", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -22626,15 +22628,15 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_20write_to_buffer(struct __pyx_obj_5
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_23__reduce_cython__(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_23__reduce_cython__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_5tangy_4_uqd_3UQD_23__reduce_cython__ = {"__reduce_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_3UQD_23__reduce_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_23__reduce_cython__(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_5tangy_4_uqd_10UQDLogic16_23__reduce_cython__ = {"__reduce_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_10UQDLogic16_23__reduce_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_23__reduce_cython__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -22659,14 +22661,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   if (unlikely(__pyx_nargs > 0)) {
     __Pyx_RaiseArgtupleInvalid("__reduce_cython__", 1, 0, 0, __pyx_nargs); return NULL;}
   if (unlikely(__pyx_kwds) && __Pyx_NumKwargs_FASTCALL(__pyx_kwds) && unlikely(!__Pyx_CheckKeywordStrings(__pyx_kwds, "__reduce_cython__", 0))) return NULL;
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_22__reduce_cython__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_22__reduce_cython__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_22__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_22__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   int __pyx_lineno = 0;
@@ -22691,7 +22693,7 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_22__reduce_cython__(CYTHON_UNUSED st
 
   /* function exit code */
   __pyx_L1_error:;
-  __Pyx_AddTraceback("tangy._uqd.UQD.__reduce_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.__reduce_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
@@ -22706,15 +22708,15 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_22__reduce_cython__(CYTHON_UNUSED st
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_25__setstate_cython__(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_25__setstate_cython__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_5tangy_4_uqd_3UQD_25__setstate_cython__ = {"__setstate_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_3UQD_25__setstate_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_5tangy_4_uqd_3UQD_25__setstate_cython__(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_5tangy_4_uqd_10UQDLogic16_25__setstate_cython__ = {"__setstate_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_10UQDLogic16_25__setstate_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_5tangy_4_uqd_10UQDLogic16_25__setstate_cython__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -22784,11 +22786,11 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
       __Pyx_Arg_XDECREF_FASTCALL(values[__pyx_temp]);
     }
   }
-  __Pyx_AddTraceback("tangy._uqd.UQD.__setstate_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.__setstate_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_5tangy_4_uqd_3UQD_24__setstate_cython__(((struct __pyx_obj_5tangy_4_uqd_UQD *)__pyx_v_self), __pyx_v___pyx_state);
+  __pyx_r = __pyx_pf_5tangy_4_uqd_10UQDLogic16_24__setstate_cython__(((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)__pyx_v_self), __pyx_v___pyx_state);
 
   /* function exit code */
   {
@@ -22801,7 +22803,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_24__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_5tangy_4_uqd_UQD *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pf_5tangy_4_uqd_10UQDLogic16_24__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   int __pyx_lineno = 0;
@@ -22826,16 +22828,16 @@ static PyObject *__pyx_pf_5tangy_4_uqd_3UQD_24__setstate_cython__(CYTHON_UNUSED 
 
   /* function exit code */
   __pyx_L1_error:;
-  __Pyx_AddTraceback("tangy._uqd.UQD.__setstate_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tangy._uqd.UQDLogic16.__setstate_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
-static struct __pyx_vtabstruct_5tangy_4_uqd_UQD __pyx_vtable_5tangy_4_uqd_UQD;
+static struct __pyx_vtabstruct_5tangy_4_uqd_UQDLogic16 __pyx_vtable_5tangy_4_uqd_UQDLogic16;
 
-static PyObject *__pyx_tp_new_5tangy_4_uqd_UQD(PyTypeObject *t, CYTHON_UNUSED PyObject *a, CYTHON_UNUSED PyObject *k) {
-  struct __pyx_obj_5tangy_4_uqd_UQD *p;
+static PyObject *__pyx_tp_new_5tangy_4_uqd_UQDLogic16(PyTypeObject *t, CYTHON_UNUSED PyObject *a, CYTHON_UNUSED PyObject *k) {
+  struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *p;
   PyObject *o;
   #if CYTHON_COMPILING_IN_LIMITED_API
   allocfunc alloc_func = (allocfunc)PyType_GetSlot(t, Py_tp_alloc);
@@ -22848,8 +22850,8 @@ static PyObject *__pyx_tp_new_5tangy_4_uqd_UQD(PyTypeObject *t, CYTHON_UNUSED Py
   }
   if (unlikely(!o)) return 0;
   #endif
-  p = ((struct __pyx_obj_5tangy_4_uqd_UQD *)o);
-  p->__pyx_vtab = __pyx_vtabptr_5tangy_4_uqd_UQD;
+  p = ((struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)o);
+  p->__pyx_vtab = __pyx_vtabptr_5tangy_4_uqd_UQDLogic16;
   new((void*)&(p->_c_timetag)) TimeTag::CTimeTag();
   p->_input_thresholds = Py_None; Py_INCREF(Py_None);
   p->_inversion = Py_None; Py_INCREF(Py_None);
@@ -22862,11 +22864,11 @@ static PyObject *__pyx_tp_new_5tangy_4_uqd_UQD(PyTypeObject *t, CYTHON_UNUSED Py
   return o;
 }
 
-static void __pyx_tp_dealloc_5tangy_4_uqd_UQD(PyObject *o) {
-  struct __pyx_obj_5tangy_4_uqd_UQD *p = (struct __pyx_obj_5tangy_4_uqd_UQD *)o;
+static void __pyx_tp_dealloc_5tangy_4_uqd_UQDLogic16(PyObject *o) {
+  struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *p = (struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)o;
   #if CYTHON_USE_TP_FINALIZE
   if (unlikely((PY_VERSION_HEX >= 0x03080000 || __Pyx_PyType_HasFeature(Py_TYPE(o), Py_TPFLAGS_HAVE_FINALIZE)) && __Pyx_PyObject_GetSlot(o, tp_finalize, destructor)) && !__Pyx_PyObject_GC_IsFinalized(o)) {
-    if (__Pyx_PyObject_GetSlot(o, tp_dealloc, destructor) == __pyx_tp_dealloc_5tangy_4_uqd_UQD) {
+    if (__Pyx_PyObject_GetSlot(o, tp_dealloc, destructor) == __pyx_tp_dealloc_5tangy_4_uqd_UQDLogic16) {
       if (PyObject_CallFinalizerFromDealloc(o)) return;
     }
   }
@@ -22891,9 +22893,9 @@ static void __pyx_tp_dealloc_5tangy_4_uqd_UQD(PyObject *o) {
   #endif
 }
 
-static int __pyx_tp_traverse_5tangy_4_uqd_UQD(PyObject *o, visitproc v, void *a) {
+static int __pyx_tp_traverse_5tangy_4_uqd_UQDLogic16(PyObject *o, visitproc v, void *a) {
   int e;
-  struct __pyx_obj_5tangy_4_uqd_UQD *p = (struct __pyx_obj_5tangy_4_uqd_UQD *)o;
+  struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *p = (struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)o;
   if (p->_input_thresholds) {
     e = (*v)(p->_input_thresholds, a); if (e) return e;
   }
@@ -22912,9 +22914,9 @@ static int __pyx_tp_traverse_5tangy_4_uqd_UQD(PyObject *o, visitproc v, void *a)
   return 0;
 }
 
-static int __pyx_tp_clear_5tangy_4_uqd_UQD(PyObject *o) {
+static int __pyx_tp_clear_5tangy_4_uqd_UQDLogic16(PyObject *o) {
   PyObject* tmp;
-  struct __pyx_obj_5tangy_4_uqd_UQD *p = (struct __pyx_obj_5tangy_4_uqd_UQD *)o;
+  struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *p = (struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *)o;
   tmp = ((PyObject*)p->_input_thresholds);
   p->_input_thresholds = Py_None; Py_INCREF(Py_None);
   Py_XDECREF(tmp);
@@ -22933,13 +22935,13 @@ static int __pyx_tp_clear_5tangy_4_uqd_UQD(PyObject *o) {
   return 0;
 }
 
-static PyObject *__pyx_getprop_5tangy_4_uqd_3UQD_led_brightness(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5tangy_4_uqd_3UQD_14led_brightness_1__get__(o);
+static PyObject *__pyx_getprop_5tangy_4_uqd_10UQDLogic16_led_brightness(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5tangy_4_uqd_10UQDLogic16_14led_brightness_1__get__(o);
 }
 
-static int __pyx_setprop_5tangy_4_uqd_3UQD_led_brightness(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+static int __pyx_setprop_5tangy_4_uqd_10UQDLogic16_led_brightness(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
   if (v) {
-    return __pyx_pw_5tangy_4_uqd_3UQD_14led_brightness_3__set__(o, v);
+    return __pyx_pw_5tangy_4_uqd_10UQDLogic16_14led_brightness_3__set__(o, v);
   }
   else {
     PyErr_SetString(PyExc_NotImplementedError, "__del__");
@@ -22947,25 +22949,25 @@ static int __pyx_setprop_5tangy_4_uqd_3UQD_led_brightness(PyObject *o, PyObject 
   }
 }
 
-static PyObject *__pyx_getprop_5tangy_4_uqd_3UQD_fpga_version(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5tangy_4_uqd_3UQD_12fpga_version_1__get__(o);
+static PyObject *__pyx_getprop_5tangy_4_uqd_10UQDLogic16_fpga_version(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5tangy_4_uqd_10UQDLogic16_12fpga_version_1__get__(o);
 }
 
-static PyObject *__pyx_getprop_5tangy_4_uqd_3UQD_resolution(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5tangy_4_uqd_3UQD_10resolution_1__get__(o);
+static PyObject *__pyx_getprop_5tangy_4_uqd_10UQDLogic16_resolution(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5tangy_4_uqd_10UQDLogic16_10resolution_1__get__(o);
 }
 
-static PyObject *__pyx_getprop_5tangy_4_uqd_3UQD_number_of_channels(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5tangy_4_uqd_3UQD_18number_of_channels_1__get__(o);
+static PyObject *__pyx_getprop_5tangy_4_uqd_10UQDLogic16_number_of_channels(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5tangy_4_uqd_10UQDLogic16_18number_of_channels_1__get__(o);
 }
 
-static PyObject *__pyx_getprop_5tangy_4_uqd_3UQD_input_threshold(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5tangy_4_uqd_3UQD_15input_threshold_1__get__(o);
+static PyObject *__pyx_getprop_5tangy_4_uqd_10UQDLogic16_input_threshold(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5tangy_4_uqd_10UQDLogic16_15input_threshold_1__get__(o);
 }
 
-static int __pyx_setprop_5tangy_4_uqd_3UQD_input_threshold(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+static int __pyx_setprop_5tangy_4_uqd_10UQDLogic16_input_threshold(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
   if (v) {
-    return __pyx_pw_5tangy_4_uqd_3UQD_15input_threshold_3__set__(o, v);
+    return __pyx_pw_5tangy_4_uqd_10UQDLogic16_15input_threshold_3__set__(o, v);
   }
   else {
     PyErr_SetString(PyExc_NotImplementedError, "__del__");
@@ -22973,13 +22975,13 @@ static int __pyx_setprop_5tangy_4_uqd_3UQD_input_threshold(PyObject *o, PyObject
   }
 }
 
-static PyObject *__pyx_getprop_5tangy_4_uqd_3UQD_inversion(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5tangy_4_uqd_3UQD_9inversion_1__get__(o);
+static PyObject *__pyx_getprop_5tangy_4_uqd_10UQDLogic16_inversion(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5tangy_4_uqd_10UQDLogic16_9inversion_1__get__(o);
 }
 
-static int __pyx_setprop_5tangy_4_uqd_3UQD_inversion(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+static int __pyx_setprop_5tangy_4_uqd_10UQDLogic16_inversion(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
   if (v) {
-    return __pyx_pw_5tangy_4_uqd_3UQD_9inversion_3__set__(o, v);
+    return __pyx_pw_5tangy_4_uqd_10UQDLogic16_9inversion_3__set__(o, v);
   }
   else {
     PyErr_SetString(PyExc_NotImplementedError, "__del__");
@@ -22987,13 +22989,13 @@ static int __pyx_setprop_5tangy_4_uqd_3UQD_inversion(PyObject *o, PyObject *v, C
   }
 }
 
-static PyObject *__pyx_getprop_5tangy_4_uqd_3UQD_input_delay(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5tangy_4_uqd_3UQD_11input_delay_1__get__(o);
+static PyObject *__pyx_getprop_5tangy_4_uqd_10UQDLogic16_input_delay(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5tangy_4_uqd_10UQDLogic16_11input_delay_1__get__(o);
 }
 
-static int __pyx_setprop_5tangy_4_uqd_3UQD_input_delay(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+static int __pyx_setprop_5tangy_4_uqd_10UQDLogic16_input_delay(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
   if (v) {
-    return __pyx_pw_5tangy_4_uqd_3UQD_11input_delay_3__set__(o, v);
+    return __pyx_pw_5tangy_4_uqd_10UQDLogic16_11input_delay_3__set__(o, v);
   }
   else {
     PyErr_SetString(PyExc_NotImplementedError, "__del__");
@@ -23001,13 +23003,13 @@ static int __pyx_setprop_5tangy_4_uqd_3UQD_input_delay(PyObject *o, PyObject *v,
   }
 }
 
-static PyObject *__pyx_getprop_5tangy_4_uqd_3UQD_function_generator(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5tangy_4_uqd_3UQD_18function_generator_1__get__(o);
+static PyObject *__pyx_getprop_5tangy_4_uqd_10UQDLogic16_function_generator(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5tangy_4_uqd_10UQDLogic16_18function_generator_1__get__(o);
 }
 
-static int __pyx_setprop_5tangy_4_uqd_3UQD_function_generator(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+static int __pyx_setprop_5tangy_4_uqd_10UQDLogic16_function_generator(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
   if (v) {
-    return __pyx_pw_5tangy_4_uqd_3UQD_18function_generator_3__set__(o, v);
+    return __pyx_pw_5tangy_4_uqd_10UQDLogic16_18function_generator_3__set__(o, v);
   }
   else {
     PyErr_SetString(PyExc_NotImplementedError, "__del__");
@@ -23015,13 +23017,13 @@ static int __pyx_setprop_5tangy_4_uqd_3UQD_function_generator(PyObject *o, PyObj
   }
 }
 
-static PyObject *__pyx_getprop_5tangy_4_uqd_3UQD_external_10MHz_reference(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5tangy_4_uqd_3UQD_24external_10MHz_reference_1__get__(o);
+static PyObject *__pyx_getprop_5tangy_4_uqd_10UQDLogic16_external_10MHz_reference(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5tangy_4_uqd_10UQDLogic16_24external_10MHz_reference_1__get__(o);
 }
 
-static int __pyx_setprop_5tangy_4_uqd_3UQD_external_10MHz_reference(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+static int __pyx_setprop_5tangy_4_uqd_10UQDLogic16_external_10MHz_reference(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
   if (v) {
-    return __pyx_pw_5tangy_4_uqd_3UQD_24external_10MHz_reference_3__set__(o, v);
+    return __pyx_pw_5tangy_4_uqd_10UQDLogic16_24external_10MHz_reference_3__set__(o, v);
   }
   else {
     PyErr_SetString(PyExc_NotImplementedError, "__del__");
@@ -23029,13 +23031,13 @@ static int __pyx_setprop_5tangy_4_uqd_3UQD_external_10MHz_reference(PyObject *o,
   }
 }
 
-static PyObject *__pyx_getprop_5tangy_4_uqd_3UQD_filter_min_count(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5tangy_4_uqd_3UQD_16filter_min_count_1__get__(o);
+static PyObject *__pyx_getprop_5tangy_4_uqd_10UQDLogic16_filter_min_count(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5tangy_4_uqd_10UQDLogic16_16filter_min_count_1__get__(o);
 }
 
-static int __pyx_setprop_5tangy_4_uqd_3UQD_filter_min_count(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+static int __pyx_setprop_5tangy_4_uqd_10UQDLogic16_filter_min_count(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
   if (v) {
-    return __pyx_pw_5tangy_4_uqd_3UQD_16filter_min_count_3__set__(o, v);
+    return __pyx_pw_5tangy_4_uqd_10UQDLogic16_16filter_min_count_3__set__(o, v);
   }
   else {
     PyErr_SetString(PyExc_NotImplementedError, "__del__");
@@ -23043,13 +23045,13 @@ static int __pyx_setprop_5tangy_4_uqd_3UQD_filter_min_count(PyObject *o, PyObjec
   }
 }
 
-static PyObject *__pyx_getprop_5tangy_4_uqd_3UQD_filter_max_time(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5tangy_4_uqd_3UQD_15filter_max_time_1__get__(o);
+static PyObject *__pyx_getprop_5tangy_4_uqd_10UQDLogic16_filter_max_time(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5tangy_4_uqd_10UQDLogic16_15filter_max_time_1__get__(o);
 }
 
-static int __pyx_setprop_5tangy_4_uqd_3UQD_filter_max_time(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+static int __pyx_setprop_5tangy_4_uqd_10UQDLogic16_filter_max_time(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
   if (v) {
-    return __pyx_pw_5tangy_4_uqd_3UQD_15filter_max_time_3__set__(o, v);
+    return __pyx_pw_5tangy_4_uqd_10UQDLogic16_15filter_max_time_3__set__(o, v);
   }
   else {
     PyErr_SetString(PyExc_NotImplementedError, "__del__");
@@ -23057,13 +23059,13 @@ static int __pyx_setprop_5tangy_4_uqd_3UQD_filter_max_time(PyObject *o, PyObject
   }
 }
 
-static PyObject *__pyx_getprop_5tangy_4_uqd_3UQD_exclusion(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5tangy_4_uqd_3UQD_9exclusion_1__get__(o);
+static PyObject *__pyx_getprop_5tangy_4_uqd_10UQDLogic16_exclusion(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5tangy_4_uqd_10UQDLogic16_9exclusion_1__get__(o);
 }
 
-static int __pyx_setprop_5tangy_4_uqd_3UQD_exclusion(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+static int __pyx_setprop_5tangy_4_uqd_10UQDLogic16_exclusion(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
   if (v) {
-    return __pyx_pw_5tangy_4_uqd_3UQD_9exclusion_3__set__(o, v);
+    return __pyx_pw_5tangy_4_uqd_10UQDLogic16_9exclusion_3__set__(o, v);
   }
   else {
     PyErr_SetString(PyExc_NotImplementedError, "__del__");
@@ -23071,13 +23073,13 @@ static int __pyx_setprop_5tangy_4_uqd_3UQD_exclusion(PyObject *o, PyObject *v, C
   }
 }
 
-static PyObject *__pyx_getprop_5tangy_4_uqd_3UQD_level_gate(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5tangy_4_uqd_3UQD_10level_gate_1__get__(o);
+static PyObject *__pyx_getprop_5tangy_4_uqd_10UQDLogic16_level_gate(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5tangy_4_uqd_10UQDLogic16_10level_gate_1__get__(o);
 }
 
-static int __pyx_setprop_5tangy_4_uqd_3UQD_level_gate(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+static int __pyx_setprop_5tangy_4_uqd_10UQDLogic16_level_gate(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
   if (v) {
-    return __pyx_pw_5tangy_4_uqd_3UQD_10level_gate_3__set__(o, v);
+    return __pyx_pw_5tangy_4_uqd_10UQDLogic16_10level_gate_3__set__(o, v);
   }
   else {
     PyErr_SetString(PyExc_NotImplementedError, "__del__");
@@ -23085,13 +23087,13 @@ static int __pyx_setprop_5tangy_4_uqd_3UQD_level_gate(PyObject *o, PyObject *v, 
   }
 }
 
-static PyObject *__pyx_getprop_5tangy_4_uqd_3UQD_time_gating(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5tangy_4_uqd_3UQD_11time_gating_1__get__(o);
+static PyObject *__pyx_getprop_5tangy_4_uqd_10UQDLogic16_time_gating(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5tangy_4_uqd_10UQDLogic16_11time_gating_1__get__(o);
 }
 
-static int __pyx_setprop_5tangy_4_uqd_3UQD_time_gating(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+static int __pyx_setprop_5tangy_4_uqd_10UQDLogic16_time_gating(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
   if (v) {
-    return __pyx_pw_5tangy_4_uqd_3UQD_11time_gating_3__set__(o, v);
+    return __pyx_pw_5tangy_4_uqd_10UQDLogic16_11time_gating_3__set__(o, v);
   }
   else {
     PyErr_SetString(PyExc_NotImplementedError, "__del__");
@@ -23099,13 +23101,13 @@ static int __pyx_setprop_5tangy_4_uqd_3UQD_time_gating(PyObject *o, PyObject *v,
   }
 }
 
-static PyObject *__pyx_getprop_5tangy_4_uqd_3UQD_time_gate_width(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5tangy_4_uqd_3UQD_15time_gate_width_1__get__(o);
+static PyObject *__pyx_getprop_5tangy_4_uqd_10UQDLogic16_time_gate_width(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5tangy_4_uqd_10UQDLogic16_15time_gate_width_1__get__(o);
 }
 
-static int __pyx_setprop_5tangy_4_uqd_3UQD_time_gate_width(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+static int __pyx_setprop_5tangy_4_uqd_10UQDLogic16_time_gate_width(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
   if (v) {
-    return __pyx_pw_5tangy_4_uqd_3UQD_15time_gate_width_3__set__(o, v);
+    return __pyx_pw_5tangy_4_uqd_10UQDLogic16_15time_gate_width_3__set__(o, v);
   }
   else {
     PyErr_SetString(PyExc_NotImplementedError, "__del__");
@@ -23113,65 +23115,65 @@ static int __pyx_setprop_5tangy_4_uqd_3UQD_time_gate_width(PyObject *o, PyObject
   }
 }
 
-static PyMethodDef __pyx_methods_5tangy_4_uqd_UQD[] = {
-  {"is_open", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_3UQD_3is_open, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
-  {"__close__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_3UQD_5__close__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
-  {"__exit__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_3UQD_7__exit__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
-  {"calibrate", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_3UQD_9calibrate, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
-  {"start_timetags", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_3UQD_11start_timetags, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_5tangy_4_uqd_3UQD_10start_timetags},
-  {"stop_timetags", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_3UQD_13stop_timetags, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_5tangy_4_uqd_3UQD_12stop_timetags},
-  {"error_text", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_3UQD_17error_text, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
-  {"buffer", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_3UQD_19buffer, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
-  {"__reduce_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_3UQD_23__reduce_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
-  {"__setstate_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_3UQD_25__setstate_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+static PyMethodDef __pyx_methods_5tangy_4_uqd_UQDLogic16[] = {
+  {"is_open", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_10UQDLogic16_3is_open, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+  {"__close__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_10UQDLogic16_5__close__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+  {"__exit__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_10UQDLogic16_7__exit__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+  {"calibrate", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_10UQDLogic16_9calibrate, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+  {"start_timetags", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_10UQDLogic16_11start_timetags, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_5tangy_4_uqd_10UQDLogic16_10start_timetags},
+  {"stop_timetags", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_10UQDLogic16_13stop_timetags, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_5tangy_4_uqd_10UQDLogic16_12stop_timetags},
+  {"error_text", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_10UQDLogic16_17error_text, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+  {"buffer", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_10UQDLogic16_19buffer, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_5tangy_4_uqd_10UQDLogic16_18buffer},
+  {"__reduce_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_10UQDLogic16_23__reduce_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+  {"__setstate_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5tangy_4_uqd_10UQDLogic16_25__setstate_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
   {0, 0, 0, 0}
 };
 
-static struct PyGetSetDef __pyx_getsets_5tangy_4_uqd_UQD[] = {
-  {(char *)"led_brightness", __pyx_getprop_5tangy_4_uqd_3UQD_led_brightness, __pyx_setprop_5tangy_4_uqd_3UQD_led_brightness, (char *)PyDoc_STR("\n        Brightness of front panel LED.\n\n        Args:\n            percent (int): brightness in percent\n        "), 0},
-  {(char *)"fpga_version", __pyx_getprop_5tangy_4_uqd_3UQD_fpga_version, 0, (char *)PyDoc_STR("\n        Version of FPGA design on device.\n\n        Returns:\n            (int): fpga design version\n        "), 0},
-  {(char *)"resolution", __pyx_getprop_5tangy_4_uqd_3UQD_resolution, 0, (char *)PyDoc_STR("\n        Get the resolution of the device.\n\n        Depending on the device firmware this will return either 78.125ps or\n        156.25ps.\n\n        Returns:\n            (float): resolution\n        "), 0},
-  {(char *)"number_of_channels", __pyx_getprop_5tangy_4_uqd_3UQD_number_of_channels, 0, (char *)PyDoc_STR("\n        Number of channels enabled on the device.\n\n        Depending on loaded firmware this will return either 8 or 16\n\n        Returns:\n            (int): number of useable input channels\n        "), 0},
-  {(char *)"input_threshold", __pyx_getprop_5tangy_4_uqd_3UQD_input_threshold, __pyx_setprop_5tangy_4_uqd_3UQD_input_threshold, (char *)PyDoc_STR("\n        Input thresholds\n\n        Returns:\n            List[float64]: Currently set input thresholds\n        "), 0},
-  {(char *)"inversion", __pyx_getprop_5tangy_4_uqd_3UQD_inversion, __pyx_setprop_5tangy_4_uqd_3UQD_inversion, (char *)PyDoc_STR("\n        Channels set to use negative edge triggering\n\n        Returns:\n            (List[uint8]): List of channels set to trigger on negative edges\n        "), 0},
-  {(char *)"input_delay", __pyx_getprop_5tangy_4_uqd_3UQD_input_delay, __pyx_setprop_5tangy_4_uqd_3UQD_input_delay, (char *)PyDoc_STR("\n        Delays in seconds set on each channel\n\n        Returns:\n            (float64): delays on each channel in seconds\n        "), 0},
-  {(char *)"function_generator", __pyx_getprop_5tangy_4_uqd_3UQD_function_generator, __pyx_setprop_5tangy_4_uqd_3UQD_function_generator, (char *)PyDoc_STR("\n        Function generator period and width, both in units of 5ns\n        "), 0},
-  {(char *)"external_10MHz_reference", __pyx_getprop_5tangy_4_uqd_3UQD_external_10MHz_reference, __pyx_setprop_5tangy_4_uqd_3UQD_external_10MHz_reference, (char *)PyDoc_STR("\n        "), 0},
-  {(char *)"filter_min_count", __pyx_getprop_5tangy_4_uqd_3UQD_filter_min_count, __pyx_setprop_5tangy_4_uqd_3UQD_filter_min_count, (char *)PyDoc_STR("\n        Minimum size of a group to be transmitted to the host computer.\n\n        Returns:\n            (int): Minimum size of a group to be transmitted\n        "), 0},
-  {(char *)"filter_max_time", __pyx_getprop_5tangy_4_uqd_3UQD_filter_max_time, __pyx_setprop_5tangy_4_uqd_3UQD_filter_max_time, (char *)PyDoc_STR("\n        Maximum time between two pulses in the same group.\n\n        Returns:\n            (float): maximum time between two pulses in the same group\n        "), 0},
-  {(char *)"exclusion", __pyx_getprop_5tangy_4_uqd_3UQD_exclusion, __pyx_setprop_5tangy_4_uqd_3UQD_exclusion, (char *)PyDoc_STR("\n        "), 0},
-  {(char *)"level_gate", __pyx_getprop_5tangy_4_uqd_3UQD_level_gate, __pyx_setprop_5tangy_4_uqd_3UQD_level_gate, (char *)PyDoc_STR("\n        "), 0},
-  {(char *)"time_gating", __pyx_getprop_5tangy_4_uqd_3UQD_time_gating, __pyx_setprop_5tangy_4_uqd_3UQD_time_gating, (char *)PyDoc_STR("\n        "), 0},
-  {(char *)"time_gate_width", __pyx_getprop_5tangy_4_uqd_3UQD_time_gate_width, __pyx_setprop_5tangy_4_uqd_3UQD_time_gate_width, (char *)PyDoc_STR("\n        "), 0},
+static struct PyGetSetDef __pyx_getsets_5tangy_4_uqd_UQDLogic16[] = {
+  {(char *)"led_brightness", __pyx_getprop_5tangy_4_uqd_10UQDLogic16_led_brightness, __pyx_setprop_5tangy_4_uqd_10UQDLogic16_led_brightness, (char *)PyDoc_STR("\n        Brightness of front panel LED.\n\n        Args:\n            percent (int): brightness in percent\n        "), 0},
+  {(char *)"fpga_version", __pyx_getprop_5tangy_4_uqd_10UQDLogic16_fpga_version, 0, (char *)PyDoc_STR("\n        Version of FPGA design on device.\n\n        Returns:\n            (int): fpga design version\n        "), 0},
+  {(char *)"resolution", __pyx_getprop_5tangy_4_uqd_10UQDLogic16_resolution, 0, (char *)PyDoc_STR("\n        Get the resolution of the device.\n\n        Depending on the device firmware this will return either 78.125ps or\n        156.25ps.\n\n        Returns:\n            (float): resolution\n        "), 0},
+  {(char *)"number_of_channels", __pyx_getprop_5tangy_4_uqd_10UQDLogic16_number_of_channels, 0, (char *)PyDoc_STR("\n        Number of channels enabled on the device.\n\n        Depending on loaded firmware this will return either 8 or 16\n\n        Returns:\n            (int): number of useable input channels\n        "), 0},
+  {(char *)"input_threshold", __pyx_getprop_5tangy_4_uqd_10UQDLogic16_input_threshold, __pyx_setprop_5tangy_4_uqd_10UQDLogic16_input_threshold, (char *)PyDoc_STR("\n        Input thresholds\n\n        Returns:\n            List[float64]: Currently set input thresholds\n        "), 0},
+  {(char *)"inversion", __pyx_getprop_5tangy_4_uqd_10UQDLogic16_inversion, __pyx_setprop_5tangy_4_uqd_10UQDLogic16_inversion, (char *)PyDoc_STR("\n        Channels set to use negative edge triggering\n\n        Returns:\n            (List[uint8]): List of channels set to trigger on negative edges\n        "), 0},
+  {(char *)"input_delay", __pyx_getprop_5tangy_4_uqd_10UQDLogic16_input_delay, __pyx_setprop_5tangy_4_uqd_10UQDLogic16_input_delay, (char *)PyDoc_STR("\n        Delays in seconds set on each channel\n\n        Returns:\n            (float64): delays on each channel in seconds\n        "), 0},
+  {(char *)"function_generator", __pyx_getprop_5tangy_4_uqd_10UQDLogic16_function_generator, __pyx_setprop_5tangy_4_uqd_10UQDLogic16_function_generator, (char *)PyDoc_STR("\n        Function generator period and width, both in units of 5ns\n        "), 0},
+  {(char *)"external_10MHz_reference", __pyx_getprop_5tangy_4_uqd_10UQDLogic16_external_10MHz_reference, __pyx_setprop_5tangy_4_uqd_10UQDLogic16_external_10MHz_reference, (char *)PyDoc_STR("\n        "), 0},
+  {(char *)"filter_min_count", __pyx_getprop_5tangy_4_uqd_10UQDLogic16_filter_min_count, __pyx_setprop_5tangy_4_uqd_10UQDLogic16_filter_min_count, (char *)PyDoc_STR("\n        Minimum size of a group to be transmitted to the host computer.\n\n        Returns:\n            (int): Minimum size of a group to be transmitted\n        "), 0},
+  {(char *)"filter_max_time", __pyx_getprop_5tangy_4_uqd_10UQDLogic16_filter_max_time, __pyx_setprop_5tangy_4_uqd_10UQDLogic16_filter_max_time, (char *)PyDoc_STR("\n        Maximum time between two pulses in the same group.\n\n        Returns:\n            (float): maximum time between two pulses in the same group\n        "), 0},
+  {(char *)"exclusion", __pyx_getprop_5tangy_4_uqd_10UQDLogic16_exclusion, __pyx_setprop_5tangy_4_uqd_10UQDLogic16_exclusion, (char *)PyDoc_STR("\n        "), 0},
+  {(char *)"level_gate", __pyx_getprop_5tangy_4_uqd_10UQDLogic16_level_gate, __pyx_setprop_5tangy_4_uqd_10UQDLogic16_level_gate, (char *)PyDoc_STR("\n        "), 0},
+  {(char *)"time_gating", __pyx_getprop_5tangy_4_uqd_10UQDLogic16_time_gating, __pyx_setprop_5tangy_4_uqd_10UQDLogic16_time_gating, (char *)PyDoc_STR("\n        "), 0},
+  {(char *)"time_gate_width", __pyx_getprop_5tangy_4_uqd_10UQDLogic16_time_gate_width, __pyx_setprop_5tangy_4_uqd_10UQDLogic16_time_gate_width, (char *)PyDoc_STR("\n        "), 0},
   {0, 0, 0, 0, 0}
 };
 #if CYTHON_USE_TYPE_SPECS
-static PyType_Slot __pyx_type_5tangy_4_uqd_UQD_slots[] = {
-  {Py_tp_dealloc, (void *)__pyx_tp_dealloc_5tangy_4_uqd_UQD},
+static PyType_Slot __pyx_type_5tangy_4_uqd_UQDLogic16_slots[] = {
+  {Py_tp_dealloc, (void *)__pyx_tp_dealloc_5tangy_4_uqd_UQDLogic16},
   {Py_tp_doc, (void *)PyDoc_STR("\n\n    NOTE:\n        Linux users will need to add the following file to their system,         ``/etc/udev/rules.d/UQDLogic16.rules`` that contains the following line         ``ATTR{idVendor}==\"0bd0\", ATTR{idProduct}==\"f100\", MODE=\"666\"``. This         will ensure that the device does not need additional root privaledges to         operate. After this file has been created the user will have to log out         and the log in again or run the following command         ``sudo udevadm control --reload-rules && udevadm trigger`` to update the         current device rules.\n\n    ")},
-  {Py_tp_traverse, (void *)__pyx_tp_traverse_5tangy_4_uqd_UQD},
-  {Py_tp_clear, (void *)__pyx_tp_clear_5tangy_4_uqd_UQD},
-  {Py_tp_methods, (void *)__pyx_methods_5tangy_4_uqd_UQD},
-  {Py_tp_getset, (void *)__pyx_getsets_5tangy_4_uqd_UQD},
-  {Py_tp_init, (void *)__pyx_pw_5tangy_4_uqd_3UQD_1__init__},
-  {Py_tp_new, (void *)__pyx_tp_new_5tangy_4_uqd_UQD},
+  {Py_tp_traverse, (void *)__pyx_tp_traverse_5tangy_4_uqd_UQDLogic16},
+  {Py_tp_clear, (void *)__pyx_tp_clear_5tangy_4_uqd_UQDLogic16},
+  {Py_tp_methods, (void *)__pyx_methods_5tangy_4_uqd_UQDLogic16},
+  {Py_tp_getset, (void *)__pyx_getsets_5tangy_4_uqd_UQDLogic16},
+  {Py_tp_init, (void *)__pyx_pw_5tangy_4_uqd_10UQDLogic16_1__init__},
+  {Py_tp_new, (void *)__pyx_tp_new_5tangy_4_uqd_UQDLogic16},
   {0, 0},
 };
-static PyType_Spec __pyx_type_5tangy_4_uqd_UQD_spec = {
-  "tangy._uqd.UQD",
-  sizeof(struct __pyx_obj_5tangy_4_uqd_UQD),
+static PyType_Spec __pyx_type_5tangy_4_uqd_UQDLogic16_spec = {
+  "tangy._uqd.UQDLogic16",
+  sizeof(struct __pyx_obj_5tangy_4_uqd_UQDLogic16),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC,
-  __pyx_type_5tangy_4_uqd_UQD_slots,
+  __pyx_type_5tangy_4_uqd_UQDLogic16_slots,
 };
 #else
 
-static PyTypeObject __pyx_type_5tangy_4_uqd_UQD = {
+static PyTypeObject __pyx_type_5tangy_4_uqd_UQDLogic16 = {
   PyVarObject_HEAD_INIT(0, 0)
-  "tangy._uqd.""UQD", /*tp_name*/
-  sizeof(struct __pyx_obj_5tangy_4_uqd_UQD), /*tp_basicsize*/
+  "tangy._uqd.""UQDLogic16", /*tp_name*/
+  sizeof(struct __pyx_obj_5tangy_4_uqd_UQDLogic16), /*tp_basicsize*/
   0, /*tp_itemsize*/
-  __pyx_tp_dealloc_5tangy_4_uqd_UQD, /*tp_dealloc*/
+  __pyx_tp_dealloc_5tangy_4_uqd_UQDLogic16, /*tp_dealloc*/
   #if PY_VERSION_HEX < 0x030800b4
   0, /*tp_print*/
   #endif
@@ -23198,15 +23200,15 @@ static PyTypeObject __pyx_type_5tangy_4_uqd_UQD = {
   0, /*tp_as_buffer*/
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC, /*tp_flags*/
   PyDoc_STR("\n\n    NOTE:\n        Linux users will need to add the following file to their system,         ``/etc/udev/rules.d/UQDLogic16.rules`` that contains the following line         ``ATTR{idVendor}==\"0bd0\", ATTR{idProduct}==\"f100\", MODE=\"666\"``. This         will ensure that the device does not need additional root privaledges to         operate. After this file has been created the user will have to log out         and the log in again or run the following command         ``sudo udevadm control --reload-rules && udevadm trigger`` to update the         current device rules.\n\n    "), /*tp_doc*/
-  __pyx_tp_traverse_5tangy_4_uqd_UQD, /*tp_traverse*/
-  __pyx_tp_clear_5tangy_4_uqd_UQD, /*tp_clear*/
+  __pyx_tp_traverse_5tangy_4_uqd_UQDLogic16, /*tp_traverse*/
+  __pyx_tp_clear_5tangy_4_uqd_UQDLogic16, /*tp_clear*/
   0, /*tp_richcompare*/
   0, /*tp_weaklistoffset*/
   0, /*tp_iter*/
   0, /*tp_iternext*/
-  __pyx_methods_5tangy_4_uqd_UQD, /*tp_methods*/
+  __pyx_methods_5tangy_4_uqd_UQDLogic16, /*tp_methods*/
   0, /*tp_members*/
-  __pyx_getsets_5tangy_4_uqd_UQD, /*tp_getset*/
+  __pyx_getsets_5tangy_4_uqd_UQDLogic16, /*tp_getset*/
   0, /*tp_base*/
   0, /*tp_dict*/
   0, /*tp_descr_get*/
@@ -23214,9 +23216,9 @@ static PyTypeObject __pyx_type_5tangy_4_uqd_UQD = {
   #if !CYTHON_USE_TYPE_SPECS
   0, /*tp_dictoffset*/
   #endif
-  __pyx_pw_5tangy_4_uqd_3UQD_1__init__, /*tp_init*/
+  __pyx_pw_5tangy_4_uqd_10UQDLogic16_1__init__, /*tp_init*/
   0, /*tp_alloc*/
-  __pyx_tp_new_5tangy_4_uqd_UQD, /*tp_new*/
+  __pyx_tp_new_5tangy_4_uqd_UQDLogic16, /*tp_new*/
   0, /*tp_free*/
   0, /*tp_is_gc*/
   0, /*tp_bases*/
@@ -24268,20 +24270,20 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_kp_u_The_internal_processing_was_too, __pyx_k_The_internal_processing_was_too, sizeof(__pyx_k_The_internal_processing_was_too), 0, 1, 0, 0},
     {&__pyx_n_s_Tuple, __pyx_k_Tuple, sizeof(__pyx_k_Tuple), 0, 0, 1, 1},
     {&__pyx_n_s_TypeError, __pyx_k_TypeError, sizeof(__pyx_k_TypeError), 0, 0, 1, 1},
-    {&__pyx_n_s_UQD, __pyx_k_UQD, sizeof(__pyx_k_UQD), 0, 0, 1, 1},
+    {&__pyx_n_s_UQDLogic16, __pyx_k_UQDLogic16, sizeof(__pyx_k_UQDLogic16), 0, 0, 1, 1},
+    {&__pyx_n_s_UQDLogic16___close, __pyx_k_UQDLogic16___close, sizeof(__pyx_k_UQDLogic16___close), 0, 0, 1, 1},
+    {&__pyx_n_s_UQDLogic16___exit, __pyx_k_UQDLogic16___exit, sizeof(__pyx_k_UQDLogic16___exit), 0, 0, 1, 1},
+    {&__pyx_n_s_UQDLogic16___reduce_cython, __pyx_k_UQDLogic16___reduce_cython, sizeof(__pyx_k_UQDLogic16___reduce_cython), 0, 0, 1, 1},
+    {&__pyx_n_s_UQDLogic16___setstate_cython, __pyx_k_UQDLogic16___setstate_cython, sizeof(__pyx_k_UQDLogic16___setstate_cython), 0, 0, 1, 1},
+    {&__pyx_n_s_UQDLogic16_buffer, __pyx_k_UQDLogic16_buffer, sizeof(__pyx_k_UQDLogic16_buffer), 0, 0, 1, 1},
+    {&__pyx_n_s_UQDLogic16_calibrate, __pyx_k_UQDLogic16_calibrate, sizeof(__pyx_k_UQDLogic16_calibrate), 0, 0, 1, 1},
+    {&__pyx_n_s_UQDLogic16_error_text, __pyx_k_UQDLogic16_error_text, sizeof(__pyx_k_UQDLogic16_error_text), 0, 0, 1, 1},
+    {&__pyx_n_s_UQDLogic16_is_open, __pyx_k_UQDLogic16_is_open, sizeof(__pyx_k_UQDLogic16_is_open), 0, 0, 1, 1},
+    {&__pyx_n_s_UQDLogic16_read_tags, __pyx_k_UQDLogic16_read_tags, sizeof(__pyx_k_UQDLogic16_read_tags), 0, 0, 1, 1},
+    {&__pyx_n_s_UQDLogic16_start_timetags, __pyx_k_UQDLogic16_start_timetags, sizeof(__pyx_k_UQDLogic16_start_timetags), 0, 0, 1, 1},
+    {&__pyx_n_s_UQDLogic16_stop_timetags, __pyx_k_UQDLogic16_stop_timetags, sizeof(__pyx_k_UQDLogic16_stop_timetags), 0, 0, 1, 1},
+    {&__pyx_n_s_UQDLogic16_write_to_buffer, __pyx_k_UQDLogic16_write_to_buffer, sizeof(__pyx_k_UQDLogic16_write_to_buffer), 0, 0, 1, 1},
     {&__pyx_n_s_UQD_ERROR_FLAG, __pyx_k_UQD_ERROR_FLAG, sizeof(__pyx_k_UQD_ERROR_FLAG), 0, 0, 1, 1},
-    {&__pyx_n_s_UQD___close, __pyx_k_UQD___close, sizeof(__pyx_k_UQD___close), 0, 0, 1, 1},
-    {&__pyx_n_s_UQD___exit, __pyx_k_UQD___exit, sizeof(__pyx_k_UQD___exit), 0, 0, 1, 1},
-    {&__pyx_n_s_UQD___reduce_cython, __pyx_k_UQD___reduce_cython, sizeof(__pyx_k_UQD___reduce_cython), 0, 0, 1, 1},
-    {&__pyx_n_s_UQD___setstate_cython, __pyx_k_UQD___setstate_cython, sizeof(__pyx_k_UQD___setstate_cython), 0, 0, 1, 1},
-    {&__pyx_n_s_UQD_buffer, __pyx_k_UQD_buffer, sizeof(__pyx_k_UQD_buffer), 0, 0, 1, 1},
-    {&__pyx_n_s_UQD_calibrate, __pyx_k_UQD_calibrate, sizeof(__pyx_k_UQD_calibrate), 0, 0, 1, 1},
-    {&__pyx_n_s_UQD_error_text, __pyx_k_UQD_error_text, sizeof(__pyx_k_UQD_error_text), 0, 0, 1, 1},
-    {&__pyx_n_s_UQD_is_open, __pyx_k_UQD_is_open, sizeof(__pyx_k_UQD_is_open), 0, 0, 1, 1},
-    {&__pyx_n_s_UQD_read_tags, __pyx_k_UQD_read_tags, sizeof(__pyx_k_UQD_read_tags), 0, 0, 1, 1},
-    {&__pyx_n_s_UQD_start_timetags, __pyx_k_UQD_start_timetags, sizeof(__pyx_k_UQD_start_timetags), 0, 0, 1, 1},
-    {&__pyx_n_s_UQD_stop_timetags, __pyx_k_UQD_stop_timetags, sizeof(__pyx_k_UQD_stop_timetags), 0, 0, 1, 1},
-    {&__pyx_n_s_UQD_write_to_buffer, __pyx_k_UQD_write_to_buffer, sizeof(__pyx_k_UQD_write_to_buffer), 0, 0, 1, 1},
     {&__pyx_kp_s_Unable_to_convert_item_to_object, __pyx_k_Unable_to_convert_item_to_object, sizeof(__pyx_k_Unable_to_convert_item_to_object), 0, 0, 1, 0},
     {&__pyx_n_s_Union, __pyx_k_Union, sizeof(__pyx_k_Union), 0, 0, 1, 1},
     {&__pyx_n_s_ValueError, __pyx_k_ValueError, sizeof(__pyx_k_ValueError), 0, 0, 1, 1},
@@ -24707,19 +24709,19 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *         ...
  * 
  *     def buffer(self) -> TangyBufferStandard:             # <<<<<<<<<<<<<<
- *         return self._buffer
- * 
+ *         """
+ *         Acquire buffer
  */
   __pyx_codeobj__36 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__28, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tangy_src__uqd_py, __pyx_n_s_buffer, 465, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__36)) __PYX_ERR(0, 465, __pyx_L1_error)
 
-  /* "tangy_src/_uqd.py":468
+  /* "tangy_src/_uqd.py":471
  *         return self._buffer
  * 
  *     @cython.ccall             # <<<<<<<<<<<<<<
  *     def write_to_buffer(self):
- *         (count, channels, tags) = self.read_tags()
+ *         """
  */
-  __pyx_codeobj__37 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__28, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tangy_src__uqd_py, __pyx_n_s_write_to_buffer, 468, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__37)) __PYX_ERR(0, 468, __pyx_L1_error)
+  __pyx_codeobj__37 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__28, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tangy_src__uqd_py, __pyx_n_s_write_to_buffer, 471, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__37)) __PYX_ERR(0, 471, __pyx_L1_error)
 
   /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
@@ -24831,35 +24833,35 @@ static int __Pyx_modinit_type_init_code(void) {
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__Pyx_modinit_type_init_code", 0);
   /*--- Type init code ---*/
-  __pyx_vtabptr_5tangy_4_uqd_UQD = &__pyx_vtable_5tangy_4_uqd_UQD;
-  __pyx_vtable_5tangy_4_uqd_UQD.read_tags = (PyObject *(*)(struct __pyx_obj_5tangy_4_uqd_UQD *, int __pyx_skip_dispatch))__pyx_f_5tangy_4_uqd_3UQD_read_tags;
-  __pyx_vtable_5tangy_4_uqd_UQD.write_to_buffer = (PyObject *(*)(struct __pyx_obj_5tangy_4_uqd_UQD *, int __pyx_skip_dispatch))__pyx_f_5tangy_4_uqd_3UQD_write_to_buffer;
+  __pyx_vtabptr_5tangy_4_uqd_UQDLogic16 = &__pyx_vtable_5tangy_4_uqd_UQDLogic16;
+  __pyx_vtable_5tangy_4_uqd_UQDLogic16.read_tags = (PyObject *(*)(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *, int __pyx_skip_dispatch))__pyx_f_5tangy_4_uqd_10UQDLogic16_read_tags;
+  __pyx_vtable_5tangy_4_uqd_UQDLogic16.write_to_buffer = (PyObject *(*)(struct __pyx_obj_5tangy_4_uqd_UQDLogic16 *, int __pyx_skip_dispatch))__pyx_f_5tangy_4_uqd_10UQDLogic16_write_to_buffer;
   #if CYTHON_USE_TYPE_SPECS
-  __pyx_ptype_5tangy_4_uqd_UQD = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_5tangy_4_uqd_UQD_spec, NULL); if (unlikely(!__pyx_ptype_5tangy_4_uqd_UQD)) __PYX_ERR(0, 64, __pyx_L1_error)
-  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_5tangy_4_uqd_UQD_spec, __pyx_ptype_5tangy_4_uqd_UQD) < 0) __PYX_ERR(0, 64, __pyx_L1_error)
+  __pyx_ptype_5tangy_4_uqd_UQDLogic16 = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_5tangy_4_uqd_UQDLogic16_spec, NULL); if (unlikely(!__pyx_ptype_5tangy_4_uqd_UQDLogic16)) __PYX_ERR(0, 64, __pyx_L1_error)
+  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_5tangy_4_uqd_UQDLogic16_spec, __pyx_ptype_5tangy_4_uqd_UQDLogic16) < 0) __PYX_ERR(0, 64, __pyx_L1_error)
   #else
-  __pyx_ptype_5tangy_4_uqd_UQD = &__pyx_type_5tangy_4_uqd_UQD;
+  __pyx_ptype_5tangy_4_uqd_UQDLogic16 = &__pyx_type_5tangy_4_uqd_UQDLogic16;
   #endif
   #if !CYTHON_COMPILING_IN_LIMITED_API
   #endif
   #if !CYTHON_USE_TYPE_SPECS
-  if (__Pyx_PyType_Ready(__pyx_ptype_5tangy_4_uqd_UQD) < 0) __PYX_ERR(0, 64, __pyx_L1_error)
+  if (__Pyx_PyType_Ready(__pyx_ptype_5tangy_4_uqd_UQDLogic16) < 0) __PYX_ERR(0, 64, __pyx_L1_error)
   #endif
   #if PY_MAJOR_VERSION < 3
-  __pyx_ptype_5tangy_4_uqd_UQD->tp_print = 0;
+  __pyx_ptype_5tangy_4_uqd_UQDLogic16->tp_print = 0;
   #endif
   #if !CYTHON_COMPILING_IN_LIMITED_API
-  if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_ptype_5tangy_4_uqd_UQD->tp_dictoffset && __pyx_ptype_5tangy_4_uqd_UQD->tp_getattro == PyObject_GenericGetAttr)) {
-    __pyx_ptype_5tangy_4_uqd_UQD->tp_getattro = __Pyx_PyObject_GenericGetAttr;
+  if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_ptype_5tangy_4_uqd_UQDLogic16->tp_dictoffset && __pyx_ptype_5tangy_4_uqd_UQDLogic16->tp_getattro == PyObject_GenericGetAttr)) {
+    __pyx_ptype_5tangy_4_uqd_UQDLogic16->tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
   #endif
-  if (__Pyx_SetVtable(__pyx_ptype_5tangy_4_uqd_UQD, __pyx_vtabptr_5tangy_4_uqd_UQD) < 0) __PYX_ERR(0, 64, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_ptype_5tangy_4_uqd_UQDLogic16, __pyx_vtabptr_5tangy_4_uqd_UQDLogic16) < 0) __PYX_ERR(0, 64, __pyx_L1_error)
   #if !CYTHON_COMPILING_IN_LIMITED_API
-  if (__Pyx_MergeVtables(__pyx_ptype_5tangy_4_uqd_UQD) < 0) __PYX_ERR(0, 64, __pyx_L1_error)
+  if (__Pyx_MergeVtables(__pyx_ptype_5tangy_4_uqd_UQDLogic16) < 0) __PYX_ERR(0, 64, __pyx_L1_error)
   #endif
-  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_UQD, (PyObject *) __pyx_ptype_5tangy_4_uqd_UQD) < 0) __PYX_ERR(0, 64, __pyx_L1_error)
+  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_UQDLogic16, (PyObject *) __pyx_ptype_5tangy_4_uqd_UQDLogic16) < 0) __PYX_ERR(0, 64, __pyx_L1_error)
   #if !CYTHON_COMPILING_IN_LIMITED_API
-  if (__Pyx_setup_reduce((PyObject *) __pyx_ptype_5tangy_4_uqd_UQD) < 0) __PYX_ERR(0, 64, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject *) __pyx_ptype_5tangy_4_uqd_UQDLogic16) < 0) __PYX_ERR(0, 64, __pyx_L1_error)
   #endif
   __pyx_vtabptr_array = &__pyx_vtable_array;
   __pyx_vtable_array.get_memview = (PyObject *(*)(struct __pyx_array_obj *))__pyx_array_get_memview;
@@ -26032,8 +26034,8 @@ if (!__Pyx_RefNanny) {
  *     _time_gate: bool = False
  *     _gate_width: int
  */
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQD, __pyx_n_s_10MHz, Py_False) < 0) __PYX_ERR(0, 98, __pyx_L1_error)
-  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQD);
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQDLogic16, __pyx_n_s_10MHz, Py_False) < 0) __PYX_ERR(0, 98, __pyx_L1_error)
+  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQDLogic16);
 
   /* "tangy_src/_uqd.py":99
  *     _exclusion: ndarray(uint8)
@@ -26042,8 +26044,8 @@ if (!__Pyx_RefNanny) {
  *     _gate_width: int
  *     _buffer: TangyBufferStandard
  */
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQD, __pyx_n_s_time_gate, Py_False) < 0) __PYX_ERR(0, 99, __pyx_L1_error)
-  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQD);
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQDLogic16, __pyx_n_s_time_gate, Py_False) < 0) __PYX_ERR(0, 99, __pyx_L1_error)
+  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQDLogic16);
 
   /* "tangy_src/_uqd.py":103
  *     _buffer: TangyBufferStandard
@@ -26079,13 +26081,13 @@ if (!__Pyx_RefNanny) {
   __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 133, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_return, __pyx_n_s_bool) < 0) __PYX_ERR(0, 133, __pyx_L1_error)
-  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_3UQD_3is_open, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQD_is_open, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__27)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 133, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_10UQDLogic16_3is_open, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQDLogic16_is_open, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__27)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 133, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_7, __pyx_t_4);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQD, __pyx_n_s_is_open, __pyx_t_7) < 0) __PYX_ERR(0, 133, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQDLogic16, __pyx_n_s_is_open, __pyx_t_7) < 0) __PYX_ERR(0, 133, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQD);
+  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQDLogic16);
 
   /* "tangy_src/_uqd.py":140
  *         return False
@@ -26094,11 +26096,11 @@ if (!__Pyx_RefNanny) {
  *         print('Gracefully closing connection to device...')
  *         self._c_timetag.Close()
  */
-  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_3UQD_5__close__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQD___close, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__29)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 140, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_10UQDLogic16_5__close__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQDLogic16___close, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__29)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 140, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQD, __pyx_n_s_close, __pyx_t_7) < 0) __PYX_ERR(0, 140, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQDLogic16, __pyx_n_s_close, __pyx_t_7) < 0) __PYX_ERR(0, 140, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQD);
+  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQDLogic16);
 
   /* "tangy_src/_uqd.py":144
  *         self._c_timetag.Close()
@@ -26107,11 +26109,11 @@ if (!__Pyx_RefNanny) {
  *         print('Gracefully closing connection to device...')
  *         self._c_timetag.Close()
  */
-  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_3UQD_7__exit__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQD___exit, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__30)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 144, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_10UQDLogic16_7__exit__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQDLogic16___exit, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__30)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 144, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQD, __pyx_n_s_exit, __pyx_t_7) < 0) __PYX_ERR(0, 144, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQDLogic16, __pyx_n_s_exit, __pyx_t_7) < 0) __PYX_ERR(0, 144, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQD);
+  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQDLogic16);
 
   /* "tangy_src/_uqd.py":148
  *         self._c_timetag.Close()
@@ -26120,11 +26122,11 @@ if (!__Pyx_RefNanny) {
  *         self._c_timetag.Calibrate()
  * 
  */
-  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_3UQD_9calibrate, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQD_calibrate, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__31)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 148, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_10UQDLogic16_9calibrate, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQDLogic16_calibrate, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__31)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 148, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQD, __pyx_n_s_calibrate, __pyx_t_7) < 0) __PYX_ERR(0, 148, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQDLogic16, __pyx_n_s_calibrate, __pyx_t_7) < 0) __PYX_ERR(0, 148, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQD);
+  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQDLogic16);
 
   /* "tangy_src/_uqd.py":334
  *         self._external_10MHz_reference = value
@@ -26133,11 +26135,11 @@ if (!__Pyx_RefNanny) {
  *         """
  *         Start transmitting timetags from the device to the host computer
  */
-  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_3UQD_11start_timetags, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQD_start_timetags, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__32)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 334, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_10UQDLogic16_11start_timetags, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQDLogic16_start_timetags, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__32)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 334, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQD, __pyx_n_s_start_timetags, __pyx_t_7) < 0) __PYX_ERR(0, 334, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQDLogic16, __pyx_n_s_start_timetags, __pyx_t_7) < 0) __PYX_ERR(0, 334, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQD);
+  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQDLogic16);
 
   /* "tangy_src/_uqd.py":340
  *         self._c_timetag.StartTimetags()
@@ -26146,11 +26148,11 @@ if (!__Pyx_RefNanny) {
  *         """
  *         Stop transmitting timetags from the device to the host computer
  */
-  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_3UQD_13stop_timetags, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQD_stop_timetags, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__33)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 340, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_10UQDLogic16_13stop_timetags, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQDLogic16_stop_timetags, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__33)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 340, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQD, __pyx_n_s_stop_timetags, __pyx_t_7) < 0) __PYX_ERR(0, 340, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQDLogic16, __pyx_n_s_stop_timetags, __pyx_t_7) < 0) __PYX_ERR(0, 340, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQD);
+  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQDLogic16);
 
   /* "tangy_src/_uqd.py":346
  *         self._c_timetag.StopTimetags()
@@ -26159,11 +26161,11 @@ if (!__Pyx_RefNanny) {
  *     def read_tags(self) -> Tuple[int, List[uint8], List[uint64]]:
  *         count: int = self._c_timetag.ReadTags(self._channel_ptr, self._timetag_ptr)
  */
-  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_3UQD_15read_tags, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQD_read_tags, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__34)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 346, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_10UQDLogic16_15read_tags, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQDLogic16_read_tags, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__34)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 346, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQD, __pyx_n_s_read_tags, __pyx_t_7) < 0) __PYX_ERR(0, 346, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQDLogic16, __pyx_n_s_read_tags, __pyx_t_7) < 0) __PYX_ERR(0, 346, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQD);
+  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQDLogic16);
 
   /* "tangy_src/_uqd.py":462
  *         self._time_gate_width = duration
@@ -26172,49 +26174,49 @@ if (!__Pyx_RefNanny) {
  *         ...
  * 
  */
-  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_3UQD_17error_text, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQD_error_text, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__35)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 462, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_10UQDLogic16_17error_text, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQDLogic16_error_text, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__35)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 462, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQD, __pyx_n_s_error_text, __pyx_t_7) < 0) __PYX_ERR(0, 462, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQDLogic16, __pyx_n_s_error_text, __pyx_t_7) < 0) __PYX_ERR(0, 462, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQD);
+  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQDLogic16);
 
   /* "tangy_src/_uqd.py":465
  *         ...
  * 
  *     def buffer(self) -> TangyBufferStandard:             # <<<<<<<<<<<<<<
- *         return self._buffer
- * 
+ *         """
+ *         Acquire buffer
  */
   __pyx_t_7 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 465, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   if (PyDict_SetItem(__pyx_t_7, __pyx_n_s_return, __pyx_n_s_TangyBufferStandard) < 0) __PYX_ERR(0, 465, __pyx_L1_error)
-  __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_3UQD_19buffer, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQD_buffer, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__36)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 465, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_10UQDLogic16_19buffer, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQDLogic16_buffer, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__36)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 465, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_4, __pyx_t_7);
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQD, __pyx_n_s_buffer, __pyx_t_4) < 0) __PYX_ERR(0, 465, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQDLogic16, __pyx_n_s_buffer, __pyx_t_4) < 0) __PYX_ERR(0, 465, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQD);
+  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQDLogic16);
 
-  /* "tangy_src/_uqd.py":468
+  /* "tangy_src/_uqd.py":471
  *         return self._buffer
  * 
  *     @cython.ccall             # <<<<<<<<<<<<<<
  *     def write_to_buffer(self):
- *         (count, channels, tags) = self.read_tags()
+ *         """
  */
-  __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_3UQD_21write_to_buffer, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQD_write_to_buffer, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__37)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 468, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_10UQDLogic16_21write_to_buffer, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQDLogic16_write_to_buffer, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__37)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 471, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQD, __pyx_n_s_write_to_buffer, __pyx_t_4) < 0) __PYX_ERR(0, 468, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_5tangy_4_uqd_UQDLogic16, __pyx_n_s_write_to_buffer, __pyx_t_4) < 0) __PYX_ERR(0, 471, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQD);
+  PyType_Modified(__pyx_ptype_5tangy_4_uqd_UQDLogic16);
 
   /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
  *     raise TypeError, "self._c_logic,self._c_timetag,self._timetag_ptr cannot be converted to a Python object for pickling"
  * def __setstate_cython__(self, __pyx_state):
  */
-  __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_3UQD_23__reduce_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQD___reduce_cython, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__38)); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_10UQDLogic16_23__reduce_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQDLogic16___reduce_cython, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__38)); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_reduce_cython, __pyx_t_4) < 0) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -26225,7 +26227,7 @@ if (!__Pyx_RefNanny) {
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     raise TypeError, "self._c_logic,self._c_timetag,self._timetag_ptr cannot be converted to a Python object for pickling"
  */
-  __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_3UQD_25__setstate_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQD___setstate_cython, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__40)); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 3, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_5tangy_4_uqd_10UQDLogic16_25__setstate_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_UQDLogic16___setstate_cython, NULL, __pyx_n_s_tangy__uqd, __pyx_d, ((PyObject *)__pyx_codeobj__40)); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 3, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_setstate_cython, __pyx_t_4) < 0) __PYX_ERR(1, 3, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;

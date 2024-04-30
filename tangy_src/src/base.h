@@ -169,13 +169,14 @@ typedef struct {
     circular_iterator* iters;
 } pattern_iterator;
 
-// // Vector style storage struct for timetags found in coincidence
-// // length of timetags needs to be truncated to count * n_channels
-// typedef struct {
-//     usize count;
-//     usize n_channels;
-//     u64* timetags;
-// } record_vec;
+typedef struct cc_measurement cc_measurement;
+struct cc_measurement {
+    u64 count;
+    u64 number_of_channels;
+    u8* channels;
+    f64* delays;
+    void* records;
+};
 
 typedef struct delay_histogram_measurement delay_histogram_measurement;
 struct delay_histogram_measurement {
@@ -202,8 +203,6 @@ buffer_name(char* prefix, char* name) {
     char* buffer = (char*)malloc(sizeof(char) * len_buffer);
 
     int len = snprintf(buffer, len_buffer, "%s_%s", prefix, name);
-
-    printf("target[%lu]\tactual[%d]\n", len_buffer, len);
 
     return buffer;
 }

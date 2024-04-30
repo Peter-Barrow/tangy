@@ -4,10 +4,8 @@ from ._tangy import singles  # , Coincidences
 # from ._tangy import JointDelayHistogram, JointHistogram
 from ._tangy import find_zero_delay, zero_delay_result
 from ._tangy import timetrace, PTUFile
-from ._tangy import test_class, test_impl_a, test_impl_b, print_resolution, print_resolution_cy, print_resolution_fused
 
-
-from ._uqd import UQD
+from ._uqd import UQDLogic16
 
 # from .tangy import singles, coincidences, timetrace, find_zero_delay
 # from .tangy import coincidence_measurement

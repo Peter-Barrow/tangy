@@ -863,6 +863,23 @@ JOIN(STUB, coincidence_measurement_delete)(CC_MEASUREMENT* measurement) {
     return measurement;
 }
 
+// static inline cc_measurement
+// JOIN(STUB, cc_measurement_init)(u64 number_of_channels,
+//                                 u8* channels,
+//                                 f64* delays,
+//                                 void* records) {
+//     cc_measurement cc = { 0, number_of_channels, channels, delays };
+//     channels = NULL;
+//     delays = NULL;
+//     cc.records = TT_VECTOR_INIT(128);
+//     return cc;
+// }
+// 
+// static inline void JOIN(STUB, cc_measurement_deinit)(cc_measurement* cc){
+//     TT_VECTOR_DEINIT((TT_VECTOR*)cc.records);
+//     cc = NULL;
+// }
+
 /**
  * @brief Collect records found to be in coincidence according to channels in
  * measurement

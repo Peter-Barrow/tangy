@@ -9,5 +9,8 @@ __pycache__
 *.lib
 *.dll
 *.html
+*.zip
+*.tgz
 wheelhouse
 CTimeTag
+opt

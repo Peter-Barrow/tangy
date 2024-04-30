@@ -1,8 +1,8 @@
 #ifndef __TANGY__
 #define __TANGY__
 
-#include "./clocked_buffer.h"
-#include "./standard_buffer.h"
+#include "clocked_buffer.h"
+#include "standard_buffer.h"
 
 typedef enum { STANDARD, CLOCKED } tangy_buffer_tag;
 
@@ -14,20 +14,20 @@ typedef union {
 typedef struct tangy_buffer tangy_buffer;
 struct tangy_buffer {
     tangy_buffer_tag tag;
-    tangy_buffer_union value;
+    tangy_buffer_union* value;
 };
 
 static inline tangy_buffer
 tangy_buffer_new(tangy_buffer_tag tag) {
     tangy_buffer buffer;
-    buffer.tag = STANDARD;
+    buffer.tag = tag;
 
-    switch (tag) {
+    switch (buffer.tag) {
         case STANDARD:
-            buffer.value.standard = std_buffer_new();
+            buffer.value->standard = std_buffer_new();
             break;
         case CLOCKED:
-            buffer.value.clocked = clk_buffer_new();
+            buffer.value->clocked = clk_buffer_new();
             break;
     }
     return buffer;
@@ -45,29 +45,25 @@ tangy_buffer_init(u64 num_elements,
                   char* name,
                   tangy_buffer* buffer) {
 
+    tbResult result;
     switch (buffer->tag) {
         case STANDARD:
-            return std_buffer_init(num_elements,
-                                   resolution.standard,
-                                   n_channels,
-                                   name,
-                                   buffer->value.standard);
+            result = std_buffer_init(num_elements, resolution.standard, n_channels, name, buffer->value->standard);
+            break;
         case CLOCKED:
-            return clk_buffer_init(num_elements,
-                                   resolution.clocked,
-                                   n_channels,
-                                   name,
-                                   buffer->value.clocked);
+            result = clk_buffer_init(num_elements, resolution.clocked, n_channels, name, buffer->value->clocked);
+            break;
     }
+    return result;
 }
 
 static inline tbResult
 tangy_buffer_deinit(tangy_buffer* buffer) {
     switch (buffer->tag) {
         case STANDARD:
-            return std_buffer_deinit(buffer->value.standard);
+            return std_buffer_deinit(buffer->value->standard);
         case CLOCKED:
-            return clk_buffer_deinit(buffer->value.clocked);
+            return clk_buffer_deinit(buffer->value->clocked);
     }
 }
 

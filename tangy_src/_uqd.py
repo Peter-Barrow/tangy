@@ -61,7 +61,7 @@ UQD_ERROR_FLAG = {
 
 
 @cython.cclass
-class UQD:
+class UQDLogic16:
     """
 
     NOTE:
@@ -463,10 +463,16 @@ class UQD:
         ...
 
     def buffer(self) -> TangyBufferStandard:
+        """
+        Acquire buffer
+        """
         return self._buffer
 
     @cython.ccall
     def write_to_buffer(self):
+        """
+        Write tags directly into buffer
+        """
         (count, channels, tags) = self.read_tags()
         self._buffer.push(channels, tags)
 
