@@ -10,8 +10,8 @@
             ]
         ],
         "depends": [
-            "CTimeTag/Include/CLogic.h",
-            "CTimeTag/Include/CTimeTag.h"
+            "opt/CTimeTag/Include/CLogic.h",
+            "opt/CTimeTag/Include/CTimeTag.h"
         ],
         "extra_compile_args": [
             "-std=c++11",
@@ -1247,8 +1247,8 @@ static CYTHON_INLINE float __PYX_NAN() {
 #include "new"
 #include "stdexcept"
 #include "typeinfo"
-#include "../CTimeTag/Include/CTimeTag.h"
-#include "../CTimeTag/Include/CLogic.h"
+#include "../opt/CTimeTag/Include/CTimeTag.h"
+#include "../opt/CTimeTag/Include/CLogic.h"
 #include <stdlib.h>
 #include <stdint.h>
 #include "pythread.h"

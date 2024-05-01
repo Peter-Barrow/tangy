@@ -1,4 +1,5 @@
 import os
+import sys
 import platform
 import requests
 from bs4 import BeautifulSoup
@@ -24,15 +25,17 @@ def download_url(url: str, file_name: str = "file.zip", chunk_size: int = 512):
 
 url_universalquantum = "https://uqdevices.com/wp-content/uploads/2021/05/CD-V2.35.01.zip"
 zip_universalquantum = "CD-V2.35.01.zip"
-download_url(url_universalquantum, zip_universalquantum)
+#download_url(url_universalquantum, zip_universalquantum)
 
 with zipfile.ZipFile(zip_universalquantum, 'r') as zip:
+    stub = "CD V2.35.01/Applications/DLL/Release_2_35/CTimeTag/"
     for file in zip.namelist():
-        if file.startswith("CD V2.35.01/Applications/DLL/Release_2_35/CTimeTag/"):
-            destination = os.path.join(opt_path, file).replace(
-                "CD V2.35.01/Applications/DLL/Release_2_35/", "")
+        if file.startswith(stub):
+            destination = zip.getinfo(file).filename.replace(stub[:-1], "CTimeTag")
             zip.getinfo(file).filename = destination
-            zip.extract(file, destination)
+            zip.extract(file, path=os.path.relpath(opt_path))
+
+sys.exit()
 
 if "Linux" in platform.platform():
     url_qutag = "https://qutools.com/files/quTAG/QUTAG-LX64QT5-V1.5.10.tgz"

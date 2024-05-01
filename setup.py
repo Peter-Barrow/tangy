@@ -14,6 +14,9 @@ cython_dir = os.path.join("tangy_src")
 compiler_flags = []
 if "Linux" in platform.platform():
     compiler_flags = ["-O2", "-march=native"]
+    uqd_include_dirs = [get_include(), "./opt/CTimeTag/Include"]
+    uqd_libraries = ['usb-1.0', 'timetag64']
+    uqd_libraries_dirs = ['.', './opt/CTimeTag/Linux']
 
 link_args = []
 if "Windows" in platform.platform():
@@ -45,9 +48,9 @@ extensions = [
         sources=[
             os.path.join(cython_dir, "_uqd.py")],
         define_macros=[('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')],
-        include_dirs=[get_include()],
-        libraries=['usb-1.0', 'timetag64'],
-        library_dirs=['.', './CTimeTag/Linux'],
+        include_dirs=uqd_include_dirs,
+        libraries=uqd_libraries,
+        library_dirs=uqd_libraries_dirs,
         extra_compile_args=["-std=c++11"] + compiler_flags,
         language="c++",
         optional=os.environ.get('CIBUILDWHEEL', '0') != '1',

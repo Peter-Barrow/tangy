@@ -1,7 +1,7 @@
 from libcpp cimport bool
 from libcpp.string cimport string
 
-cdef extern from "../opt/CTimeTag/Include/CTimeTag.h" namespace "TimeTag"
+cdef extern from "../opt/CTimeTag/Include/CTimeTag.h" namespace "TimeTag":
     cdef cppclass CTimeTag:
         CTimeTag()
 
