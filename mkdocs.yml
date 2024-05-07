@@ -61,26 +61,26 @@ plugins:
             show_signature_annotations: true
             show_category_heading: true
             summary: true
-  - mkdoxy:
-        projects:
-          tangy:
-            src-dirs: tangy_src/_ext/src/
-            full-doc: True
-            doxy-cfg:
-              FILE_PATTERNS: "*.c *.h*"
-              RECURSIVE: True
+              # - mkdoxy:
+              #       projects:
+              #         tangy:
+              #           src-dirs: tangy_src/_ext/src/
+              #           full-doc: True
+              #           doxy-cfg:
+              #             FILE_PATTERNS: "*.c *.h*"
+              #             RECURSIVE: True
 
 nav:
   - "Home": index.md
   - "API Reference": api.md
-  - "C-API":
-    - "Links": "tangy/links.md"
-    - "Functions": "tangy/functions.md"
-    - "Variables": "tangy/variables.md"
-    - "Macros": "tangy/macros.md"
-    - "Files": "tangy/files.md"
-    - "annotated": "tangy/annotated.md"
-    - "standard_buffer": "tangy/standard__buffer_8h.md"
+    # - "C-API":
+    #   - "Links": "tangy/links.md"
+    #   - "Functions": "tangy/functions.md"
+    #   - "Variables": "tangy/variables.md"
+    #   - "Macros": "tangy/macros.md"
+    #   - "Files": "tangy/files.md"
+    #   - "annotated": "tangy/annotated.md"
+    #   - "standard_buffer": "tangy/standard__buffer_8h.md"
   - "License": license.md
 
 extra:
