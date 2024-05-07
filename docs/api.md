@@ -86,7 +86,7 @@
         show_source: false
 
 ## Devices
-### :::tangy.UQD
+### :::tangy._uqd.UQDLogic16
     options:
         show_root_heading: true
         show_source: false

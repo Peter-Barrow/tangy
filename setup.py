@@ -7,15 +7,18 @@ from Cython.Build import build_ext, cythonize
 import sys
 from setuptools import setup, Extension, Distribution
 
-# cython_dir = os.path.join("tangy/_ext")
 cython_dir = os.path.join("tangy_src")
 # os.environ["CC"] = "x86_64-w64-mingw32-gcc"
 
 compiler_flags = []
 if "Linux" in platform.platform():
-    compiler_flags = ["-O2", "-march=native"]
-    uqd_include_dirs = [get_include(), "./opt/CTimeTag/Include"]
-    uqd_libraries = ['usb-1.0', 'timetag64']
+    #compiler_flags = ["-O2", "-march=native"]
+    uqd_include_dirs = [get_include(), "./opt/CTimeTag/Include", "."]
+    libusb = "usb"
+    if "ubuntu" in platform.version().lower():
+        libusb = "usb-1.0"
+
+    uqd_libraries = [libusb, 'timetag64']
     uqd_libraries_dirs = ['.', './opt/CTimeTag/Linux']
 
 link_args = []
@@ -63,7 +66,7 @@ ext_modules = cythonize(
     compiler_directives={'language_level': '3'},
     annotate=True)
 
-setup(ext_modules=ext_modules)
+setup(ext_modules=ext_modules, include_package_data=True)
 
 # dist = Distribution({"ext_modules": ext_modules})
 # cmd = build_ext(dist)

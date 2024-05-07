@@ -5,6 +5,7 @@ from ._tangy import singles  # , Coincidences
 from ._tangy import find_zero_delay, zero_delay_result
 from ._tangy import timetrace, PTUFile
 
+from ._tangy import IFace, ImplA, ImplB
 
 # from .tangy import singles, coincidences, timetrace, find_zero_delay
 # from .tangy import coincidence_measurement
@@ -27,6 +28,6 @@ if platform.startswith("linux"):
 if platform.startswith("win32"):
     uqd_lib = find_library("CTimeTagLib")
 
-if uqd_lib is not None:
-    print("proceeding to import interface to UQD-Logic16")
-    from ._uqd import UQDLogic16
+# if uqd_lib is not None:
+#     print("proceeding to import interface to UQD-Logic16")
+#     from ._uqd import UQDLogic16

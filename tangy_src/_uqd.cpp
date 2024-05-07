@@ -9,27 +9,23 @@
                 "NPY_1_7_API_VERSION"
             ]
         ],
-        "depends": [
-            "opt/CTimeTag/Include/CLogic.h",
-            "opt/CTimeTag/Include/CTimeTag.h"
-        ],
+        "depends": [],
         "extra_compile_args": [
-            "-std=c++11",
-            "-O2",
-            "-march=native"
+            "-std=c++11"
         ],
         "include_dirs": [
-            "tangy_src",
-            "/home/bp38/anaconda3/lib/python3.9/site-packages/numpy/core/include"
+            "/home/bp38/anaconda3/lib/python3.9/site-packages/numpy/core/include",
+            "./opt/CTimeTag/Include",
+            "."
         ],
         "language": "c++",
         "libraries": [
-            "usb-1.0",
+            "usb",
             "timetag64"
         ],
         "library_dirs": [
             ".",
-            "./CTimeTag/Linux"
+            "./opt/CTimeTag/Linux"
         ],
         "name": "tangy._uqd",
         "sources": [
@@ -1247,8 +1243,8 @@ static CYTHON_INLINE float __PYX_NAN() {
 #include "new"
 #include "stdexcept"
 #include "typeinfo"
-#include "../opt/CTimeTag/Include/CTimeTag.h"
-#include "../opt/CTimeTag/Include/CLogic.h"
+#include "CTimeTag.h"
+#include "CLogic.h"
 #include <stdlib.h>
 #include <stdint.h>
 #include "pythread.h"
@@ -18059,7 +18055,7 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *__
   return __pyx_r;
 }
 
-/* "_uqd.pxd":65
+/* "_uqd.pxd":67
  *         void SetOutputEventCount(int events)
  * 
  * cdef inline void ctimetag_new(CTimeTag* ctt):             # <<<<<<<<<<<<<<
@@ -18069,7 +18065,7 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *__
 
 static CYTHON_INLINE void __pyx_f_4_uqd_ctimetag_new(CYTHON_UNUSED TimeTag::CTimeTag *__pyx_v_ctt) {
 
-  /* "_uqd.pxd":66
+  /* "_uqd.pxd":68
  * 
  * cdef inline void ctimetag_new(CTimeTag* ctt):
  *     ctt = new CTimeTag()             # <<<<<<<<<<<<<<
@@ -18078,7 +18074,7 @@ static CYTHON_INLINE void __pyx_f_4_uqd_ctimetag_new(CYTHON_UNUSED TimeTag::CTim
  */
   __pyx_v_ctt = new TimeTag::CTimeTag();
 
-  /* "_uqd.pxd":65
+  /* "_uqd.pxd":67
  *         void SetOutputEventCount(int events)
  * 
  * cdef inline void ctimetag_new(CTimeTag* ctt):             # <<<<<<<<<<<<<<
@@ -18089,7 +18085,7 @@ static CYTHON_INLINE void __pyx_f_4_uqd_ctimetag_new(CYTHON_UNUSED TimeTag::CTim
   /* function exit code */
 }
 
-/* "_uqd.pxd":68
+/* "_uqd.pxd":70
  *     ctt = new CTimeTag()
  * 
  * cdef inline void clogic_new(CTimeTag* ctt, CLogic* cl):             # <<<<<<<<<<<<<<
@@ -18098,14 +18094,14 @@ static CYTHON_INLINE void __pyx_f_4_uqd_ctimetag_new(CYTHON_UNUSED TimeTag::CTim
 
 static CYTHON_INLINE void __pyx_f_4_uqd_clogic_new(TimeTag::CTimeTag *__pyx_v_ctt, CYTHON_UNUSED TimeTag::CLogic *__pyx_v_cl) {
 
-  /* "_uqd.pxd":69
+  /* "_uqd.pxd":71
  * 
  * cdef inline void clogic_new(CTimeTag* ctt, CLogic* cl):
  *     cl = new CLogic(ctt)             # <<<<<<<<<<<<<<
  */
   __pyx_v_cl = new TimeTag::CLogic(__pyx_v_ctt);
 
-  /* "_uqd.pxd":68
+  /* "_uqd.pxd":70
  *     ctt = new CTimeTag()
  * 
  * cdef inline void clogic_new(CTimeTag* ctt, CLogic* cl):             # <<<<<<<<<<<<<<

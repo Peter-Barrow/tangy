@@ -1,5 +1,6 @@
 site_name: "tangy"
 site_author: Peter Barrow
+site_url: "https://tangy.gitlab.io"
 
 repo_name: PeterBarrow/tangy
 repo_url: https://gitlab.com/PeterBarrow/tangy
@@ -51,7 +52,7 @@ plugins:
       default_handler: python
       handlers:
         python:
-          paths: [tangy/*]
+          paths: [tangy_src/*]
           options:
             docstring_section_style: list
             merge_init_into_class: true
@@ -63,7 +64,7 @@ plugins:
   - mkdoxy:
         projects:
           tangy:
-            src-dirs: tangy/_ext/src/
+            src-dirs: tangy_src/_ext/src/
             full-doc: True
             doxy-cfg:
               FILE_PATTERNS: "*.c *.h*"

@@ -292,13 +292,13 @@ clk_buffer_slice(const clk_buffer* const buffer,
     }
 
     usize capacity = *(buffer->capacity);
-    circular_iterator iter = {0};
+    circular_iterator iter = { 0 };
     if (iterator_init(&iter, capacity, start, stop) == -1) {
         return 0;
     }
 
     usize i = next(&iter);
-    for (usize j = 0; j < ptrs->length; j ++) {
+    for (usize j = 0; j < ptrs->length; j++) {
         clk_timetag timetag = buffer->ptrs.timestamp[i];
         ptrs->channels[j] = buffer->ptrs.channel[i];
         ptrs->clocks[j] = timetag.clock;
@@ -311,9 +311,9 @@ clk_buffer_slice(const clk_buffer* const buffer,
 
 usize
 clk_buffer_push(const clk_buffer* const buffer,
-                 FIELD_PTRS slice,
-                 usize start,
-                 usize stop) {
+                FIELD_PTRS slice,
+                usize start,
+                usize stop) {
     if (slice.length == 0) {
         return 0;
     }
@@ -323,25 +323,21 @@ clk_buffer_push(const clk_buffer* const buffer,
     }
 
     usize capacity = *(buffer->capacity);
-    circular_iterator iter = {0};
+    circular_iterator iter = { 0 };
     if (iterator_init(&iter, capacity, start, stop) == -1) {
         return 0;
     }
 
     int j = 0;
     usize i = iter.lower.index;
-    clk_timetag timestamp = {
-        .clock = slice.clocks[j],
-        .delta = slice.deltas[j]
-    };
+    clk_timetag timestamp = { .clock = slice.clocks[j],
+                              .delta = slice.deltas[j] };
     buffer->ptrs.timestamp[i] = timestamp;
     buffer->ptrs.channel[i] = slice.channels[j];
     while ((i = next(&iter)) != 0) {
         j += 1;
-        clk_timetag timestamp = {
-            .clock = slice.clocks[j],
-            .delta = slice.deltas[j]
-        };
+        clk_timetag timestamp = { .clock = slice.clocks[j],
+                                  .delta = slice.deltas[j] };
         buffer->ptrs.timestamp[i] = timestamp;
         buffer->ptrs.channel[i] = slice.channels[j];
     }
@@ -392,6 +388,12 @@ clk_dh_measurement_check(usize n_channels,
     config->idx_idler = idx_idler;
     return;
 }
+
+u64
+void_singles(const void* const buffer,
+             const u64 start,
+             const u64 stop,
+             u64* counters);
 
 #undef STUB
 #undef T

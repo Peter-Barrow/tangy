@@ -24,6 +24,7 @@ from cython.cimports.libc.stdio import FILE, fdopen, fclose, fseek
 from cython.cimports.libc.stdint import uint8_t as u8
 from cython.cimports.libc.stdint import uint32_t as u32
 from cython.cimports.libc.stdint import uint64_t as u64
+from cython.cimports.libc.stdint import int64_t as i64
 import struct
 # from cython.cimports.numpy import npu64n_t
 
@@ -236,38 +237,6 @@ _Coinc_Measurement = cython.union(
     clocked=cython.pointer(_tangy.clk_cc_measurement))
 
 
-@ cython.dataclasses.dataclass(frozen=True)
-class JointHistogram:
-    """JSI result
-    """
-
-    central_bin: int = cython.dataclasses.field()
-    temporal_window: float = cython.dataclasses.field()
-    bin_size: Tuple[int, int] = cython.dataclasses.field()
-    data: ndarray(u64n) = cython.dataclasses.field()
-    marginal_idler: ndarray(u64n) = cython.dataclasses.field()
-    marginal_signal: ndarray(u64n) = cython.dataclasses.field()
-    # axis_idler: ndarray(f64n) = cython.dataclasses.field()
-    # axis_signal: ndarray(f64n) = cython.dataclasses.field()
-
-    # def centre(self) -> JointHistogram:
-    #     bins: arange(self.temporal_window) - self.central_bin
-    #     offset_idler: int = int(npround(
-    #         mean(bins[self.marginal_idler > (0.1 * self.marginal_idler.max())])))
-    #     offset_signal: int = int(npround(
-    #         mean(bins[self.marginal_signal > (0.1 * self.marginal_signal.max())])))
-
-    #     offset_idler *= (-1)
-    #     offset_signal *= (-1)
-
-    #     return JointHistogram(self.central_bin,
-    #                           self.temporal_window,
-    #                           self.bin_size,
-    #                           roll(roll(self.data, offset_idler, axis=0),
-    #                                offset_signal, axis=1),
-    #                           self.marginal_idler, self.marginal_signal)
-
-
 @cython.cclass
 class TangyBuffer:
     """Interface to underlying ring buffer
@@ -338,6 +307,9 @@ class TangyBuffer:
             clocked_buffer_connection = tangy.TangyBuffer("clocked")
             ```
     """
+    _name = cython.declare(bytes)
+    _vptr: cython.pointer(cython.void)
+    _type: _tangy.BufferType
 
 #     def __init__(self, name: str,
 #                  resolution: Optional(Union[float, Tuple[float, float]]) = 1e-12,
@@ -361,7 +333,7 @@ class TangyBuffer:
         return TangyBufferClocked(name, resolution, length, n_channels)
 
     def __del__(self):
-        ...
+        raise NotImplemented
 
     def __len__(self):
         return self.capacity
@@ -384,7 +356,7 @@ class TangyBuffer:
         if time <= time_at_stop:
             return self.lower_bound(time_at_start + time)
 
-        # NOTE: should look into upper_bound here for searching from start...
+        # NOTE: should look into upper_bound here for searching from startraise NotImplemented
 
         return 0
 
@@ -405,11 +377,11 @@ class TangyBuffer:
 
     @cython.ccall
     def _get(self, key):
-        ...
+        raise NotImplemented
 
     @cython.ccall
     def oldest_index(self) -> int:
-        ...
+        raise NotImplemented
 
     @cython.ccall
     def _make_slice(self, key):
@@ -473,39 +445,39 @@ class TangyBuffer:
 
     @cython.ccall
     def push(self, channels: ndarray(u8n), timetags):
-        ...
+        raise NotImplemented
 
     @property
     def name(self):
-        ...
+        raise NotImplemented
 
     @property
     def file_descriptor(self):
-        ...
+        raise NotImplemented
 
     @property
     def capacity(self) -> int:
-        ...
+        raise NotImplemented
 
     @property
-    def resolution(self) -> Union[float, Tuple[float, float]]:
-        ...
+    def resolution(self):
+        raise NotImplemented
 
     @resolution.setter
-    def resolution(self, resolution: Union[float, Tuple[float, float]]):
-        ...
+    def resolution(self, resolution):
+        raise NotImplemented
 
     @property
     def count(self) -> int:
-        ...
+        raise NotImplemented
 
     @property
     def index_of_reference(self) -> int:
-        ...
+        raise NotImplemented
 
     @property
     def n_channels(self) -> int:
-        ...
+        raise NotImplemented
 
     @cython.ccall
     def time_in_buffer(self) -> float:
@@ -513,11 +485,11 @@ class TangyBuffer:
         Returns:
             (float): Time between oldest and newest timetags
         """
-        ...
+        raise NotImplemented
 
     @cython.ccall
     def time_range(self) -> Tuple[float, float]:
-        ...
+        raise NotImplemented
 
     @cython.ccall
     def bins_from_time(self, time: float) -> int:
@@ -534,7 +506,7 @@ class TangyBuffer:
             of the fine resolution.
 
         """
-        ...
+        raise NotImplemented
 
     @cython.ccall
     def lower_bound(self, time: float) -> int:
@@ -552,7 +524,7 @@ class TangyBuffer:
             than or equal to ``buffer.time_in_buffer() - time``
 
         """
-        ...
+        raise NotImplemented
 
 
 @cython.cclass
@@ -628,7 +600,6 @@ class TangyBufferStandard(TangyBuffer):
 
     _buffer: _tangy.std_buffer
     _ptr: cython.pointer(_tangy.std_buffer)
-    _name = cython.declare(bytes)
 
     def __init__(self, name: str, resolution: float, length: int, n_channels: int):
         self._name = name.encode('utf-8')
@@ -877,7 +848,7 @@ class TangyBufferClocked(TangyBuffer):
 
     _buffer: _tangy.clk_buffer
     _ptr: cython.pointer(_tangy.clk_buffer)
-    _name = cython.declare(bytes)
+    #_name = cython.declare(bytes)
 
     def __init__(self, name: str, resolution: Tuple[float, float], length: int, n_channels: int):
         self._name = name.encode('utf-8')
@@ -901,6 +872,7 @@ class TangyBufferClocked(TangyBuffer):
         _tangy.clk_buffer_info_init(self._buffer.map_ptr,
                                     cython.address(self._buffer))
         self._ptr = cython.address(self._buffer)
+        self._type = _tangy.BufferType.Clocked
         return
 
     def __del__(self):
@@ -1262,6 +1234,91 @@ def coincidences_collect(buffer: TangyBufferT,
                               asarray(config._channels), clocks, deltas)
 
 
+@ cython.dataclasses.dataclass(frozen=True)
+class JointHistogram:
+    """JSI result
+    """
+
+    central_bin: int = cython.dataclasses.field()
+    temporal_window: float = cython.dataclasses.field()
+    bin_size: Tuple[int, int] = cython.dataclasses.field()
+    data: ndarray(u64n) = cython.dataclasses.field()
+    marginal_idler: ndarray(u64n) = cython.dataclasses.field()
+    marginal_signal: ndarray(u64n) = cython.dataclasses.field()
+    axis_idler: ndarray(f64n) = cython.dataclasses.field()
+    axis_signal: ndarray(f64n) = cython.dataclasses.field()
+
+
+@cython.wraparound(False)
+@cython.boundscheck(False)
+@cython.ccall
+def centre(central_bin: int, temporal_window: int,
+           marginal_idler: ndarray(u64n), marginal_signal: ndarray(u64n),
+           histogram: ndarray(u64n)):
+
+    bins = arange(temporal_window) - central_bin
+    offset_idler: int = int(npround(
+        mean(bins[marginal_idler > (0.1 * marginal_idler.max())])))
+    offset_signal: int = int(npround(
+        mean(bins[marginal_signal > (0.1 * marginal_signal.max())])))
+
+    offset_idler *= (-1)
+    offset_signal *= (-1)
+
+    return roll(roll(histogram, offset_idler, axis=0), offset_signal, axis=1)
+
+
+@cython.wraparound(False)
+@cython.boundscheck(False)
+@cython.cfunc
+def bin_histogram(histogram: ndarray(u64n), x_width: i64, y_width: i64
+                  ) -> Tuple[Tuple[u64n, u64n], ndarray(u64n), ndarray(u64n), ndarray(u64n)]:
+
+    (n_rows, n_cols) = histogram.shape
+
+    histogram_view: u64[:, ::1] = histogram
+
+    n_cols_new: i64 = n_cols // y_width
+    n_rows_new: i64 = n_rows // x_width
+
+    result = zeros([n_rows_new, n_cols_new], dtype=u64n)
+    result_view: u64[:, ::1] = result
+
+    marginal_signal = zeros(n_rows_new, dtype=u64n)
+    marginal_idler = zeros(n_cols_new, dtype=u64n)
+
+    marginal_signal_view: u64[::1] = marginal_signal
+    marginal_idler_view: u64[::1] = marginal_idler
+
+    i: i64
+    i_start: i64
+    i_stop: i64
+    j: i64
+    j_start: i64
+    j_stop: i64
+
+    x: i64
+    y: i64
+
+    value: u64 = 0
+
+    for i in range(n_rows_new):
+        i_start = i * y_width
+        i_stop = i_start + y_width
+        for j in range(n_cols_new):
+            j_start = j * x_width
+            j_stop = j_start + x_width
+            value = 0
+            for y in range(i_start, i_stop):
+                for x in range(j_start, j_stop):
+                    value += histogram_view[y][x]
+            result_view[i][j] = value
+            marginal_idler_view[i] += value
+            marginal_signal_view[j] += value
+
+    return ((n_rows_new, n_cols_new), marginal_signal, marginal_idler, result)
+
+
 @cython.cclass
 class JointHistogramMeasurement:
     _n_channels: u8n
@@ -1299,8 +1356,6 @@ class JointHistogramMeasurement:
 
         self._temporal_window = radius_bins * 2
         self._central_bin = radius_bins
-        # self.histogram = zeros(self._temporal_window * self._temporal_window, dtype=uint32)
-        # self._histogram_view = self.histogram
 
         self._histogram = zeros([self._temporal_window, self._temporal_window],
                                 dtype=u64n, order='C')
@@ -1319,6 +1374,8 @@ class JointHistogramMeasurement:
             self._measurement_ptr = cython.address(self._measurement)
 
         return
+
+
 
 
 @cython.ccall
@@ -1810,3 +1867,102 @@ class PTUFile():
 
     #     return res
 
+
+@cython.cclass
+class IFace:
+
+    name: str
+
+    def __init__(self, name):
+        ...
+
+    @property
+    def foo(self):
+        """doc"""
+        return self._foo[0]
+
+    @foo.setter
+    def foo(self, value):
+        self._foo[0] = value
+
+    @property
+    def name(self) -> str:
+        return self.name
+
+    @cython.ccall
+    def greet(self) -> cython.void:
+        g: str = f"object, {self.name}, says hello"
+        print(g)
+
+    def adds(self, a, b):
+        pass
+
+
+@cython.cclass
+class ImplA(IFace):
+
+    _foo = cython.declare(cython.pointer(cython.int))
+
+    def __init__(self, name, a):
+        self.name = name
+
+    @cython.ccall
+    def adds(self, a: cython.int, b: cython.int) -> cython.int:
+        return a + b
+
+    # @property
+    # def foo(self):
+    #     """doc"""
+    #     return self._foo[0]
+
+@cython.cclass
+class ImplB(IFace):
+
+    def __init__(self, name):
+        self.name = name
+
+    @cython.ccall
+    def adds(self, a: cython.double, b: cython.double) -> cython.double:
+        return a + b
+
+
+
+
+# @cython.cclass
+# class TestBuffer:
+#     #_ptr: Union[cython.pointer(_tangy.std_buffer), cython.pointer(_tangy.clk_buffer)]
+#     #_buffer: Union[_tangy.std_buffer, _tangy.clk_buffer]
+# 
+#     def __init__(self, buf: TangyBufferT):
+#         if TangyBufferT is TangyBufferStandard:
+#             self._buffer: buf._ptr
+#         if TangyBufferT is TangyBufferClocked:
+#             self._buffer: buf._ptr
+# 
+#     @property
+#     def file_descriptor(self):
+#         return self._buffer.file_descriptor
+# 
+#     @property
+#     def capacity(self) -> int:
+#         return self._buffer.capacity[0]
+# 
+#     @property
+#     def resolution(self) -> float:
+#         return self._buffer.resolution[0]
+# 
+#     @resolution.setter
+#     def resolution(self, resolution: float):
+#         self._buffer.resolution[0] = resolution
+# 
+#     @property
+#     def count(self) -> int:
+#         return self._buffer.count[0]
+# 
+#     @property
+#     def index_of_reference(self) -> int:
+#         return self._buffer.index_of_reference[0]
+# 
+#     @property
+#     def n_channels(self) -> int:
+#         return self._buffer.n_channels[0]

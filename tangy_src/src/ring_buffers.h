@@ -524,6 +524,38 @@ JOIN(STUB, singles)(const BUFFER* const buffer,
     return count;
 }
 
+static inline u64
+JOIN(STUB, void_singles)(const void* const vbuffer,
+                    const u64 start,
+                    const u64 stop,
+                    u64* counters) {
+
+    BUFFER* buffer = (BUFFER*)vbuffer;
+    u64 capacity = *buffer->capacity;
+    u64 start_abs = start % capacity;
+    u64 stop_abs = stop % capacity;
+
+    u64 total = stop - start;
+
+    u64 mid_stop = start_abs > stop_abs ? capacity : stop_abs;
+
+    u64 i = 0;
+    for (i = 0; (i + start_abs) < mid_stop; i++) {
+        counters[buffer->ptrs.channel[start_abs + i]] += 1;
+    }
+
+    u64 count = i;
+    if (count < total) {
+        i = 0;
+        for (i = 0; i < stop_abs; i++) {
+            counters[buffer->ptrs.channel[stop_abs + i]] += 1;
+        }
+        count += i;
+    }
+
+    return count;
+}
+
 static inline pattern_iterator
 JOIN(STUB, pattern_init)(const BUFFER* const buffer,
                          const usize n,
