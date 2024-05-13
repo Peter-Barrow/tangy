@@ -26,6 +26,7 @@ if "Windows" in platform.platform():
     # these are needed for local development
     # os.environ['PATH'] = 'C:\\mingw64\\bin'
     # compiler_flags = ["-O2", "-march=native", "-DMS_WIN64", "-std=c++11"]
+    compiler_flags = ["/LTCG"]
 
     # link_args = ['-static-libgcc',
     #              '-static-libstdc++',
