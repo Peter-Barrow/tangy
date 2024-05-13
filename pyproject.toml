@@ -60,6 +60,7 @@ before-build = [
 [tool.cibuildwheel]
 before-build = [
     "pip install requests",
+    "mkdir opt",
     "python {package}/scripts/downloader.py",
     ]
 skip = "pp"
