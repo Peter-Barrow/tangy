@@ -51,6 +51,7 @@ before-build = [
     "pwd",
     "ls ./",
     "pip install requests",
+    "mkdir opt",
     "python {package}/scripts/downloader.py",
     "ls ./opt",
     "cp ./opt/CTimeTag/Linux/libtimetag64.so /lib/libtimetag64.so",
