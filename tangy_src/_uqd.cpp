@@ -9,27 +9,44 @@
                 "NPY_1_7_API_VERSION"
             ]
         ],
-        "depends": [],
+        "depends": [
+            "Z:\\home\\bp38\\Projects\\tangy\\opt\\CTimeTag\\Include\\CLogic.h",
+            "Z:\\home\\bp38\\Projects\\tangy\\opt\\CTimeTag\\Include\\CTimeTag.h"
+        ],
         "extra_compile_args": [
-            "-std=c++11"
+            "-std=c++11",
+            "-O2",
+            "-march=native",
+            "-DMS_WIN64"
         ],
         "include_dirs": [
-            "/home/bp38/anaconda3/lib/python3.9/site-packages/numpy/core/include",
-            "./opt/CTimeTag/Include",
+            "C:\\Program Files\\Python39\\lib\\site-packages\\numpy\\core\\include",
+            "Z:\\home\\bp38\\Projects\\tangy\\opt\\CTimeTag\\Include",
             "."
         ],
         "language": "c++",
         "libraries": [
-            "usb",
-            "timetag64"
+            "CTimeTagLib",
+            "kernel32.lib",
+            "user32.lib",
+            "gdi32.lib",
+            "winspool.lib",
+            "comdlg32.lib",
+            "advapi32.lib",
+            "shell32.lib",
+            "ole32.lib",
+            "oleaut32.lib",
+            "uuid.lib",
+            "odbc32.lib",
+            "odbccp32.lib"
         ],
         "library_dirs": [
             ".",
-            "./opt/CTimeTag/Linux"
+            "Z:\\home\\bp38\\Projects\\tangy\\opt\\CTimeTag\\Win64"
         ],
         "name": "tangy._uqd",
         "sources": [
-            "tangy_src/_uqd.py"
+            "tangy_src\\_uqd.py"
         ]
     },
     "module_name": "tangy._uqd"
@@ -1496,7 +1513,7 @@ static const char *__pyx_filename;
 /* #### Code section: filename_table ### */
 
 static const char *__pyx_f[] = {
-  "tangy_src/_uqd.py",
+  "tangy_src\\\\_uqd.py",
   "<stringsource>",
 };
 /* #### Code section: utility_code_proto_before_types ### */
@@ -3046,7 +3063,7 @@ static const char __pyx_k_InputFifoOverflow[] = "InputFifoOverflow";
 static const char __pyx_k_UQDLogic16___exit[] = "UQDLogic16.__exit__";
 static const char __pyx_k_UQDLogic16_buffer[] = "UQDLogic16.buffer";
 static const char __pyx_k_pyx_unpickle_Enum[] = "__pyx_unpickle_Enum";
-static const char __pyx_k_tangy_src__uqd_py[] = "tangy_src/_uqd.py";
+static const char __pyx_k_tangy_src__uqd_py[] = "tangy_src\\_uqd.py";
 static const char __pyx_k_UQDLogic16___close[] = "UQDLogic16.__close__";
 static const char __pyx_k_UQDLogic16_is_open[] = "UQDLogic16.is_open";
 static const char __pyx_k_asyncio_coroutines[] = "asyncio.coroutines";

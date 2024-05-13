@@ -52,7 +52,7 @@ plugins:
       default_handler: python
       handlers:
         python:
-          paths: [tangy_src/*]
+          paths: [tangy/*]
           options:
             docstring_section_style: list
             merge_init_into_class: true

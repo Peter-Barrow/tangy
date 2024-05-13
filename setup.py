@@ -12,7 +12,7 @@ cython_dir = os.path.join("tangy_src")
 
 compiler_flags = []
 if "Linux" in platform.platform():
-    #compiler_flags = ["-O2", "-march=native"]
+    compiler_flags = ["-O2", "-march=native"]
     uqd_include_dirs = [get_include(), "./opt/CTimeTag/Include", "."]
     libusb = "usb"
     if "ubuntu" in platform.version().lower():
@@ -27,11 +27,16 @@ if "Windows" in platform.platform():
     # os.environ['PATH'] = 'C:\\mingw64\\bin'
     # compiler_flags = ["-O2", "-march=native", "-DMS_WIN64"]
 
-    link_args = ['-static-libgcc',
-                 '-static-libstdc++',
-                 '-Wl,-Bstatic,--whole-archive',
-                 '-lwinpthread',
-                 '-Wl,--no-whole-archive']
+    # link_args = ['-static-libgcc',
+    #              '-static-libstdc++',
+    #              '-Wl,-Bstatic,--whole-archive',
+    #              '-lwinpthread',
+    #              '-Wl,--no-whole-archive']
+
+    base_path = os.getcwd()
+    uqd_include_dirs = [get_include(), base_path + "\\opt\\CTimeTag\\Include\\", "."]
+    uqd_libraries_dirs = [base_path, base_path + '\\opt\\CTimeTag\\Win64\\']
+    uqd_libraries = ['CTimeTagLib']
 
 extensions = [
     Extension(
@@ -54,6 +59,7 @@ extensions = [
         include_dirs=uqd_include_dirs,
         libraries=uqd_libraries,
         library_dirs=uqd_libraries_dirs,
+        extra_link_args=link_args,
         extra_compile_args=["-std=c++11"] + compiler_flags,
         language="c++",
         optional=os.environ.get('CIBUILDWHEEL', '0') != '1',
