@@ -25,7 +25,7 @@ link_args = []
 if "Windows" in platform.platform():
     # these are needed for local development
     # os.environ['PATH'] = 'C:\\mingw64\\bin'
-    # compiler_flags = ["-O2", "-march=native", "-DMS_WIN64"]
+    # compiler_flags = ["-O2", "-march=native", "-DMS_WIN64", "-std=c++11"]
 
     # link_args = ['-static-libgcc',
     #              '-static-libstdc++',
@@ -60,7 +60,7 @@ extensions = [
         libraries=uqd_libraries,
         library_dirs=uqd_libraries_dirs,
         extra_link_args=link_args,
-        extra_compile_args=["-std=c++11"] + compiler_flags,
+        extra_compile_args=compiler_flags,
         language="c++",
         optional=os.environ.get('CIBUILDWHEEL', '0') != '1',
     ),
