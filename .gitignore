@@ -14,3 +14,6 @@ __pycache__
 wheelhouse
 CTimeTag
 opt
+tangy_src/*.c
+tangy_src/*.cpp
+tangy_src/*.txt
