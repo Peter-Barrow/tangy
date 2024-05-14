@@ -220,7 +220,7 @@ def double_decay(time, tau1, tau2, t0, max_intensity):
 
 
 @cython.dataclasses.dataclass(frozen=True)
-class zero_delay_result:
+class delay_result:
     # TODO: add a "central_delay" field
     times: ndarray(f64n) = cython.dataclasses.field()
     intensities: ndarray(u64n) = cython.dataclasses.field()
@@ -1106,8 +1106,8 @@ class CoincidenceMeasurement:
     _delays_view: cython.double[:]
     _measurement = cython.declare(_Coinc_Measurement)
 
-    def __init__(self, window: float, channels: List[int],
-                 resolution: Union[float: Tuple[float, float]],
+    def __init__(self, channels: List[int],
+                 resolution: Union[float: List[float]],
                  delays: Optional[List[float]] = None):
 
         self._n_channels = len(channels)
@@ -1122,7 +1122,6 @@ class CoincidenceMeasurement:
 
         self._channels_view = self._channels
         self._delays_view = self._delays
-        self._window = window
 
         channels_ptr = cython.address(self._channels_view[0])
 
@@ -1130,24 +1129,25 @@ class CoincidenceMeasurement:
             _res_std: _tangy.std_res = resolution
             self._measurement = _Coinc_Measurement(
                 standard=_tangy.std_coincidence_measurement_new(
-                    _res_std, n, channels_ptr))
+                    _res_std, self._n_channels, channels_ptr))
 
-        elif type(resolution) is tuple:
+        elif type(resolution) is list:
             _res_clk: _tangy.clk_res
             _res_clk.coarse = resolution[0]
             _res_clk.fine = resolution[1]
             self._measurement = _Coinc_Measurement(
                 clocked=_tangy.clk_coincidence_measurement_new(
-                    _res_clk, n, channels_ptr))
+                    _res_clk, self._n_channels, channels_ptr))
 
 
 @cython.ccall
 def coincidences_count(buffer: TangyBufferT,
                        read_time: float,
+                       window: float,
                        config: Optional[CoincidenceMeasurement] = None,
                        channels: Optional[List[float]] = None,
                        delays: Optional[List[float]] = None,
-                       window: Optional[float] = None) -> int:
+                       ) -> int:
 
     if (config is None):
         if (channels is not None) and (window is not None):
@@ -1165,7 +1165,7 @@ def coincidences_count(buffer: TangyBufferT,
                                               config._n_channels,
                                               cython.address(config._channels_view[0]),
                                               cython.address(config._delays_view[0]),
-                                              config.window,
+                                              window,
                                               read_time)
 
     elif TangyBufferT is TangyBufferClocked:
@@ -1173,7 +1173,7 @@ def coincidences_count(buffer: TangyBufferT,
                                               config._n_channels,
                                               cython.address(config._channels_view[0]),
                                               cython.address(config._delays_view[0]),
-                                              config.window,
+                                              window,
                                               read_time)
     return count
 
@@ -1182,10 +1182,11 @@ def coincidences_count(buffer: TangyBufferT,
 @cython.ccall
 def coincidences_collect(buffer: TangyBufferT,
                          read_time: float,
+                         window: float = None,
                          config: Optional[CoincidenceMeasurement] = None,
                          channels: Optional[List[float]] = None,
                          delays: Optional[List[float]] = None,
-                         window: Optional[float] = None) -> int:
+                         ):  # -> Union[RecordsStandard, RecordsClocked]:
 
     if (config is None):
         if (channels is not None) and (window is not None):
@@ -1202,7 +1203,7 @@ def coincidences_collect(buffer: TangyBufferT,
     if TangyBufferT is TangyBufferStandard:
         count = _tangy.std_coincidences_records(buffer._ptr,
                                                 cython.address(config._delays_view[0]),
-                                                config._window,
+                                                window,
                                                 read_time,
                                                 config._measurement.standard)
         total = config._measurement.standard.total_records
@@ -1216,7 +1217,7 @@ def coincidences_collect(buffer: TangyBufferT,
     elif TangyBufferT is TangyBufferClocked:
         count = _tangy.clk_coincidences_records(buffer._ptr,
                                                 cython.address(config._delays_view[0]),
-                                                config._window,
+                                                window,
                                                 read_time,
                                                 config._measurement.clocked)
 
@@ -1252,9 +1253,9 @@ class JointHistogram:
 @cython.wraparound(False)
 @cython.boundscheck(False)
 @cython.ccall
-def centre(central_bin: int, temporal_window: int,
-           marginal_idler: ndarray(u64n), marginal_signal: ndarray(u64n),
-           histogram: ndarray(u64n)):
+def centre_histogram(central_bin: int, temporal_window: int,
+                     marginal_idler: ndarray(u64n), marginal_signal: ndarray(u64n),
+                     histogram: ndarray(u64n)):
 
     bins = arange(temporal_window) - central_bin
     offset_idler: int = int(npround(
@@ -1324,6 +1325,7 @@ class JointHistogramMeasurement:
     _n_channels: u8n
     _window: float
     _central_bin: int
+    _radius: float
     _channels: ndarray(u8n)
     _delays: ndarray(f64n)
     _channels_view: cython.uchar[:]
@@ -1331,49 +1333,108 @@ class JointHistogramMeasurement:
     _measurement: _tangy.delay_histogram_measurement
     _measurement_ptr: cython.pointer(_tangy.delay_histogram_measurement)
     _temporal_window: int
+    _histogram: ndarray(u64n)
     _histogram_view: u64[:, ::1]
     _histogram_ptrs: cython.pointer(cython.pointer(u64))
 
-    def __init__(self, buffer: TangyBuffer, channels: List[int], signal: int,
+    def __init__(self, resolution: Union[float, List[float, float]],
+                 channels: List[int], signal: int,
                  idler: int, radius: cython.double, clock: Optional[int] = 0,
                  delays: Optional[List[float]] = None):
 
         n: u64n = len(channels)
-        self._n = n
+        self._n_channels = n
 
-        self.channels = asarray(channels, dtype=u8n)
-        self.delays = zeros(n, dtype=f64n)
+        self._channels = asarray(channels, dtype=u8n)
+        self._delays = zeros(n, dtype=f64n)
 
         if delays:
             for i in range(n):
-                self.delays[i] = delays[i]
+                self._delays[i] = delays[i]
 
-        self._channels_view = self.channels
-        self._delays_view = self.delays
+        self._channels_view = self._channels
+        self._delays_view = self._delays
 
         self._radius = radius
-        radius_bins = buffer.bins_from_time(radius)
-
-        self._temporal_window = radius_bins * 2
-        self._central_bin = radius_bins
-
-        self._histogram = zeros([self._temporal_window, self._temporal_window],
-                                dtype=u64n, order='C')
-        self._histogram_view = self._histogram
-
+        self._central_bin = 0
         channels_ptr = cython.address(self._channels_view[0])
-
-        resolution = buffer.resolution
 
         if type(resolution) is float:
             self._measurement = _tangy.std_dh_measurement_new(n, clock, signal, idler, channels_ptr)
             self._measurement_ptr = cython.address(self._measurement)
 
-        elif type(resolution) is tuple:
+        elif type(resolution) is list:
             self._measurement = _tangy.clk_dh_measurement_new(n, clock, signal, idler, channels_ptr)
             self._measurement_ptr = cython.address(self._measurement)
 
         return
+
+    @cython.ccall
+    def collect(self, buffer: TangyBufferT, read_time: float):
+        """ Collect timetags for coincidences
+
+        Returns:
+            (Union[RecordsStandard, RecordsClocked]):
+        """
+
+        if self._central_bin == 0:
+            if TangyBufferT is TangyBufferStandard:
+                radius_bins = buffer.bins_from_time(self._radius)
+                resolution = buffer.resolution
+            elif TangyBufferT is TangyBufferClocked:
+                radius_bins = buffer.bins_from_time(self._radius)
+                resolution = buffer.resolution
+            self._temporal_window = radius_bins * 2
+            self._central_bin = radius_bins
+            self._histogram = zeros([self._temporal_window, self._temporal_window],
+                                    dtype=u64n, order='C')
+            self._histogram_view = self._histogram
+
+        count: u64n = 0
+        total: u64n = 0
+
+        self._histogram_ptrs = cython.cast(
+            cython.pointer(cython.pointer(u64)),
+            malloc(self._temporal_window * cython.sizeof(u64)))
+
+        i: cython.Py_ssize_t = 0
+        for i in range(self._temporal_window):
+            self._histogram_ptrs[i] = cython.address(self._histogram_view[i, 0])
+
+        if TangyBufferT is TangyBufferStandard:
+            count = _tangy.std_joint_delay_histogram(
+                buffer._ptr,
+                cython.address(self._delays_view[0]),
+                self._radius,
+                read_time,
+                self._measurement_ptr,
+                cython.address(self._histogram_ptrs[0]))
+
+        elif TangyBufferT is TangyBufferClocked:
+            count = _tangy.clk_joint_delay_histogram(
+                buffer._ptr,
+                cython.address(self._delays_view[0]),
+                self._radius,
+                read_time,
+                self._measurement_ptr,
+                cython.address(self._histogram_ptrs[0]))
+
+        # free(self._measurement_ptr)
+        return count
+
+    @cython.ccall
+    def histogram(self, bin_width: int = 1, centre: bool = False) -> JointHistogram:
+        if bin_width < 1:
+            raise ValueError("bin_width must be >= 1")
+
+        ((nr, nc), ms, mi, histogram) = bin_histogram(self._histogram, bin_width, bin_width)
+
+        temporal_window = self._temporal_window // bin_width
+        central_bin = temporal_window // 2
+        if centre:
+            histogram = centre_histogram(central_bin, temporal_window, mi, ms, histogram)
+
+        return JointHistogram(central_bin, temporal_window, bin_width, histogram, mi, ms, [], [])
 
 
 @cython.ccall
@@ -1429,10 +1490,10 @@ def timetrace(buffer: TangyBufferT, channels: List[int], read_time: float,
 
 
 @cython.ccall
-def find_zero_delay(buffer: TangyBufferT, channel_a: int, channel_b: int,
-                    read_time: float, resolution: float = 1e-9,
-                    window: Optional[float] = None
-                    ) -> zero_delay_result:
+def find_delay(buffer: TangyBufferT, channel_a: int, channel_b: int,
+               read_time: float, resolution: float = 1e-9,
+               window: Optional[float] = None
+               ) -> delay_result:
 
     trace_res: f64n = 5e-2
     trace: u64n[:] = timetrace(
@@ -1510,7 +1571,7 @@ def find_zero_delay(buffer: TangyBufferT, channel_a: int, channel_b: int,
         hist_a, edges = nphist(deltas[channels == channel_a], bins)
         central_delay += mean(bins[:-1][hist_a > (0.5 * max(hist_a))]) * (1e-12)
 
-    result = zero_delay_result(
+    result = delay_result(
         times=times,
         intensities=intensities,
         fit=hist_fit,

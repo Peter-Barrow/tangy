@@ -1,9 +1,11 @@
 from ._tangy import RecordsStandard, RecordsClocked
 from ._tangy import TangyBuffer, TangyBufferStandard, TangyBufferClocked
-from ._tangy import singles  # , Coincidences
+from ._tangy import singles
+from ._tangy import CoincidenceMeasurement, coincidences_count, coincidences_collect
 # from ._tangy import JointDelayHistogram, JointHistogram
-from ._tangy import find_zero_delay, zero_delay_result
-from ._tangy import timetrace, PTUFile
+from ._tangy import JointHistogramMeasurement, JointHistogram
+from ._tangy import timetrace, find_delay, delay_result
+from ._tangy import PTUFile
 
 from ._tangy import IFace, ImplA, ImplB
 
@@ -13,9 +15,9 @@ from ._tangy import IFace, ImplA, ImplB
 # __all__ - ["standard_records", "clocked_records", "stdbuffer", "clkbuffer",
 #            "PTUFile"]
 
-__all__ = ["RecordsStandard", "RecordsClocked", "TangyBuffer", "singles",
-           "timetrace", "find_zero_delay", "zero_delay_result", "Coincidences",
-           "JointDelayHistogram", "JointHistogram", "PTUFile"]
+# __all__ = ["RecordsStandard", "RecordsClocked", "TangyBuffer", "singles",
+#            "timetrace", "find_zero_delay", "zero_delay_result", "Coincidences",
+#            "JointDelayHistogram", "JointHistogram", "PTUFile"]
 
 from sys import platform
 from ctypes.util import find_library
@@ -27,7 +29,8 @@ if platform.startswith("linux"):
 
 if platform.startswith("win32"):
     uqd_lib = find_library("CTimeTagLib")
+    from ._uqd import UQDLogic16
 
-# if uqd_lib is not None:
-#     print("proceeding to import interface to UQD-Logic16")
-#     from ._uqd import UQDLogic16
+if uqd_lib is not None:
+    print("proceeding to import interface to UQD-Logic16")
+    from ._uqd import UQDLogic16

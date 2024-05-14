@@ -17,6 +17,7 @@ if "Linux" in platform.platform():
     libusb = "usb"
     if "ubuntu" in platform.version().lower():
         libusb = "usb-1.0"
+    uqd_link_args = []
 
     uqd_libraries = [libusb, 'timetag64']
     uqd_libraries_dirs = ['.', './opt/CTimeTag/Linux']
