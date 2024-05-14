@@ -18,6 +18,9 @@ readme = "README.md"
 #     "tangy/*.dll",
 #     "tangy/*.lib",
 # ]
+dependencies = [
+    "numpy",
+]
 
 [tool.setuptools.packages.find]
 where = ["."]

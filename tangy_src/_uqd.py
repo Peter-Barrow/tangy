@@ -5,6 +5,7 @@ from cython.cimports.libc.stdlib import malloc, free
 from cython.cimports.libcpp import bool as cbool
 from typing import List, Tuple, Optional, Union
 from cython.cimports.libc.stdint import uint8_t as u8
+from cython.cimports.libc.stdint import uint32_t as u32
 from cython.cimports.libc.stdint import uint64_t as u64
 from cython.cimports.libc.stdint import int64_t as i64
 from numpy import ndarray, zeros, uint8, uint64, float64
@@ -13,51 +14,63 @@ from ._tangy import TangyBufferStandard
 
 
 UQD_ERROR_FLAG = {
-    1: {
+    1: (
         "DataOverflow",
         "An overflow in the 512 k values SRAM FIFO has been detected. \
         The time-tag generation rate is higher than the USB transmission rate.",
-    },
-    2: {
+    ),
+    2: (
         "NegFifoOverflow",
         "Internal reason, should never occur"
-    },
-    4: {
+    ),
+    4: (
         "PosFifoOverflow",
         "Internal reason, should never occur"
-    },
-    8: {
+    ),
+    8: (
         "DoubleError",
         "One input had two pulses within the coincidence window."
-    },
-    16: {
+    ),
+    16: (
         "InputFifoOverflow",
         "More than 1024 successive tags were detected with a rate greater 100 MHz"
-    },
-    32: {
+    ),
+    32: (
         "10MHzHardError",
         "The 10 MHz input is not connected or connected to a wrong type of signal."
-    },
-    64: {
+    ),
+    64: (
         "10MHzSoftError",
         "The 10 MHz input is connected, but the frequency is not 10 MHz."
-    },
-    128: {
+    ),
+    128: (
         "OutFifoOverflow",
         "Internal error, should never occur"
-    },
-    256: {
+    ),
+    256: (
         "OutDoublePulse",
         "An output pulse was generated, while another pulse was still present \
         on the same output. The pulse length is too long for the given rate."
-    },
-    512: {
+    ),
+    512: (
         "OutTooLate",
         "The internal processing was too slow. This is because the output \
         event queue is too small for the given rate. Increase the value with \
         SetOutputEventQueue()"
-    },
+    ),
 }
+
+
+@cython.ccall
+def error_from_bit_set(bit_set: int) -> List[int]:
+    bits = zeros(16, dtype=uint8)
+    i: cython.Py_ssize_t = 0
+    x: u32
+    for i in range(16):
+        x = bit_set >> i
+        if x & 1:
+            bits[15 - i] = 2 ** i
+    return bits
 
 
 @cython.cclass
@@ -459,8 +472,17 @@ class UQDLogic16:
         self._c_timetag.SetGateWidth(duration)
         self._time_gate_width = duration
 
-    def error_text(self):
-        ...
+    @cython.ccall
+    def check_errors(self) -> dict:
+        active_errors: dict = {}
+        error_bits = error_from_bit_set(self._c_timetag.ReadErrorFlags())
+        for e in error_bits:
+            if e == 0:
+                continue
+            (err, text) = UQD_ERROR_FLAG[e]
+            active_errors[err] = text
+        return active_errors
+
 
     def buffer(self) -> TangyBufferStandard:
         """

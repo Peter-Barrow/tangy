@@ -62,6 +62,8 @@ windows:
     - choco install python -y --version 3.9.13
     - choco install git.install -y
     - py -m pip install cibuildwheel==2.17.0
+    - "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x86_64 -vcvars_ver=14.0
+    - cl -Bv
   script:
     - py -m cibuildwheel --output-dir wheelhouse --platform windows
   artifacts:

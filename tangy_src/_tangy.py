@@ -848,7 +848,7 @@ class TangyBufferClocked(TangyBuffer):
 
     _buffer: _tangy.clk_buffer
     _ptr: cython.pointer(_tangy.clk_buffer)
-    #_name = cython.declare(bytes)
+    # _name = cython.declare(bytes)
 
     def __init__(self, name: str, resolution: Tuple[float, float], length: int, n_channels: int):
         self._name = name.encode('utf-8')
@@ -1374,8 +1374,6 @@ class JointHistogramMeasurement:
             self._measurement_ptr = cython.address(self._measurement)
 
         return
-
-
 
 
 @cython.ccall
@@ -1915,6 +1913,7 @@ class ImplA(IFace):
     #     """doc"""
     #     return self._foo[0]
 
+
 @cython.cclass
 class ImplB(IFace):
 
@@ -1926,43 +1925,41 @@ class ImplB(IFace):
         return a + b
 
 
-
-
 # @cython.cclass
 # class TestBuffer:
 #     #_ptr: Union[cython.pointer(_tangy.std_buffer), cython.pointer(_tangy.clk_buffer)]
 #     #_buffer: Union[_tangy.std_buffer, _tangy.clk_buffer]
-# 
+#
 #     def __init__(self, buf: TangyBufferT):
 #         if TangyBufferT is TangyBufferStandard:
 #             self._buffer: buf._ptr
 #         if TangyBufferT is TangyBufferClocked:
 #             self._buffer: buf._ptr
-# 
+#
 #     @property
 #     def file_descriptor(self):
 #         return self._buffer.file_descriptor
-# 
+#
 #     @property
 #     def capacity(self) -> int:
 #         return self._buffer.capacity[0]
-# 
+#
 #     @property
 #     def resolution(self) -> float:
 #         return self._buffer.resolution[0]
-# 
+#
 #     @resolution.setter
 #     def resolution(self, resolution: float):
 #         self._buffer.resolution[0] = resolution
-# 
+#
 #     @property
 #     def count(self) -> int:
 #         return self._buffer.count[0]
-# 
+#
 #     @property
 #     def index_of_reference(self) -> int:
 #         return self._buffer.index_of_reference[0]
-# 
+#
 #     @property
 #     def n_channels(self) -> int:
 #         return self._buffer.n_channels[0]

@@ -26,18 +26,28 @@ if "Windows" in platform.platform():
     # these are needed for local development
     # os.environ['PATH'] = 'C:\\mingw64\\bin'
     # compiler_flags = ["-O2", "-march=native", "-DMS_WIN64", "-std=c++11"]
-    compiler_flags = ["/LTCG"]
+    # compiler_flags = ["-O2", "-march=native", "-DMS_WIN64"]
+    # compiler_flags = ["-DMS_WIN64"]
+    compiler_flags = []
+
+    base_path = os.getcwd()
 
     # link_args = ['-static-libgcc',
     #              '-static-libstdc++',
     #              '-Wl,-Bstatic,--whole-archive',
     #              '-lwinpthread',
-    #              '-Wl,--no-whole-archive']
+    #              '-Wl,--no-whole-archive',
+    #              ]
 
-    base_path = os.getcwd()
-    uqd_include_dirs = [get_include(), base_path + "\\opt\\CTimeTag\\Include\\", "."]
+    uqd_link_args = [
+        # '-ICTimeTagLib',
+    ]
+    uqd_include_dirs = [get_include(), base_path + "\\opt\\CTimeTag\\Include\\"]
     uqd_libraries_dirs = [base_path, base_path + '\\opt\\CTimeTag\\Win64\\']
-    uqd_libraries = ['CTimeTagLib']
+    # uqd_libraries_dirs += [base_path, base_path + '\\opt\\CTimeTag\\Linux']
+    # uqd_libraries = ["timetag64"]
+    uqd_libraries = ["CTimeTagLib"]
+
 
 extensions = [
     Extension(
@@ -60,7 +70,7 @@ extensions = [
         include_dirs=uqd_include_dirs,
         libraries=uqd_libraries,
         library_dirs=uqd_libraries_dirs,
-        extra_link_args=link_args,
+        extra_link_args=link_args + uqd_link_args,
         extra_compile_args=compiler_flags,
         language="c++",
         optional=os.environ.get('CIBUILDWHEEL', '0') != '1',
