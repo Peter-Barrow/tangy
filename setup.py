@@ -41,7 +41,7 @@ if "Windows" in platform.platform():
 
     uqd_link_args = [
         # '-ICTimeTagLib',
-        # '/d2:-AllowCompatibleILVersions'
+        '/d2:-AllowCompatibleILVersions'
     ]
     uqd_include_dirs = [get_include(), base_path + "\\opt\\CTimeTag\\Include\\"]
     uqd_libraries_dirs = [base_path, base_path + '\\opt\\CTimeTag\\Win64\\']
