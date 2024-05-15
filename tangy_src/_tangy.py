@@ -1266,7 +1266,11 @@ def centre_histogram(central_bin: int, temporal_window: int,
     offset_idler *= (-1)
     offset_signal *= (-1)
 
-    return roll(roll(histogram, offset_idler, axis=0), offset_signal, axis=1)
+    return (
+        roll(marginal_idler, offset_idler),
+        roll(marginal_signal, offset_signal),
+        roll(roll(histogram, offset_idler, axis=0), offset_signal, axis=1)
+    )
 
 
 @cython.wraparound(False)
@@ -1428,7 +1432,8 @@ class JointHistogramMeasurement:
         temporal_window = self._temporal_window // bin_width
         central_bin = temporal_window // 2
         if centre:
-            histogram = centre_histogram(central_bin, temporal_window, mi, ms, histogram)
+            (ms, mi, histogram) = centre_histogram(central_bin, temporal_window,
+                                                   mi, ms, histogram)
 
         axis = arange(temporal_window) - central_bin  # TODO: convert to time
         return JointHistogram(central_bin, temporal_window,
