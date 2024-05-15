@@ -1337,9 +1337,9 @@ class JointHistogramMeasurement:
     _histogram_view: u64[:, ::1]
     _histogram_ptrs: cython.pointer(cython.pointer(u64))
 
-    def __init__(self, resolution: Union[float, List[float, float]],
+    def __init__(self, buffer: TangyBuffer, radius: cython.double,
                  channels: List[int], signal: int,
-                 idler: int, radius: cython.double, clock: Optional[int] = 0,
+                 idler: int, clock: Optional[int] = 0,
                  delays: Optional[List[float]] = None):
 
         n: u64n = len(channels)
@@ -1355,15 +1355,24 @@ class JointHistogramMeasurement:
         self._channels_view = self._channels
         self._delays_view = self._delays
 
+        radius_bins = buffer.bins_from_time(radius)
         self._radius = radius
-        self._central_bin = 0
+        self._temporal_window = radius_bins * 2
+        self._central_bin = radius_bins
+        self._histogram = zeros([self._temporal_window, self._temporal_window],
+                                dtype=u64n, order='C')
+        self._histogram_view = self._histogram
+
         channels_ptr = cython.address(self._channels_view[0])
 
+        resolution = buffer.resolution
         if type(resolution) is float:
+            print("standard")
             self._measurement = _tangy.std_dh_measurement_new(n, clock, signal, idler, channels_ptr)
             self._measurement_ptr = cython.address(self._measurement)
 
-        elif type(resolution) is list:
+        elif type(resolution) is tuple:
+            print("clocked")
             self._measurement = _tangy.clk_dh_measurement_new(n, clock, signal, idler, channels_ptr)
             self._measurement_ptr = cython.address(self._measurement)
 
@@ -1376,19 +1385,6 @@ class JointHistogramMeasurement:
         Returns:
             (Union[RecordsStandard, RecordsClocked]):
         """
-
-        if self._central_bin == 0:
-            if TangyBufferT is TangyBufferStandard:
-                radius_bins = buffer.bins_from_time(self._radius)
-                resolution = buffer.resolution
-            elif TangyBufferT is TangyBufferClocked:
-                radius_bins = buffer.bins_from_time(self._radius)
-                resolution = buffer.resolution
-            self._temporal_window = radius_bins * 2
-            self._central_bin = radius_bins
-            self._histogram = zeros([self._temporal_window, self._temporal_window],
-                                    dtype=u64n, order='C')
-            self._histogram_view = self._histogram
 
         count: u64n = 0
         total: u64n = 0
@@ -1434,7 +1430,10 @@ class JointHistogramMeasurement:
         if centre:
             histogram = centre_histogram(central_bin, temporal_window, mi, ms, histogram)
 
-        return JointHistogram(central_bin, temporal_window, bin_width, histogram, mi, ms, [], [])
+        axis = arange(temporal_window) - central_bin  # TODO: convert to time
+        return JointHistogram(central_bin, temporal_window,
+                              (bin_width, bin_width), histogram,
+                              mi, ms, axis, axis)
 
 
 @cython.ccall
