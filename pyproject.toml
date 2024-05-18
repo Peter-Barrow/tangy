@@ -19,7 +19,7 @@ readme = "README.md"
 #     "tangy/*.lib",
 # ]
 dependencies = [
-    "numpy",
+    "numpy", "scipy",
 ]
 
 [tool.setuptools.packages.find]

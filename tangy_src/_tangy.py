@@ -1256,6 +1256,24 @@ class JointHistogram:
 def centre_histogram(central_bin: int, temporal_window: int,
                      marginal_idler: ndarray(u64n), marginal_signal: ndarray(u64n),
                      histogram: ndarray(u64n)):
+    """
+    Centre a 2D histogram and marginals
+
+    Todo:
+        central_bin and temporal_window arguments should be removable, instead\
+        everything should be calculated from the dimensions of the marginals
+
+    Args:
+        central_bin (int): central bin
+        temporal_window (int): temporal window
+        marginal_idler (ndarray(u64n)): Marginal distribution of idler
+        marginal_signal (ndarray(u64n)): Marginal distribution of sigal
+        histogram (ndarray(u64n)): 2D joint histogram of signal and idler
+
+    Returns:
+        (Tuple[ndarray(u64n),ndarray(u64n),ndarray(u64n)]): Tuple of idler\
+        marginal, signal marginal and joint histogram
+    """
 
     bins = arange(temporal_window) - central_bin
     offset_idler: int = int(npround(
