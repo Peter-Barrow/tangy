@@ -1,6 +1,7 @@
 local_testing
 build
 dist
+.mypy_cache
 site
 __pycache__
 *.egg-info
@@ -11,6 +12,7 @@ __pycache__
 *.html
 *.zip
 *.tgz
+.python-version
 wheelhouse
 CTimeTag
 opt

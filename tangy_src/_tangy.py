@@ -109,6 +109,21 @@ def buffer_type(ptr: TangyBufferPtr):
         print("found clocked")
 
 
+@cython.ccall
+def buffer_list_update():
+    ...
+
+
+@cython.ccall
+def buffer_list_append():
+    ...
+
+
+@cython.ccall
+def buffer_list_contains():
+    ...
+
+
 @cython.dataclasses.dataclass(frozen=True)
 class RecordsStandard:
     """Container for Standard format Timetags
@@ -243,44 +258,44 @@ class TangyBuffer:
 
     Args:
         name (str): Name of buffer to be created or attached to.
-        resolution (Union[float, Tuple[float, float]]): Resolution \
-        of timetags in seconds. A single float for the "standard timetags". A \
-        pair of floats for "clocked timetags" with a "coarse" and "fine" \
-        timing structure. Unused if connecting. In seconds.
-        n_channels (Optional[int]): Number of channels
-        length (Optional[int] = 10_000_000): Length of buffer to create. \
+        resolution (float): Resolution of timetags in seconds. A single float
+            for the "standard timetags". A pair of floats for "clocked timetags"
+            with a "coarse" and "fine" timing structure. Unused if connecting.
+            In seconds.
+        n_channels (int): Number of channels
+        length (int): Length of buffer to create.
         Unused if connecting.
 
     Attributes:
         name (str): Name of buffer
         file_descriptor (int): File descriptor of underlying ring buffer
-        capacity (int): Size of buffer
-        resolution (Union[float, Tuple[float, float]]): Single float for \
-        a buffer of ``standard timetags`` or a pair of floats for buffers of \
-        ``clocked timetags`` (coarse resolution, fine resolution). Resolutions \
-        are in seconds.
+            capacity (int): Size of buffer
+        resolution (Union[float, Tuple[float, float]]): Single float for
+            a buffer of ``standard timetags`` or a pair of floats for buffers of
+            ``clocked timetags`` (coarse resolution, fine resolution).
+            Resolutions are in seconds.
         count (int): Number of elements that have been written to the buffer
         index_of_reference (int): On/off marker
         n_channels (int): Number of channels the buffer can contain
 
     Note:
-        If connecting to an existing buffer the resolution, n_channels and \
+        If connecting to an existing buffer the resolution, n_channels and
         length arguments will be ignored even if supplied.
 
     Note:
-        For buffers using the clocked timetag format the resolution must be \
-        specified as a tuple in the form (coarse resolution, fine resolution).\
-        As an example a clock signal from an 80Mhz TiSapphire laser and a fine\
-        resolution on-board the time timetagger would give: \
-        ``resolution = (12.5e-9, 1e-12)``
+        For buffers using the clocked timetag format the resolution must be
+            specified as a tuple in the form (coarse resolution, fine
+            resolution). As an example a clock signal from an 80Mhz TiSapphire
+            laser and a fine resolution on-board the time timetagger would
+            give: ``resolution = (12.5e-9, 1e-12)``
 
     Examples:
-        Creation of a TangyBuffer object for both the ``Standard`` and \
-        ``Clocked`` timetag formats that can hold 1,000,000 timetags for a \
-        device with 4 channels. The method to connect to these buffers is also \
-        shown. This method of creating new buffers and connecting to existing \
-        ones allows the user to hold on to and continously read timetags from \
-        a device in one process and then connect to that buffer in another to \
+        Creation of a TangyBuffer object for both the ``Standard`` and
+        ``Clocked`` timetag formats that can hold 1,000,000 timetags for a
+        device with 4 channels. The method to connect to these buffers is also
+        shown. This method of creating new buffers and connecting to existing
+        ones allows the user to hold on to and continously read timetags from
+        a device in one process and then connect to that buffer in another to
         perform analysis on the current data.
         === "Buffer in ``Standard`` format"
             ```python
@@ -333,7 +348,30 @@ class TangyBuffer:
         return TangyBufferClocked(name, resolution, length, n_channels)
 
     def __del__(self):
-        raise NotImplemented
+        raise NotImplementedError
+
+    def configuration(self) -> dict:
+        buffer_type = 0
+        if self._type == _tangy.BufferType.Clocked:
+            buffer_type = 1
+
+        config = {
+            "name": self.name.decode("ascii"),
+            "format": buffer_type,
+            "capacity": self.capacity,
+            "count": self.count,
+            "resolution": self.resolution,
+            "n_channels": self.n_channels,
+        }
+        return config
+
+    def __repr__(self) -> str:
+        out: str = "Tangy Buffer:\n"
+        config = self.configuration()
+        longest_key = max([len(k) for k in config.keys()])
+        for k, v in config.items():
+            out += f"{k.rjust(longest_key)} : {v}\n"
+        return out
 
     def __len__(self):
         return self.capacity
@@ -356,7 +394,7 @@ class TangyBuffer:
         if time <= time_at_stop:
             return self.lower_bound(time_at_start + time)
 
-        # NOTE: should look into upper_bound here for searching from startraise NotImplemented
+        # NOTE: should look into upper_bound here for searching from startraise NotImplementedError
 
         return 0
 
@@ -377,11 +415,11 @@ class TangyBuffer:
 
     @cython.ccall
     def _get(self, key):
-        raise NotImplemented
+        raise NotImplementedError
 
     @cython.ccall
     def oldest_index(self) -> int:
-        raise NotImplemented
+        raise NotImplementedError
 
     @cython.ccall
     def _make_slice(self, key):
@@ -445,39 +483,39 @@ class TangyBuffer:
 
     @cython.ccall
     def push(self, channels: ndarray(u8n), timetags):
-        raise NotImplemented
+        raise NotImplementedError
 
     @property
     def name(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     @property
     def file_descriptor(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     @property
     def capacity(self) -> int:
-        raise NotImplemented
+        raise NotImplementedError
 
     @property
     def resolution(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     @resolution.setter
     def resolution(self, resolution):
-        raise NotImplemented
+        raise NotImplementedError
 
     @property
     def count(self) -> int:
-        raise NotImplemented
+        raise NotImplementedError
 
     @property
     def index_of_reference(self) -> int:
-        raise NotImplemented
+        raise NotImplementedError
 
     @property
     def n_channels(self) -> int:
-        raise NotImplemented
+        raise NotImplementedError
 
     @cython.ccall
     def time_in_buffer(self) -> float:
@@ -485,11 +523,11 @@ class TangyBuffer:
         Returns:
             (float): Time between oldest and newest timetags
         """
-        raise NotImplemented
+        raise NotImplementedError
 
     @cython.ccall
     def time_range(self) -> Tuple[float, float]:
-        raise NotImplemented
+        raise NotImplementedError
 
     @cython.ccall
     def bins_from_time(self, time: float) -> int:
@@ -506,7 +544,7 @@ class TangyBuffer:
             of the fine resolution.
 
         """
-        raise NotImplemented
+        raise NotImplementedError
 
     @cython.ccall
     def lower_bound(self, time: float) -> int:
@@ -524,7 +562,7 @@ class TangyBuffer:
             than or equal to ``buffer.time_in_buffer() - time``
 
         """
-        raise NotImplemented
+        raise NotImplementedError
 
 
 @cython.cclass
@@ -533,44 +571,44 @@ class TangyBufferStandard(TangyBuffer):
 
     Args:
         name (str): Name of buffer to be created or attached to.
-        resolution (float): Resolution \
-        of timetags in seconds. A single float for the "standard timetags". A \
-        pair of floats for "clocked timetags" with a "coarse" and "fine" \
-        timing structure. Unused if connecting. In seconds.
+        resolution (float): Resolution of timetags in seconds. A single float
+            for the "standard timetags". A pair of floats for "clocked timetags"
+            with a "coarse" and "fine" timing structure. Unused if connecting.
+            In seconds.
         n_channels (int): Number of channels
-        length (int): Length of buffer to create. \
+        length (int): Length of buffer to create.
         Unused if connecting.
 
     Attributes:
         name (str): Name of buffer
         file_descriptor (int): File descriptor of underlying ring buffer
-        capacity (int): Size of buffer
-        resolution (Union[float, Tuple[float, float]]): Single float for \
-        a buffer of ``standard timetags`` or a pair of floats for buffers of \
-        ``clocked timetags`` (coarse resolution, fine resolution). Resolutions \
-        are in seconds.
+            capacity (int): Size of buffer
+        resolution (Union[float, Tuple[float, float]]): Single float for
+            a buffer of ``standard timetags`` or a pair of floats for buffers of
+            ``clocked timetags`` (coarse resolution, fine resolution).
+            Resolutions are in seconds.
         count (int): Number of elements that have been written to the buffer
         index_of_reference (int): On/off marker
         n_channels (int): Number of channels the buffer can contain
 
     Note:
-        If connecting to an existing buffer the resolution, n_channels and \
+        If connecting to an existing buffer the resolution, n_channels and
         length arguments will be ignored even if supplied.
 
     Note:
-        For buffers using the clocked timetag format the resolution must be \
-        specified as a tuple in the form (coarse resolution, fine resolution).\
-        As an example a clock signal from an 80Mhz TiSapphire laser and a fine\
-        resolution on-board the time timetagger would give: \
-        ``resolution = (12.5e-9, 1e-12)``
+        For buffers using the clocked timetag format the resolution must be
+            specified as a tuple in the form (coarse resolution, fine
+            resolution). As an example a clock signal from an 80Mhz TiSapphire
+            laser and a fine resolution on-board the time timetagger would
+            give: ``resolution = (12.5e-9, 1e-12)``
 
     Examples:
-        Creation of a TangyBuffer object for both the ``Standard`` and \
-        ``Clocked`` timetag formats that can hold 1,000,000 timetags for a \
-        device with 4 channels. The method to connect to these buffers is also \
-        shown. This method of creating new buffers and connecting to existing \
-        ones allows the user to hold on to and continously read timetags from \
-        a device in one process and then connect to that buffer in another to \
+        Creation of a TangyBuffer object for both the ``Standard`` and
+        ``Clocked`` timetag formats that can hold 1,000,000 timetags for a
+        device with 4 channels. The method to connect to these buffers is also
+        shown. This method of creating new buffers and connecting to existing
+        ones allows the user to hold on to and continously read timetags from
+        a device in one process and then connect to that buffer in another to
         perform analysis on the current data.
         === "Buffer in ``Standard`` format"
             ```python
@@ -781,44 +819,44 @@ class TangyBufferClocked(TangyBuffer):
 
     Args:
         name (str): Name of buffer to be created or attached to.
-        resolution (Tuple[float, float]): Resolution \
-        of timetags in seconds. A single float for the "standard timetags". A \
-        pair of floats for "clocked timetags" with a "coarse" and "fine" \
-        timing structure. Unused if connecting. In seconds.
+        resolution (float): Resolution of timetags in seconds. A single float
+            for the "standard timetags". A pair of floats for "clocked timetags"
+            with a "coarse" and "fine" timing structure. Unused if connecting.
+            In seconds.
         n_channels (int): Number of channels
-        length (int): Length of buffer to create. \
+        length (int): Length of buffer to create.
         Unused if connecting.
 
     Attributes:
         name (str): Name of buffer
         file_descriptor (int): File descriptor of underlying ring buffer
-        capacity (int): Size of buffer
-        resolution (Union[float, Tuple[float, float]]): Single float for \
-        a buffer of ``standard timetags`` or a pair of floats for buffers of \
-        ``clocked timetags`` (coarse resolution, fine resolution). Resolutions \
-        are in seconds.
+            capacity (int): Size of buffer
+        resolution (Union[float, Tuple[float, float]]): Single float for
+            a buffer of ``standard timetags`` or a pair of floats for buffers of
+            ``clocked timetags`` (coarse resolution, fine resolution).
+            Resolutions are in seconds.
         count (int): Number of elements that have been written to the buffer
         index_of_reference (int): On/off marker
         n_channels (int): Number of channels the buffer can contain
 
     Note:
-        If connecting to an existing buffer the resolution, n_channels and \
+        If connecting to an existing buffer the resolution, n_channels and
         length arguments will be ignored even if supplied.
 
     Note:
-        For buffers using the clocked timetag format the resolution must be \
-        specified as a tuple in the form (coarse resolution, fine resolution).\
-        As an example a clock signal from an 80Mhz TiSapphire laser and a fine\
-        resolution on-board the time timetagger would give: \
-        ``resolution = (12.5e-9, 1e-12)``
+        For buffers using the clocked timetag format the resolution must be
+            specified as a tuple in the form (coarse resolution, fine
+            resolution). As an example a clock signal from an 80Mhz TiSapphire
+            laser and a fine resolution on-board the time timetagger would
+            give: ``resolution = (12.5e-9, 1e-12)``
 
     Examples:
-        Creation of a TangyBuffer object for both the ``Standard`` and \
-        ``Clocked`` timetag formats that can hold 1,000,000 timetags for a \
-        device with 4 channels. The method to connect to these buffers is also \
-        shown. This method of creating new buffers and connecting to existing \
-        ones allows the user to hold on to and continously read timetags from \
-        a device in one process and then connect to that buffer in another to \
+        Creation of a TangyBuffer object for both the ``Standard`` and
+        ``Clocked`` timetag formats that can hold 1,000,000 timetags for a
+        device with 4 channels. The method to connect to these buffers is also
+        shown. This method of creating new buffers and connecting to existing
+        ones allows the user to hold on to and continously read timetags from
+        a device in one process and then connect to that buffer in another to
         perform analysis on the current data.
         === "Buffer in ``Standard`` format"
             ```python
