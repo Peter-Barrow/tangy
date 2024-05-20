@@ -1,7 +1,7 @@
 #[tool.poetry]
 [project]
 name = "tangy"
-version = "0.2.1"
+version = "0.3.0"
 description = "A library to manage timetags"
 authors = [
     {name = "Peter Thomas Barrow", email = "peter.barrow.93@gmail.com"}
@@ -19,7 +19,7 @@ readme = "README.md"
 #     "tangy/*.lib",
 # ]
 dependencies = [
-    "numpy", "scipy",
+    "numpy", "scipy", "projectdirs",
 ]
 
 [tool.setuptools.package-data]

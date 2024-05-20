@@ -1,3 +1,4 @@
+from ._tangy import tangy_config_location, buffer_list_update, buffer_list_append
 from ._tangy import RecordsStandard, RecordsClocked
 from ._tangy import TangyBuffer, TangyBufferStandard, TangyBufferClocked
 from ._tangy import singles
@@ -32,5 +33,4 @@ if platform.startswith("win32"):
     from ._uqd import UQDLogic16
 
 if uqd_lib is not None:
-    print("proceeding to import interface to UQD-Logic16")
     from ._uqd import UQDLogic16

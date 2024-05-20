@@ -4,8 +4,9 @@ from cython.cimports.cython import view
 from cython.cimports import _tangy as _tangy
 
 import mmap
-from os import dup
-from os.path import getsize
+from os import dup, listdir, remove, makedirs
+from os.path import getsize, join, exists
+import json
 # import time
 from scipy.optimize import curve_fit
 from numpy import log2, mean, where, exp, roll, reshape, ravel
@@ -31,6 +32,7 @@ import struct
 import numpy.typing as npt
 from typing import List, Tuple, Optional, Union
 from enum import Enum
+from platformdirs import user_config_dir
 
 
 # __all__ = ["RecordsStandard", "RecordsClocked", "TagBuffer", "singles",
@@ -110,13 +112,99 @@ def buffer_type(ptr: TangyBufferPtr):
 
 
 @cython.ccall
-def buffer_list_update():
-    ...
+def tangy_config_location() -> str:
+    appname = "Tangy"
+    appauthor = "PeterBarrow"
+
+    config_path = user_config_dir(appname, appauthor)
+    if not exists(config_path):
+        makedirs(config_path)
+    return config_path
 
 
 @cython.ccall
-def buffer_list_append():
-    ...
+def buffer_list_update() -> dict:
+    """
+    Up-to-date list of available buffers
+
+    Gets the list of available buffers from the Tangy configuration directory
+        [```~/.config/Tangy/buffers``` on linux and
+        ```C:\\Users\\user_name\\AppData\\Local\\PeterBarrow\\Tangy\\buffers```
+        on Windows]. For each buffer configuration file the existence of the
+        associated buffer is checked, buffers that no longer exists have their
+        corresponding configuration file removed. Upon completion this returns
+        a dictionary containing the buffer name, buffer format and path to the
+        configuration file.
+
+    Returns:
+        (dict): Dictionary of {"name": {"format": fmt, "path": "/path/to/config"}
+
+    """
+    buffer_list_path = join(tangy_config_location(), "buffers")
+    if not exists(buffer_list_path):
+        makedirs(buffer_list_path)
+    buffer_list = {}
+
+    for file in listdir(buffer_list_path):
+        if file.endswith(".json") or file.endswith(".JSON"):
+            file_name = join(buffer_list_path, file)
+            with open(file_name, "r") as f:
+                config = {k.lower():v for k, v in json.load(f).items()}
+                keys = config.keys()
+                if "name" not in keys:
+                    continue
+                if "format" not in keys:
+                    continue
+                buffer_list[config["name"]] = {
+                        "format": config["format"],
+                        "path": file_name
+                }
+
+    buffer_list_available = {}
+    result: _tangy.tbResult
+    flag: cython.bint
+    for name, details in buffer_list.items():
+        name_encoded = name.encode('utf-8')
+        c_name: cython.p_char = name_encoded
+        result = _tangy.shmem_exists(c_name, cython.address(flag))
+        if result.Ok is False:
+            # buffer doesn't exist anymore so delete its json file
+            remove(details["path"])
+            continue
+
+        # if we got here then the buffer exists, but we don't know about its
+        # reference count, the reference count can also be higher than it should
+        # if the last connection to that buffer crashed (no decrement)
+
+        name_stub_free = ""
+        # if details["format"].lower() == "standard":
+        if details["format"] == 0:
+             name_stub_free = name.replace("std_", "")
+
+        # if details["format"].lower() == "clocked":
+        if details["format"] == 1:
+             name_stub_free = name.replace("clk_", "")
+
+        buffer_list_available[name_stub_free] = details
+
+    return buffer_list_available
+
+
+@cython.ccall
+def buffer_list_append(buffer: TangyBuffer):
+    """
+    Adds the configuration of a buffer to the Tangy configuration directory
+
+    Args:
+        buffer (TangyBuffer): buffer with configuration to save
+    """
+
+    config = buffer.configuration()
+    buffer_list_path = join(tangy_config_location(), "buffers")
+    file_name = join(buffer_list_path, config["name"] + ".json")
+    with open(file_name, "w") as file:
+        json.dump(config, file, indent=4)
+
 
 
 @cython.ccall
@@ -357,7 +445,7 @@ class TangyBuffer:
 
         config = {
             "name": self.name.decode("ascii"),
-            "format": buffer_type,
+            "format": buffer_type, # TODO: Enum module should be used so we can give this a name
             "capacity": self.capacity,
             "count": self.count,
             "resolution": self.resolution,
@@ -640,6 +728,7 @@ class TangyBufferStandard(TangyBuffer):
     _ptr: cython.pointer(_tangy.std_buffer)
 
     def __init__(self, name: str, resolution: float, length: int, n_channels: int):
+        buffer_list_update()
         self._name = name.encode('utf-8')
         c_name: cython.p_char = self._name
 
@@ -656,6 +745,7 @@ class TangyBufferStandard(TangyBuffer):
         _tangy.std_buffer_info_init(self._buffer.map_ptr,
                                     cython.address(self._buffer))
         self._ptr = cython.address(self._buffer)
+        buffer_list_append(self)
         return
 
     def __del__(self):
@@ -889,6 +979,7 @@ class TangyBufferClocked(TangyBuffer):
     # _name = cython.declare(bytes)
 
     def __init__(self, name: str, resolution: Tuple[float, float], length: int, n_channels: int):
+        buffer_list_update()
         self._name = name.encode('utf-8')
         c_name: cython.p_char = self._name
 
@@ -911,6 +1002,7 @@ class TangyBufferClocked(TangyBuffer):
                                     cython.address(self._buffer))
         self._ptr = cython.address(self._buffer)
         self._type = _tangy.BufferType.Clocked
+        buffer_list_append(self)
         return
 
     def __del__(self):
