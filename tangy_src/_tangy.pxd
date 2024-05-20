@@ -5,6 +5,7 @@ from numpy cimport int8_t as char
 from numpy cimport uint8_t as u8
 from numpy cimport uint32_t as u32
 from numpy cimport uint64_t as u64
+from numpy cimport int64_t as i64
 from numpy cimport uint64_t as usize
 from numpy cimport int64_t as isize
 
@@ -16,7 +17,6 @@ from libc.stdio cimport FILE
 cpdef enum BufferType:
     Standard,
     Clocked
-
 
 cdef extern from "./src/base.h":
     ctypedef enum tbError:
@@ -48,7 +48,7 @@ cdef extern from "./src/vector_impls.h":
     vec_u64* vector_u64_deinit(vec_u64* vector)
 
 cdef extern from "./src/shared_memory.c":
-    tbResult shmem_exists(char *const map_name, bint *exists)
+    tbResult shmem_exists(char *const map_name, u8 *exists)
 
 cdef extern from "./src/standard_buffer.h":
 
@@ -76,6 +76,7 @@ cdef extern from "./src/standard_buffer.h":
         u64 *capacity
         u64 *count
         u64 *index_of_reference
+        i64 *reference_count
         u8 *n_channels
 
     std_buffer* std_buffer_new()
@@ -236,6 +237,7 @@ cdef extern from "./src/clocked_buffer.h":
         u64 *capacity
         u64 *count
         u64 *index_of_reference
+        i64 *reference_count
         u8 *n_channels
 
     clk_buffer* clk_buffer_new()

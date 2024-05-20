@@ -75,6 +75,7 @@
 #define BUFFER_INFO JOIN(STUB, buffer_info)
 #define BUFFER_INFO_PTRS JOIN(STUB, buffer_info_ptrs)
 
+// TODO: add a reference count to buffer
 typedef struct {
     char* map_ptr;
     SLICE ptrs;
@@ -87,6 +88,7 @@ typedef struct {
     u64* capacity;
     u64* count;
     u64* index_of_reference; // pointer to index of reference record
+    i64* reference_count;
     u8* n_channels;
 } BUFFER;
 
@@ -96,6 +98,7 @@ typedef struct {
     u64 capacity;
     u64 count;
     u64 index_of_reference; // pointer to index of reference record
+    i64 reference_count;
     u8 n_channels;
 } BUFFER_INFO;
 
@@ -133,6 +136,7 @@ JOIN(STUB, buffer_info_init)(char* data, BUFFER* buffer) {
     buffer->capacity = &((BUFFER_INFO*)data)->capacity;
     buffer->count = &((BUFFER_INFO*)data)->count;
     buffer->index_of_reference = &((BUFFER_INFO*)data)->index_of_reference;
+    buffer->reference_count = &((BUFFER_INFO*)data)->reference_count;
     buffer->n_channels = &((BUFFER_INFO*)data)->n_channels;
 }
 
@@ -176,6 +180,9 @@ JOIN(STUB, buffer_init)(const u64 num_elements,
     offset = offsetof(BUFFER_INFO, index_of_reference) / 8;
     ((u64*)buffer->map_ptr)[offset] = 0;
 
+    offset = offsetof(BUFFER_INFO, reference_count) / 8;
+    ((i64*)buffer->map_ptr)[offset] = 1;
+
     offset = offsetof(BUFFER_INFO, n_channels) / 8;
     ((u64*)buffer->map_ptr)[offset] = n_channels;
 
@@ -200,7 +207,7 @@ JOIN(STUB, buffer_connect)(char* name, BUFFER* buffer) {
     char* full_name = buffer_name_new(name);
     buffer_name_init(name, full_name);
 
-    bool exists = false;
+    u8 exists = 0;
     tbResult result = shmem_exists(full_name, &exists);
     if (false == result.Ok) {
         return result;
@@ -222,6 +229,8 @@ JOIN(STUB, buffer_connect)(char* name, BUFFER* buffer) {
     JOIN(STUB, buffer_info_init)(buffer->map_ptr, buffer);
     // buffer->ptrs = JOIN(STUB, init_base_ptrs)(buffer, *info->capacity);
     buffer->ptrs = JOIN(STUB, init_base_ptrs)(buffer);
+    usize offset = offsetof(BUFFER_INFO, reference_count) / 8;
+    ((i64*)buffer->map_ptr)[offset] += 1;
 
     result.Ok = true;
 
@@ -235,10 +244,14 @@ JOIN(STUB, buffer_deinit)(BUFFER* buffer) {
                            .name = buffer->name,
                            .data = buffer->map_ptr };
 
-    bool exists = false;
+    u8 exists = 0;
     tbResult result = shmem_exists(buffer->name, &exists);
 
-    if (true == exists) {
+    usize offset = offsetof(BUFFER_INFO, reference_count) / 8;
+    ((i64*)buffer->map_ptr)[offset] -= 1;
+    i64 reference_count = ((i64*)buffer->map_ptr)[offset];
+
+    if ((1 == exists) & (reference_count <= 0)) {
         result = shmem_close(&map);
         if (false == result.Ok) {
             return result;

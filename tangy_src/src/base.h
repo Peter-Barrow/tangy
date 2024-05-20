@@ -13,6 +13,7 @@
 typedef uint8_t u8;
 typedef int32_t b32;
 typedef int32_t i32;
+typedef int64_t i64;
 typedef uint32_t u32;
 typedef uint64_t u64;
 typedef float f32;
@@ -196,13 +197,14 @@ struct histogram2D_coords {
 
 static inline char*
 buffer_name(char* prefix, char* name) {
-    size_t len_prefix = strlen(prefix);
-    size_t len_name = strlen(name);
-    size_t len_buffer = len_prefix + len_name + 2; // additional "_" and "\0"
+    usize len_prefix = strlen(prefix);
+    usize len_name = strlen(name);
+    usize len_buffer = len_prefix + len_name + 2; // additional "_" and "\0"
 
     char* buffer = (char*)malloc(sizeof(char) * len_buffer);
 
-    int len = snprintf(buffer, len_buffer, "%s_%s", prefix, name);
+    // int len = snprintf(buffer, len_buffer, "%s_%s", prefix, name);
+    snprintf(buffer, len_buffer, "%s_%s", prefix, name);
 
     return buffer;
 }

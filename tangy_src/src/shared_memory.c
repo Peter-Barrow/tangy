@@ -187,14 +187,15 @@ tbResult shmem_close(shared_mapping *map) {
 }
 
 // TODO: shm_open and close can set errno, handle it!
-tbResult shmem_exists(char *const map_name, bool *exists) {
+// tbResult shmem_exists(char *const map_name, bool *exists) {
+tbResult shmem_exists(char *const map_name, u8 *exists) {
     tbResult result = {0};
 
 #ifdef __linux__
     fd_t shm_descriptor = shm_open(map_name, O_RDONLY, 0777);
 
     if (0 <= shm_descriptor) {
-        *exists = true;
+        *exists = 1;
     }
 
     if (-1 == close(shm_descriptor)) {

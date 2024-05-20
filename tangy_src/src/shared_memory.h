@@ -58,6 +58,7 @@ tbResult shmem_close(shared_mapping *map);
  * @param map_name Name of the mapping.
  * @return tbResult Indicating whether the mapping exists.
  */
-tbResult shmem_exists(char *const map_name, bool *exists);
+// tbResult shmem_exists(char *const map_name, bool *exists);
+tbResult shmem_exists(char *const map_name, u8 *exists);
 
 #endif

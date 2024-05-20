@@ -108,8 +108,8 @@ class UQDLogic16:
     _function_generator_period: int
     _function_generator_high: int
     _exclusion: ndarray(uint8)
-    _10MHz: bool = False
-    _time_gate: bool = False
+    _10MHz: cbool = False
+    _time_gate: cbool = False
     _gate_width: int
     _buffer: TangyBufferStandard
 
