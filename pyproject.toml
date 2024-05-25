@@ -1,4 +1,7 @@
-#[tool.poetry]
+[build-system]
+requires = ["setuptools", "wheel", "Cython", "numpy"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "tangy"
 version = "0.3.1"
@@ -6,53 +9,36 @@ description = "Timetag analysing library"
 authors = [
     {name = "Peter Thomas Barrow", email = "peter.barrow.93@gmail.com"}
 ]
+maintainers = [
+    {name = "Peter Thomas Barrow", email = "peter.barrow.93@gmail.com"}
+]
 readme = "README.md"
-# exclude = [
-#     "tangy/_ext/*",
-#     "tangy/_ext/src/*",
-#     "tangy/_ext/*.html"
-#     ]
-# include = [
-#     "tangy/*.a",
-#     "tangy/*.so",
-#     "tangy/*.dll",
-#     "tangy/*.lib",
-# ]
+keywords = []
+license = {text = "GPLv2"}
 dependencies = [
-    "numpy", "scipy", "projectdirs",
+    "numpy",
+    "scipy",
+    "platformdirs", "customtkinter"
 ]
 
-[tool.setuptools.package-data]
-"tangy" = ["py.typed", "_tangy.pyi", "_uqd.pyi"]
+[project.optional-dependencies]
+gui = ["customtkinter"]
+docs = [
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocstrings",
+    "mkdoxy"
+]
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["tangy", "*.py*", "*.typed"]
-exclude = ["opt"]
-# exclude = [
-#     "tangy/_ext",
-#     ]
-
-# [tool.poetry.dependencies]
-# python = "^3.8"
-# setuptools = "^69.1.1"
-# cython = "^3.0.9"
-# numpy = "^1.26.4"
-# scipy = "^1.12.0"
-# pytkdocs = "^0.16.1"
-
-# [tool.poetry.group.docs.dependencies]
-# mkdocs = "^1.4.2"
-# mkdocs-material = "^8.5.10"
-# mkdocstrings = "^0.23.0"
-# mkdoxy = "^1.1.7"
-
-[build-system]
-requires = ["setuptools", "wheel", "Cython", "numpy", "mkdocs", "mkdocs-material", "mkdocstrings", "mkdoxy"]
-build-backend = "setuptools.build_meta"
+[project.urls]
+Homepage = "https://gitlab.com/PeterBarrow/tangy"
+# Documentation = ""
+Repository = "https://gitlab.com/PeterBarrow/tangy.git"
+Issues = "https://gitlab.com/PeterBarrow/tangy/-/issues"
 
 [project.scripts]
 tangy-list-buffers = "tangy:buffer_list_show"
+tangy-gui-uqdlogic16 = "tangy.apps.gui_uqd:run"
 
 [tool.cibuildwheel.linux]
 before-build = [
@@ -65,6 +51,14 @@ before-build = [
     "ls ./opt",
     "cp ./opt/CTimeTag/Linux/libtimetag64.so /lib/libtimetag64.so",
 ]
+
+[tool.setuptools.package-data]
+"tangy" = ["py.typed", "_tangy.pyi", "_uqd.pyi"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["tangy*", "*.py*", "*.typed"]
+exclude = ["opt", "tangy_src"]
 
 [tool.cibuildwheel]
 before-build = [

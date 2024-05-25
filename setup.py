@@ -8,7 +8,6 @@ import sys
 from setuptools import setup, Extension, Distribution
 
 cython_dir = os.path.join("tangy_src")
-# os.environ["CC"] = "x86_64-w64-mingw32-gcc"
 
 compiler_flags = []
 if "Linux" in platform.platform():
@@ -25,6 +24,7 @@ if "Linux" in platform.platform():
 link_args = []
 if "Windows" in platform.platform():
     # these are needed for local development
+    # os.environ["CC"] = "x86_64-w64-mingw32-gcc"
     # os.environ['PATH'] = 'C:\\mingw64\\bin'
     # compiler_flags = ["-O2", "-march=native", "-DMS_WIN64", "-std=c++11"]
     # compiler_flags = ["-O2", "-march=native", "-DMS_WIN64"]
@@ -33,23 +33,12 @@ if "Windows" in platform.platform():
 
     base_path = os.getcwd()
 
-    # link_args = ['-static-libgcc',
-    #              '-static-libstdc++',
-    #              '-Wl,-Bstatic,--whole-archive',
-    #              '-lwinpthread',
-    #              '-Wl,--no-whole-archive',
-    #              ]
-
     uqd_link_args = [
-        # '-ICTimeTagLib',
         '/d2:-AllowCompatibleILVersions'
     ]
     uqd_include_dirs = [get_include(), base_path + "\\opt\\CTimeTag\\Include\\"]
     uqd_libraries_dirs = [base_path, base_path + '\\opt\\CTimeTag\\Win64\\']
-    # uqd_libraries_dirs += [base_path, base_path + '\\opt\\CTimeTag\\Linux']
-    # uqd_libraries = ["timetag64"]
     uqd_libraries = ["CTimeTagLib"]
-
 
 extensions = [
     Extension(

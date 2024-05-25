@@ -8,6 +8,8 @@ from ._tangy import JointHistogramMeasurement, JointHistogram
 from ._tangy import timetrace, find_delay, delay_result
 from ._tangy import PTUFile
 
+from .apps import gui_uqd
+
 from ._tangy import IFace, ImplA, ImplB
 
 # from .tangy import singles, coincidences, timetrace, find_zero_delay

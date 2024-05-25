@@ -390,6 +390,8 @@ class UQDLogic16:
         Args:
             count (int): size of group
         """
+        if (count < 1) and (count > 10):
+            raise ValueError("Count filter must be between 1 and 10")
         self._filter_min_count = count
 
     @property
@@ -491,10 +493,12 @@ class UQDLogic16:
         return self._buffer
 
     @cython.ccall
-    def write_to_buffer(self):
+    def write_to_buffer(self) -> int:
         """
         Write tags directly into buffer
         """
         (count, channels, tags) = self.read_tags()
         self._buffer.push(channels, tags)
+
+        return self._buffer.count
 
