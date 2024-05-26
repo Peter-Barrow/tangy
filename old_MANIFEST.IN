@@ -1,5 +1,0 @@
-include tangy/*.py*
-include tangy/*.typed
-include LICENSE
-
-exclude tangy/ext
