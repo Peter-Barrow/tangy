@@ -1,4 +1,5 @@
 local_testing
+out
 build
 dist
 .mypy_cache
