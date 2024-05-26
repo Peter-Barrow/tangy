@@ -1,7 +1,7 @@
 pages:
   image: python:3.8-buster
   before_script:
-    - python3 -m pip build --wheel
+    - python3 -m build --wheel
     - python3 -m pip install ./dist/tangy*.whl --no-deps
     - pip install mkdocs mkdocs-material mkdocstrings[python] mkdocstrings-python mkdoxy pymdown-extensions
   stage: deploy

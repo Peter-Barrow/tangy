@@ -65,12 +65,7 @@
         show_root_heading: true
         show_source: false
 
-### :::tangy.find_zero_delay
-    options:
-        show_root_heading: true
-        show_source: false
-
-### :::tangy.singles
+### :::tangy.find_delay
     options:
         show_root_heading: true
         show_source: false
