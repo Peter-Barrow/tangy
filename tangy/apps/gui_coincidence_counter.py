@@ -9,7 +9,7 @@ import customtkinter as ctk
 
 from tangy import buffer_list_update
 from tangy import TangyBufferStandard, TangyBufferClocked
-from tangy import singles, CoincidenceMeasurement, coincidences_count, find_delay
+from tangy import find_delay
 
 
 class FloatSpinbox(ctk.CTkFrame):
@@ -187,21 +187,27 @@ class Pair(ctk.CTkFrame):
         self.delay_value = ctk.DoubleVar(self, value=0)
         self.delay_slider = ctk.CTkSlider(
             self, from_=-1000, to=1000, variable=self.delay_value, command=self.delay_slider_apply)
-        self.delay_slider.grid(row=0, column=2, sticky="ew")
+        self.delay_slider.grid(row=0, column=2, columnspan=3, sticky="ew")
 
         self.searching = False
         self.delay_search_button = ctk.CTkButton(self, text="Find Delay", command=self.delay_search)
-        self.delay_search_button.grid(row=0, column=3, padx=(5, 5), pady=(5, 5), stick="ew")
+        self.delay_search_button.grid(row=0, column=5, padx=(5, 5), pady=(5, 5), stick="ew")
+
+        self.window_label = ctk.CTkLabel(self, text="Window (ns)")
+        self.window_label.grid(row=1, column=2, sticky="e")
+        self.window_entry = ctk.CTkEntry(self, border_width=0, width=40)
+        self.window_entry.grid(row=1, column=3, sticky="w", padx=(5, 5))
+        self.window_entry.insert(0, "1.0")
 
         self.delay_label = ctk.CTkEntry(self, border_width=0)
-        self.delay_label.grid(row=1, column=2, sticky="ew")
+        self.delay_label.grid(row=1, column=4, sticky="ew")
         self.delay_label.insert(0, "0.0")
 
         self.delay_units_options = ["ps", "ns", "µs", "ms", "s"]
         self.delay_units_magnitude = [-12, -9, -6, -3, 0]
         self.delay_units = ctk.CTkComboBox(
             self, width=60, values=self.delay_units_options, command=self.delay_calculate)
-        self.delay_units.grid(row=1, column=3, sticky="ew", padx=(5, 5))
+        self.delay_units.grid(row=1, column=5, sticky="ew", padx=(5, 5))
 
         self.changed = False
 
@@ -358,8 +364,8 @@ class CoincidenceCounter(ctk.CTk):
         super().__init__()
 
         self.title("Tangy Pair Counter")
-        self.geometry("600x400")
-        self.minsize(600, 400)
+        self.geometry("650x400")
+        self.minsize(650, 400)
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure((0), weight=1)
@@ -383,13 +389,19 @@ class CoincidenceCounter(ctk.CTk):
         self.count()
 
     def count(self):
-        if self.buffer_list.running == True:
-            start_time = time.perf_counter()
-            channels = [self.pair.signal_channel.get(), self.pair.idler_channel.get()]
+        if self.buffer_list.running is True:
+            # start_time = time.perf_counter()
+            channels = [self.pair.idler_channel.get(), self.pair.signal_channel.get()]
             delays = [0, self.pair.delay]
+            try:
+                window = float(self.pair.window_entry.get())
+            except ValueError:
+                window = 1
 
-            (total, singles_count) = singles(self.buffer_list.buffer, 1.0)
-            cc = self.buffer_list.buffer.coincidence_count(1, 1e-9, channels, delays=delays)
+            window *= (1e-9)
+
+            (total, singles_count) = self.buffer_list.buffer.singles(1.0)
+            cc = self.buffer_list.buffer.coincidence_count(1, window, channels, delays=delays)
             rate_i = singles_count[channels[0]]
             rate_s = singles_count[channels[1]]
             self.hud.rate_idler.text.configure(text=f"{rate_i}")
@@ -400,18 +412,17 @@ class CoincidenceCounter(ctk.CTk):
             else:
                 eta = (cc / sqrt(rate_i * rate_s)) * 100
             self.hud.efficiency.text.configure(text=f"{eta:.4g}")
-            stop_time = time.perf_counter()
-            #print(stop_time - start_time)
+            # stop_time = time.perf_counter()
+            # print(stop_time - start_time)
 
         if self.pair.searching is True:
             self.pair.searching = False
             channels, delays = self.pair.configuration()
             delay_result = find_delay(self.buffer_list.buffer,
-                                      channels[0], channels[1], 10, resolution=6.25e-9, window=80e-7)
+                                      channels[0], channels[1], 10,
+                                      resolution=6.25e-9, window=80e-7)
             new_delay = delay_result.t0
             self.pair.delay_from_found(new_delay)
-            # TODO: delay is not always the correct sign
-            print(new_delay)
 
         self.after(25, self.count)
 

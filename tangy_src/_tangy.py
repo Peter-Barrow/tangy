@@ -1433,11 +1433,11 @@ class TangyBufferClocked(TangyBuffer):
 
         _n_channels = len(channels)
 
-        assert _n_channels <= self.n_channels, "More channels than available in buffer"
-
-        assert max(channels) <= self.n_channels, \
-            f"Requested channel {max(channels)} when maximum channel available in {self.n_channels}"
-
+#         assert _n_channels <= self.n_channels, "More channels than available in buffer"
+#
+#         assert max(channels) <= self.n_channels, \
+#             f"Requested channel {max(channels)} when maximum channel available in {self.n_channels}"
+#
         _channels: ndarray(u8n) = array(channels, dtype=u8n)
 
         if delays is None:
