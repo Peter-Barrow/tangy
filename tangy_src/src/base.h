@@ -152,10 +152,36 @@ iterator_init(circular_iterator* iter,
     usize x = start % capacity;
     usize y = stop % capacity;
 
+    // printf("%lu\t%lu\n", start, stop);
+    // printf("%lu\t%lu\n", x, y);
+
+    //if (x <= y) {
+    if ((x+iter->count) <= capacity){
+        iter->lower.index = x;
+        iter->lower.count = iter->count;
+        iter->upper.index = 0;
+        iter->upper.count = 0;
+        // printf("TOTAL:\t%lu\n", iter->count);
+        // printf("ITER:\t%lu\t%lu\t%lu\t%lu\n", iter->lower.index, iter->lower.count, iter->upper.index, iter->upper.count);
+        return 0;
+    }
+
+    // now for x > y
     iter->lower.index = x;
     iter->lower.count = capacity - x;
     iter->upper.index = 0;
-    iter->upper.count = y;
+    iter->upper.count = iter->count - iter->lower.count;
+
+    // usize total = stop - start;
+
+    // iter->lower.index = x;
+    // iter->lower.count = capacity - x;
+    // iter->upper.index = 0;
+    // // iter->upper.count = y;
+    // iter->upper.count = total - iter->lower.count;
+
+    // printf("TOTAL:\t%lu\n", iter->count);
+    // printf("ITER:\t%lu\t%lu\t%lu\t%lu\n", iter->lower.index, iter->lower.count, iter->upper.index, iter->upper.count);
 
     return 0;
 }

@@ -1,6 +1,6 @@
-import datetime
+# import datetime
 import cython
-from cython.cimports.cython import view
+# from cython.cimports.cython import view
 from cython.cimports import _tangy as _tangy
 
 import mmap
@@ -9,29 +9,29 @@ from os.path import getsize, join, exists
 import json
 # import time
 from scipy.optimize import curve_fit
-from numpy import log2, mean, where, exp, roll, reshape, ravel
-from numpy import sum as npsum
+from numpy import mean, where, exp, roll
+# from numpy import sum as npsum
 from numpy import round as npround
 from numpy import abs as nabs
 from numpy import histogram as nphist
-from numpy import arange, array, ndarray, asarray, zeros, empty, frombuffer
+from numpy import arange, array, ndarray, asarray, zeros, frombuffer
 from numpy import uint8 as u8n
 from numpy import uint64 as u64n
 from numpy import int64 as i64n
 from numpy import float64 as f64n
-from cython.cimports.libc.stdlib import malloc, free
-from cython.cimports.libc.stdio import FILE, fdopen, fclose, fseek
+from cython.cimports.libc.stdlib import malloc
+from cython.cimports.libc.stdio import FILE, fdopen, fclose
 
 from cython.cimports.libc.stdint import uint8_t as u8
-from cython.cimports.libc.stdint import uint32_t as u32
+# from cython.cimports.libc.stdint import uint32_t as u32
 from cython.cimports.libc.stdint import uint64_t as u64
 from cython.cimports.libc.stdint import int64_t as i64
 import struct
 # from cython.cimports.numpy import npu64n_t
 
-import numpy.typing as npt
+# import numpy.typing as npt
 from typing import List, Tuple, Optional, Union
-from enum import Enum
+# from enum import Enum
 from platformdirs import user_config_dir
 
 
@@ -51,8 +51,8 @@ _Resolution = cython.fused_type(float, Tuple[float, float])
 # @cython.cfunc
 # def into_std_buffer(void_ptr: cython.pointer(cython.void)) -> std_buf_ptr:
 #     return cython.cast(std_buf_ptr, void_ptr)
-# 
-# 
+#
+#
 # @cython.cfunc
 # def into_clk_buffer(void_ptr: cython.pointer(cython.void)) -> clk_buf_ptr:
 #     return cython.cast(clk_buf_ptr, void_ptr)
@@ -90,12 +90,12 @@ def timetag_at(ptr: TangyBufferPtr, idx: u64n):
 # @cython.cfunc
 # def time_at_index(buf_ptr: cython.pointer(cython.void),
 #                   buf_type: _tangy.BufferType, index: u64n) -> float:
-# 
+#
 #     if buf_type is _tangy.BufferType.Standard:
 #         ptr_std = into_std_buffer(buf_ptr)
 #         rec_std: _tangy.standard = timetag_at(ptr_std, index)
 #         return to_time[_tangy.standard, _tangy.std_res](rec_std, ptr_std[0].resolution[0])
-# 
+#
 #     elif buf_type is _tangy.BufferType.Clocked:
 #         ptr_clk = into_clk_buffer(buf_ptr)
 #         rec_clk: _tangy.clocked = timetag_at(ptr_clk, index)
@@ -149,15 +149,15 @@ def buffer_list_update() -> dict:
         if file.endswith(".json") or file.endswith(".JSON"):
             file_name = join(buffer_list_path, file)
             with open(file_name, "r") as f:
-                config = {k.lower():v for k, v in json.load(f).items()}
+                config = {k.lower(): v for k, v in json.load(f).items()}
                 keys = config.keys()
                 if "name" not in keys:
                     continue
                 if "format" not in keys:
                     continue
                 buffer_list[config["name"]] = {
-                        "format": config["format"],
-                        "path": file_name
+                    "format": config["format"],
+                    "path": file_name
                 }
 
     buffer_list_available = {}
@@ -167,7 +167,8 @@ def buffer_list_update() -> dict:
         name_encoded = name.encode('utf-8')
         c_name: cython.p_char = name_encoded
         result = _tangy.shmem_exists(c_name, cython.address(flag))
-        # if result.Ok is False:
+        if result.Ok is False:
+            continue
         if flag == 0:
             # buffer doesn't exist anymore so delete its json file
             remove(details["path"])
@@ -180,11 +181,11 @@ def buffer_list_update() -> dict:
         name_stub_free = ""
         # if details["format"].lower() == "standard":
         if details["format"] == 0:
-             name_stub_free = name.replace("std_", "")
+            name_stub_free = name.replace("std_", "")
 
         # if details["format"].lower() == "clocked":
         if details["format"] == 1:
-             name_stub_free = name.replace("clk_", "")
+            name_stub_free = name.replace("clk_", "")
 
         buffer_list_available[name_stub_free] = details
 
@@ -207,10 +208,28 @@ def buffer_list_append(buffer: TangyBuffer):
         json.dump(config, file, indent=4)
 
 
-
 @cython.ccall
 def buffer_list_contains():
     ...
+
+
+@cython.ccall
+def buffer_list_delete_all():
+    buffer_list = buffer_list_update()
+
+    for name in buffer_list.keys():
+        format = buffer_list[name]["format"]
+        if format == 0:
+            buffer = TangyBufferStandard(name)
+            buffer._buffer.reference_count = 0
+            buffer.__del__()
+
+        if format == 1:
+            buffer = TangyBufferClocked(name)
+            buffer.reference_count = 0
+            buffer.__del__()
+
+    buffer_list_update()
 
 
 @cython.ccall
@@ -444,12 +463,12 @@ class TangyBuffer:
 
     @classmethod
     def make_new_standard(cls, name: str, resolution: float,
-                          length: int, n_channels: int) -> TangyBufferStandard:
+                          length: int, n_channels: int):
         return TangyBufferStandard(name, resolution, length, n_channels)
 
     @classmethod
     def make_new_clocked(cls, name: str, resolution: Tuple[float, float],
-                         length: int, n_channels: int) -> TangyBufferClocked:
+                         length: int, n_channels: int):
         return TangyBufferClocked(name, resolution, length, n_channels)
 
     def __del__(self):
@@ -462,7 +481,7 @@ class TangyBuffer:
 
         config = {
             "name": self.name.decode("ascii"),
-            "format": buffer_type, # TODO: Enum module should be used so we can give this a name
+            "format": buffer_type,  # TODO: Enum module should be used so we can give this a name
             "capacity": self.capacity,
             "count": self.count,
             "resolution": self.resolution,
@@ -492,7 +511,7 @@ class TangyBuffer:
         time_at_stop: f64n = 0
         (time_at_start, time_at_stop) = self.time_range()
 
-        idx: int = self.begin
+        # idx: int = self.begin
 
         if time < 0:
             return self.lower_bound(time_at_stop + time)
@@ -534,7 +553,7 @@ class TangyBuffer:
         step: int = 1
 
         if type(key) is slice:
-            oldest = self.begin
+            # oldest = self.begin
 
             dist: int = abs(abs(key.stop) - abs(key.start))
             if (key.start > self.capacity) or (key.stop > self.capacity):
@@ -748,6 +767,7 @@ class TangyBufferStandard(TangyBuffer):
 
     _buffer: _tangy.std_buffer
     _ptr: cython.pointer(_tangy.std_buffer)
+    _type: _tangy.BufferType
 
     def __init__(self, name: str,
                  resolution: Optional[float] = None,
@@ -779,11 +799,14 @@ class TangyBufferStandard(TangyBuffer):
         _tangy.std_buffer_info_init(self._buffer.map_ptr,
                                     cython.address(self._buffer))
         self._ptr = cython.address(self._buffer)
+        self._type = _tangy.BufferType.Clocked
         buffer_list_append(self)
         return
 
     def __del__(self):
         result: _tangy.tbResult = _tangy.std_buffer_deinit(self._ptr)
+        if result.Ok is False:
+            print("something went wrong...")
         # TODO: check result...
         # TODO: update buffer list
 
@@ -870,6 +893,10 @@ class TangyBufferStandard(TangyBuffer):
     @property
     def reference_count(self) -> int:
         return self._buffer.reference_count[0]
+
+    @reference_count.setter
+    def reference_count(self, int):
+        self._buffer.reference_count[0] = 0
 
     @property
     def n_channels(self) -> int:
@@ -1015,6 +1042,7 @@ class TangyBufferClocked(TangyBuffer):
 
     _buffer: _tangy.clk_buffer
     _ptr: cython.pointer(_tangy.clk_buffer)
+    _type: _tangy.BufferType
     # _name = cython.declare(bytes)
 
     def __init__(self, name: str,
@@ -1058,6 +1086,8 @@ class TangyBufferClocked(TangyBuffer):
 
     def __del__(self):
         result: _tangy.tbResult = _tangy.clk_buffer_deinit(self._ptr)
+        if result.Ok is False:
+            print("something went wrong")
         # TODO: check result...
         # TODO: update buffer list
 
@@ -1160,6 +1190,10 @@ class TangyBufferClocked(TangyBuffer):
     def reference_count(self) -> int:
         return self._buffer.reference_count[0]
 
+    @reference_count.setter
+    def reference_count(self, int):
+        self._buffer.reference_count[0] = 0
+
     @property
     def n_channels(self) -> int:
         return self._buffer.n_channels[0]
@@ -1229,6 +1263,31 @@ class TangyBufferClocked(TangyBuffer):
         index: u64n = _tangy.clk_lower_bound(self._ptr, bins)
 
         return index
+
+    @cython.ccall
+    def coincidence_count(self, read_time: float, window: float,
+                          channels: List[int], delays: Optional[List[int]] = None):
+
+        _n_channels = len(channels)
+
+        _channels: ndarray(u8n) = array(channels, dtype=u8n)
+
+        if delays is None:
+            delays: ndarray(f64n) = zeros(_n_channels, dtype=f64n)
+
+        # _delays: ndarray(f64n) = array([0, 1.6125e-7], dtype=f64n)
+
+        _channels_view: cython.uchar[::1] = _channels
+        _delays_view: cython.double[::1] = array(delays, dtype=f64n)
+        # _delays_view: cython.double[::1] = _delays
+
+        count = _tangy.clk_coincidences_count(self._ptr,
+                                              _n_channels,
+                                              cython.address(_channels_view[0]),
+                                              cython.address(_delays_view[0]),
+                                              window,
+                                              read_time)
+        return count
 
 
 TangyBufferT = cython.fused_type(TangyBufferStandard, TangyBufferClocked)
@@ -1331,18 +1390,24 @@ def coincidences_count(buffer: TangyBufferT,
                        read_time: float,
                        window: float,
                        config: Optional[CoincidenceMeasurement] = None,
-                       channels: Optional[List[float]] = None,
+                       channels: Optional[List[int]] = None,
                        delays: Optional[List[float]] = None,
                        ) -> int:
 
     if (config is None):
-        if (channels is not None) and (window is not None):
+        if (channels is None) and (window is None):
             raise ValueError("No valid arguments given")
 
         if (delays is None):
-            delays = zeros(len(channels), dtype=u8n)
+            delays = zeros(len(channels), dtype=f64n).tolist()
 
-        config: CoincidenceMeasurement = CoincidenceMeasurement(window, channels, delays)
+        if TangyBufferT is TangyBufferStandard:
+            resolution = buffer.resolution
+
+        if TangyBufferT is TangyBufferClocked:
+            resolution = list(buffer.resolution)
+
+        config: CoincidenceMeasurement = CoincidenceMeasurement(channels, resolution, delays)
 
     count: u64n = 0
 
@@ -1370,12 +1435,12 @@ def coincidences_collect(buffer: TangyBufferT,
                          read_time: float,
                          window: float = None,
                          config: Optional[CoincidenceMeasurement] = None,
-                         channels: Optional[List[float]] = None,
+                         channels: Optional[List[int]] = None,
                          delays: Optional[List[float]] = None,
                          ):  # -> Union[RecordsStandard, RecordsClocked]:
 
     if (config is None):
-        if (channels is not None) and (window is not None):
+        if (channels is None) and (window is None):
             raise ValueError("No valid arguments given")
 
         if (delays is None):

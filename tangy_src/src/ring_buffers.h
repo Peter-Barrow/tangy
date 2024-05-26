@@ -483,7 +483,7 @@ JOIN(STUB, arg_min)(const BUFFER* const buffer,
     // u64 min_val = ArrivalTimeAt(buffer, index[0] % capacity);
     u64 min_val = current[0];
 
-    for (int i = 1; i < n_channels; i++) {
+    for (size i = 1; i < n_channels; i++) {
         // temp = ArrivalTimeAt(buffer, index[i] % capacity);
         temp = current[i];
         if (temp < min_val) {
@@ -630,6 +630,23 @@ JOIN(STUB, pattern_init)(const BUFFER* const buffer,
         index[i] = iters[i].lower.index;
     }
 
+    free(delays);
+
+    // u64 index_min = count;
+    // u64 index_max = 0;
+    // for (usize i = 0; i < n; i++){
+    //     if (index[i] < index_min) {
+    //         index_min = index[i];
+    //     }
+    //     if (channel_max[i] > index_max) {
+    //         index_max = channel_max[i];
+    //     }
+
+    // }
+
+    // printf("MAX_ITER:\t%lu\n", index_max - index_min);
+
+
     pattern_iterator pattern_iter = { 0 };
     pattern_iter.length = n;
     pattern_iter.oldest = ArgMin(buffer, channel_max, index, n);
@@ -668,11 +685,11 @@ JOIN(STUB, next_for_channel)(const BUFFER* const buffer,
         }
     }
 
-    *index = i;
-
     if (iter->count == 0) {
         return false;
     }
+
+    *index = i;
 
     return true;
 }
@@ -826,6 +843,10 @@ JOIN(STUB, coincidences_count)(const BUFFER* const buffer,
     pattern_iterator pattern =
       PatternIteratorInit(buffer, n_channels, channels, delays, read_time);
 
+    // for (usize i = 0; i < n_channels; i++){
+    //     printf("%lu\t", pattern.index[i]);
+    // }
+
     u64 conversion_factor = *(buffer->conversion_factor);
     u64* current_times = (u64*)malloc(n_channels * sizeof(u64));
     for (usize i = 0; i < n_channels; i++) {
@@ -837,6 +858,7 @@ JOIN(STUB, coincidences_count)(const BUFFER* const buffer,
     u64 radius_bins = BinsFromTime(res, radius);
     u64 diameter_bins = radius_bins + radius_bins;
 
+    // usize iterations = 0;
     bool in_range = true;
     u64 count = 0;
     while (in_range == true) {
@@ -862,7 +884,14 @@ JOIN(STUB, coincidences_count)(const BUFFER* const buffer,
         current_times[pattern.oldest] =
           ArrivalTimeAtNext(conversion_factor,
                             TimestampAt(buffer, pattern.index[pattern.oldest]));
+        // iterations += 1;
     }
+
+    // for (usize i = 0; i < n_channels; i++){
+    //     printf("%lu\t", pattern.index[i]);
+    // }
+    // printf("%lu", iterations);
+    // printf("\n");
 
     PatternIteratorDeinit(&pattern);
     free(current_times);

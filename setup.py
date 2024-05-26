@@ -11,7 +11,8 @@ cython_dir = os.path.join("tangy_src")
 
 compiler_flags = []
 if "Linux" in platform.platform():
-    compiler_flags = ["-O2", "-march=native"]
+    # compiler_flags = ["-O2", "-march=native"]
+    # compiler_flags = ["-march=native"]
     uqd_include_dirs = [get_include(), "./opt/CTimeTag/Include", "."]
     libusb = "usb"
     if "ubuntu" in platform.version().lower():
