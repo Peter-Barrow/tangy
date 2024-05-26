@@ -389,15 +389,7 @@ class CoincidenceCounter(ctk.CTk):
             delays = [0, self.pair.delay]
 
             (total, singles_count) = singles(self.buffer_list.buffer, 1.0)
-            # cc = coincidences_count(self.buffer_list.buffer, 1, 1e-9,
-            #                         channels=channels, delays=delays)
             cc = self.buffer_list.buffer.coincidence_count(1, 1e-9, channels, delays=delays)
-            # cc = coincidences_count(self.buffer_list.buffer, 1.0, 1e-9, channels=channels, delays=delays)
-
-            # if self.buffer_list.format == 0:
-            #     cc = coincidences_count[TangyBufferStandard](self.buffer_list.buffer, 1.0, 1e-9, channels=channels, delays=delays)
-            # else:
-            #     cc = coincidences_count[TangyBufferClocked](self.buffer_list.buffer, 1.0, 1e-9, channels=channels, delays=delays)
             rate_i = singles_count[channels[0]]
             rate_s = singles_count[channels[1]]
             self.hud.rate_idler.text.configure(text=f"{rate_i}")

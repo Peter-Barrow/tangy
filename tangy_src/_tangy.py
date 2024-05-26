@@ -768,6 +768,8 @@ class TangyBufferStandard(TangyBuffer):
     _buffer: _tangy.std_buffer
     _ptr: cython.pointer(_tangy.std_buffer)
     _type: _tangy.BufferType
+    _have_measurement: bool = False
+    _measurement_cc: cython.pointer(_tangy.std_cc_measurement)
 
     def __init__(self, name: str,
                  resolution: Optional[float] = None,
@@ -800,6 +802,7 @@ class TangyBufferStandard(TangyBuffer):
                                     cython.address(self._buffer))
         self._ptr = cython.address(self._buffer)
         self._type = _tangy.BufferType.Clocked
+
         buffer_list_append(self)
         return
 
@@ -968,6 +971,121 @@ class TangyBufferStandard(TangyBuffer):
 
         return index
 
+    @cython.ccall
+    def singles(self, read_time: Optional[float] = None,
+                start: Optional[int] = None,
+                stop: Optional[int] = None) -> Tuple[int, List[int]]:
+        """Count the occurances of each channel over a region of the buffer
+
+        Args:
+            buffer (RecordBuffer): Buffer containing timetags
+            read_time (Optional[float] = None): Length of time to integrate over
+            start (Optional[int] = None): Buffer position to start counting from
+            stop (Optional[int] = None): Buffer position to sotp counting to
+
+        Returns:
+            (int, List[int]): Total counts and list of total counts on each channel
+
+        Examples:
+            Get all of the singles in a buffer
+            >>> tangy.singles(buffer, buffer.time_in_buffer())
+
+            Count the singles in the last 1s
+            >>> tangy.singles(buffer, 1)
+
+            Count the singles in the last 1000 tags
+            >>> tangy.singles(buffer, buffer.count - 1000, buffer.count)
+        """
+
+        counters: u64n[:] = zeros(self.n_channels, dtype=u64n)
+        counters_view: u64[::1] = counters
+
+        if read_time:
+            read_time: f64n = read_time
+            start: u64n = self.lower_bound(read_time)
+
+        if stop is None:
+            stop: u64n = self.count - 1
+
+        total: u64n = 0
+
+        total = _tangy.std_singles(self._ptr, start, stop, cython.address(counters_view[0]))
+
+        return (total, counters)
+
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    @cython.ccall
+    def coincidence_count(self, read_time: float, window: float,
+                          channels: List[int], delays: Optional[List[int]] = None):
+
+        _n_channels = len(channels)
+
+        assert _n_channels <= self.n_channels, "More channels than available in buffer"
+
+        assert max(channels) <= self.n_channels, \
+            f"Requested channel {max(channels)} when maximum channel available in {self.n_channels}"
+
+        _channels: ndarray(u8n) = array(channels, dtype=u8n)
+
+        if delays is None:
+            delays: ndarray(f64n) = zeros(_n_channels, dtype=f64n)
+
+        _channels_view: cython.uchar[::1] = _channels
+        _delays_view: cython.double[::1] = array(delays, dtype=f64n)
+
+        count = _tangy.std_coincidences_count(self._ptr,
+                                              _n_channels,
+                                              cython.address(_channels_view[0]),
+                                              cython.address(_delays_view[0]),
+                                              window,
+                                              read_time)
+        return count
+
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    @cython.ccall
+    def coincidence_collect(self, read_time: float, window: float,
+                            channels: List[int], delays: Optional[List[int]] = None):
+
+        n_channels = len(channels)
+
+        assert n_channels <= self.n_channels, "More channels than available in buffer"
+
+        assert max(channels) <= self.n_channels, \
+            f"Requested channel {max(channels)} when maximum channel available in {self.n_channels}"
+
+        _channels: ndarray(u8n) = array(channels, dtype=u8n)
+
+        if delays is None:
+            delays: ndarray(f64n) = zeros(n_channels, dtype=f64n)
+
+        channels_view: cython.uchar[::1] = _channels
+        delays_view: cython.double[::1] = array(delays, dtype=f64n)
+
+        if self._have_measurement is False:
+            self._measurement_cc = _tangy.std_coincidence_measurement_new(
+                self._buffer.resolution[0], n_channels, cython.address(channels_view[0]))
+
+        self._measurement_cc.n_channels = n_channels
+        self._measurement_cc.channels = cython.address(channels_view[0])
+
+        count: u64n = _tangy.std_coincidences_records(self._ptr,
+                                                      cython.address(delays_view[0]),
+                                                      window,
+                                                      read_time,
+                                                      self._measurement_cc)
+
+        total: u64n = self._measurement.total_records
+
+        assert count == total, f"Count {count} and total {total} aren't equal"
+
+        records: ndarray(u64n) = zeros(total, dtype=u64n)
+        for i in range(total):
+            records[i] = self._measurement_cc.records.data[i]
+
+        return RecordsStandard(total, self.resolution, _channels, records)
+
 
 @cython.cclass
 class TangyBufferClocked(TangyBuffer):
@@ -1043,6 +1161,8 @@ class TangyBufferClocked(TangyBuffer):
     _buffer: _tangy.clk_buffer
     _ptr: cython.pointer(_tangy.clk_buffer)
     _type: _tangy.BufferType
+    _have_measurement: bool = False
+    _measurement_cc: cython.pointer(_tangy.clk_cc_measurement)
     # _name = cython.declare(bytes)
 
     def __init__(self, name: str,
@@ -1265,21 +1385,67 @@ class TangyBufferClocked(TangyBuffer):
         return index
 
     @cython.ccall
+    def singles(self, read_time: Optional[float] = None,
+                start: Optional[int] = None,
+                stop: Optional[int] = None) -> Tuple[int, List[int]]:
+        """Count the occurances of each channel over a region of the buffer
+
+        Args:
+            buffer (RecordBuffer): Buffer containing timetags
+            read_time (Optional[float] = None): Length of time to integrate over
+            start (Optional[int] = None): Buffer position to start counting from
+            stop (Optional[int] = None): Buffer position to sotp counting to
+
+        Returns:
+            (int, List[int]): Total counts and list of total counts on each channel
+
+        Examples:
+            Get all of the singles in a buffer
+            >>> tangy.singles(buffer, buffer.time_in_buffer())
+
+            Count the singles in the last 1s
+            >>> tangy.singles(buffer, 1)
+
+            Count the singles in the last 1000 tags
+            >>> tangy.singles(buffer, buffer.count - 1000, buffer.count)
+        """
+
+        counters: u64n[:] = zeros(self.n_channels, dtype=u64n)
+        counters_view: u64[::1] = counters
+
+        if read_time:
+            read_time: f64n = read_time
+            start: u64n = self.lower_bound(read_time)
+
+        if stop is None:
+            stop: u64n = self.count - 1
+
+        total: u64n = 0
+
+        total = _tangy.clk_singles(self._ptr, start, stop, cython.address(counters_view[0]))
+
+        return (total, counters)
+
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    @cython.ccall
     def coincidence_count(self, read_time: float, window: float,
                           channels: List[int], delays: Optional[List[int]] = None):
 
         _n_channels = len(channels)
+
+        assert _n_channels <= self.n_channels, "More channels than available in buffer"
+
+        assert max(channels) <= self.n_channels, \
+            f"Requested channel {max(channels)} when maximum channel available in {self.n_channels}"
 
         _channels: ndarray(u8n) = array(channels, dtype=u8n)
 
         if delays is None:
             delays: ndarray(f64n) = zeros(_n_channels, dtype=f64n)
 
-        # _delays: ndarray(f64n) = array([0, 1.6125e-7], dtype=f64n)
-
         _channels_view: cython.uchar[::1] = _channels
         _delays_view: cython.double[::1] = array(delays, dtype=f64n)
-        # _delays_view: cython.double[::1] = _delays
 
         count = _tangy.clk_coincidences_count(self._ptr,
                                               _n_channels,
@@ -1288,6 +1454,54 @@ class TangyBufferClocked(TangyBuffer):
                                               window,
                                               read_time)
         return count
+
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    @cython.ccall
+    def coincidence_collect(self, read_time: float, window: float,
+                            channels: List[int], delays: Optional[List[int]] = None):
+
+        n_channels = len(channels)
+
+        assert n_channels <= self.n_channels, "More channels than available in buffer"
+
+        assert max(channels) <= self.n_channels, \
+            f"Requested channel {max(channels)} when maximum channel available in {self.n_channels}"
+
+        _channels: ndarray(u8n) = array(channels, dtype=u8n)
+
+        if delays is None:
+            delays: ndarray(f64n) = zeros(n_channels, dtype=f64n)
+
+        channels_view: cython.uchar[::1] = _channels
+        delays_view: cython.double[::1] = array(delays, dtype=f64n)
+
+        if self._have_measurement is False:
+            self._measurement_cc = _tangy.clk_coincidence_measurement_new(
+                self._buffer.resolution[0], n_channels, cython.address(channels_view[0]))
+
+        self._measurement_cc.n_channels = n_channels
+        self._measurement_cc.channels = cython.address(channels_view[0])
+
+        count: u64n = _tangy.clk_coincidences_records(self._ptr,
+                                                      cython.address(delays_view[0]),
+                                                      window,
+                                                      read_time,
+                                                      self._measurement_cc)
+
+        total: u64n = self._measurement_cc.total_records
+
+        assert count == total, f"Count {count} and total {total} aren't equal"
+
+        clocks: ndarray(u64n) = zeros(total, dtype=u64n)
+        deltas: ndarray(u64n) = zeros(total, dtype=u64n)
+        for i in range(total):
+            clocks[i] = self._measurement_cc.records.data.clock[i]
+            deltas[i] = self._measurement_cc.records.data.delta[i]
+
+        (coarse, fine) = self.resolution
+
+        return RecordsClocked(total, coarse, fine, _channels, clocks, deltas)
 
 
 TangyBufferT = cython.fused_type(TangyBufferStandard, TangyBufferClocked)
