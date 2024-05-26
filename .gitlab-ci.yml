@@ -1,6 +1,10 @@
 pages:
   image: python:3.8-buster
   before_script:
+    - pip install requests
+    - mkdir ./opt
+    - python ./scripts/downloader.py
+    - ls ./opt
     - pip install .
     - python3 -m build --wheel
     - python3 -m pip install ./dist/tangy*.whl --no-deps
