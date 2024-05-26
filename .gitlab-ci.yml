@@ -1,7 +1,7 @@
 pages:
   image: python:3.8-buster
   before_script:
-    - pip install requests
+    - pip install requests setuptools wheel Cython numpy
     - mkdir ./opt
     - python ./scripts/downloader.py
     - ls ./opt
