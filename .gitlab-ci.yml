@@ -1,6 +1,7 @@
 pages:
   image: python:3.8-buster
   before_script:
+    - apt-get install libusb-1.0
     - pip install requests setuptools wheel Cython numpy
     - mkdir ./opt
     - python ./scripts/downloader.py
