@@ -1,16 +1,12 @@
 from ._tangy import tangy_config_location, buffer_list_update, buffer_list_append, buffer_list_show, buffer_list_delete_all
 from ._tangy import RecordsStandard, RecordsClocked
 from ._tangy import TangyBuffer, TangyBufferStandard, TangyBufferClocked
-from ._tangy import singles
-from ._tangy import CoincidenceMeasurement, coincidences_count, coincidences_collect
 # from ._tangy import JointDelayHistogram, JointHistogram
 from ._tangy import JointHistogramMeasurement, JointHistogram
 from ._tangy import timetrace, find_delay, delay_result
 from ._tangy import PTUFile
 
 from .apps import gui_uqd
-
-from ._tangy import IFace, ImplA, ImplB
 
 # from .tangy import singles, coincidences, timetrace, find_zero_delay
 # from .tangy import coincidence_measurement
