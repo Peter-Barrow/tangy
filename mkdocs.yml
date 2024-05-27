@@ -54,6 +54,7 @@ plugins:
         python:
           paths: [tangy/*]
           options:
+            allow_inspection: false
             docstring_section_style: list
             merge_init_into_class: true
             show_root_heading: true

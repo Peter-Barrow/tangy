@@ -46,33 +46,42 @@
 
 ### :::tangy.TangyBuffer
     options:
+        allow_inspection: true
+        show_symbol_type_heading: true
         show_root_heading: true
         show_source: false
 
 ### :::tangy.TangyBufferStandard
     options:
+        inherited_members: true
+        allow_inspection: true
+        show_symbol_type_heading: true
         show_root_heading: true
         show_source: false
 
 ### :::tangy.TangyBufferClocked
     options:
+        show_symbol_type_heading: true
         show_root_heading: true
         show_source: false
 
 ## Measurements
 ### :::tangy.timetrace
     options:
+        show_symbol_type_heading: true
         show_root_heading: true
         show_source: false
 
 ### :::tangy.find_delay
     options:
+        show_symbol_type_heading: true
         show_root_heading: true
         show_source: false
 
 ## File Readers
 ### :::tangy.PTUFile
     options:
+        show_symbol_type_heading: true
         members:
             - records
             - read
@@ -81,32 +90,32 @@
         show_source: false
 
 ## Devices
-```
-    ### :::tangy._uqd.UQDLogic16
-        options:
-            show_root_heading: true
-            show_source: false
-            members:
-                - is_open
-                - calibrate
-                - led_brightness
-                - fpga_version
-                - resolution
-                - number_of_channels
-                - input_threshold
-                - inversion
-                - input_delay
-                - function_generator
-                - external_10MHz_reference
-                - start_timetags
-                - stop_timetags
-                - read_tags
-                - filter_min_count
-                - filter_max_time
-                - exclusion
-                - level_gate
-                - time_gating
-                - time_gate_width
-                - buffer
-                - write_to_buffer
-```
+### :::tangy._uqd.UQDLogic16
+    options:
+        show_symbol_type_heading: true
+        show_root_heading: true
+        show_source: false
+        members:
+            - is_open
+            - calibrate
+            - led_brightness
+            - fpga_version
+            - resolution
+            - number_of_channels
+            - input_threshold
+            - inversion
+            - input_delay
+            - function_generator
+            - external_10MHz_reference
+            - start_timetags
+            - stop_timetags
+            - read_tags
+            - filter_min_count
+            - filter_max_time
+            - exclusion
+            - level_gate
+            - time_gating
+            - time_gate_width
+            - buffer
+            - write_to_buffer
+

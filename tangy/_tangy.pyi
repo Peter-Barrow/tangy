@@ -142,13 +142,9 @@ class TangyBuffer:
 
         Examples:
             Find the position bounding the first second in the buffer
-            ```python
-                idx = buffer(1)
-            ```
+            >>> idx = buffer(1)
             Find the position bounding the last second in the buffer
-            ```python
-                idx = buffer(-1)
-            ```
+            >>> idx = buffer(-1)
 
         Returns:
             (int): Index corresponding to requested time
@@ -165,27 +161,66 @@ class TangyBuffer:
         Returns:
             (int): Index of first record in buffer
         """
-    def __getitem__(self, key): ...
+    def __getitem__(self, key):
+        """ Access subscript of buffer
+
+        """
     def oldest_index(self) -> int: ...
     def push(self, channels: None, timetags): ...
     @property
-    def name(self) -> None: ...
+    def name(self) -> None:
+        """ Name of buffer
+
+        Returns:
+            (str): buffer name
+        """
     @property
-    def file_descriptor(self) -> None: ...
+    def file_descriptor(self) -> None:
+        """ File descriptor of buffer
+
+        Returns:
+            (str): buffers file descriptor
+        """
     @property
-    def capacity(self) -> int: ...
+    def capacity(self) -> int:
+        """ Maximum number of timetags the buffer can hold
+
+        Returns:
+            (int): maximum number of timetags
+        """
     @property
-    def resolution(self) -> None: ...
+    def resolution(self) -> None:
+        """ Resolution of timetags in buffer
+
+        """
     @resolution.setter
     def resolution(self, resolution) -> None: ...
     @property
-    def count(self) -> int: ...
+    def count(self) -> int:
+        """ Number of timetags written to the buffer
+        """
     @property
     def index_of_reference(self) -> int: ...
     @property
-    def reference_count(self) -> int: ...
+    def reference_count(self) -> int:
+        """ Number of current connections to the buffer
+
+        Tracks number of connections to buffer, used to determine if it is safe
+            to delete the backing memory and close the memory mapping.
+
+        Returns:
+            (int): number of connections
+        """
     @property
-    def n_channels(self) -> int: ...
+    def n_channels(self) -> int:
+        """ Maximum number of channels in the buffer
+
+        Typically set by a device or a file to limit the range of valid channels
+            available.
+
+        Returns:
+            (int): number of channels
+        """
     def time_in_buffer(self) -> float:
         """ Amount of time held in the buffer
         Returns:
@@ -271,25 +306,66 @@ class TangyBufferStandard(TangyBuffer):
     def oldest_index(self) -> int: ...
     def push(self, channels: None, timetags: None): ...
     @property
-    def name(self): ...
+    def name(self):
+        """ Name of buffer
+
+        Returns:
+            (str): buffer name
+        """
     @property
-    def file_descriptor(self): ...
+    def file_descriptor(self):
+        """ File descriptor of buffer
+
+        Returns:
+            (str): buffers file descriptor
+        """
     @property
-    def capacity(self) -> int: ...
+    def capacity(self) -> int:
+        """ Maximum number of timetags the buffer can hold
+
+        Returns:
+            (int): maximum number of timetags
+        """
     @property
-    def resolution(self) -> float: ...
+    def resolution(self) -> float:
+        """ Resolution of timetags in buffer
+
+        Returns:
+            (float): resolution
+        """
     @resolution.setter
     def resolution(self, resolution: float): ...
     @property
-    def count(self) -> int: ...
+    def count(self) -> int:
+        """ Number of timetags written to the buffer
+
+        Returns:
+            (int): total number of timetags written
+        """
     @property
     def index_of_reference(self) -> int: ...
     @property
-    def reference_count(self) -> int: ...
+    def reference_count(self) -> int:
+        """ Number of current connections to the buffer
+
+        Tracks number of connections to buffer, used to determine if it is safe
+            to delete the backing memory and close the memory mapping.
+
+        Returns:
+            (int): number of connections
+        """
     @reference_count.setter
     def reference_count(self, int) -> None: ...
     @property
-    def n_channels(self) -> int: ...
+    def n_channels(self) -> int:
+        """ Maximum number of channels in the buffer
+
+        Typically set by a device or a file to limit the range of valid channels
+            available.
+
+        Returns:
+            (int): number of channels
+        """
     def time_in_buffer(self) -> float:
         """ Amount of time held in the buffer
         Returns:
@@ -423,16 +499,15 @@ class TangyBufferClocked(TangyBuffer):
          timetagger would give: ``resolution = (12.5e-9, 1e-12)``
 
     Examples:
-        ```python
-        # Here we will create a buffer called \'clocked\' (imaginitive)
-        # that will only except timetags in the ``Clocked`` format, this is
-        # selected by supplying a pair of values for the resolution
-        resolution = (12.5e-9, 1e-12) # 80Mhz Clock and 1ps fine resolution
-        clocked_buffer = tangy.TangyBufferClocked("clocked", resolution, 4, int(1e6))
+        Here we will create a buffer called \'clocked\' (imaginitive)
+            that will only except timetags in the ``Clocked`` format, this is
+            selected by supplying a pair of values for the resolution
+        >>> resolution = (12.5e-9, 1e-12) # 80Mhz Clock and 1ps fine resolution
+        >>> clocked_buffer = tangy.TangyBufferClocked("clocked", resolution, 4, int(1e6))
 
-        # A new buffer object can be made by connecting to a buffer with
-        # the correct name
-        clocked_buffer_connection = tangy.TangyBufferClocked("clocked")
+            A new buffer object can be made by connecting to a buffer with
+            the correct name
+        >>> clocked_buffer_connection = tangy.TangyBufferClocked("clocked")
         ```
     '''
     def __init__(self, name: str, resolution: tuple[float, float] | None = None, length: int | None = None, n_channels: int | None = None) -> None: ...
@@ -440,25 +515,64 @@ class TangyBufferClocked(TangyBuffer):
     def oldest_index(self) -> int: ...
     def push(self, channels: None, timetags: None | None): ...
     @property
-    def name(self): ...
+    def name(self):
+        """ Name of buffer
+
+        Returns:
+            (str): buffer name
+        """
     @property
-    def file_descriptor(self): ...
+    def file_descriptor(self):
+        """ File descriptor of buffer
+
+        Returns:
+            (str): buffers file descriptor
+        """
     @property
-    def capacity(self) -> int: ...
+    def capacity(self) -> int:
+        """ Maximum number of timetags the buffer can hold
+
+        Returns:
+            (int): maximum number of timetags
+        """
     @property
-    def resolution(self) -> tuple[float, float]: ...
+    def resolution(self) -> tuple[float, float]:
+        """ Resolution of timetags in buffer
+
+        Returns:
+            (Tuple[float, float]): Tuple of (coarse, fine) resolutions
+
+        """
     @resolution.setter
     def resolution(self, resolution: tuple[float, float]): ...
     @property
-    def count(self) -> int: ...
+    def count(self) -> int:
+        """ Number of timetags written to the buffer
+        """
     @property
     def index_of_reference(self) -> int: ...
     @property
-    def reference_count(self) -> int: ...
+    def reference_count(self) -> int:
+        """ Number of current connections to the buffer
+
+        Tracks number of connections to buffer, used to determine if it is safe
+            to delete the backing memory and close the memory mapping.
+
+        Returns:
+            (int): number of connections
+        """
     @reference_count.setter
     def reference_count(self, int) -> None: ...
     @property
-    def n_channels(self) -> int: ...
+    def n_channels(self) -> int:
+        """ Maximum number of channels in the buffer
+
+        Typically set by a device or a file to limit the range of valid channels
+            available.
+
+        Returns:
+            (int): number of channels
+        """
     def time_in_buffer(self) -> float:
         """ Amount of time held in the buffer
         Returns:

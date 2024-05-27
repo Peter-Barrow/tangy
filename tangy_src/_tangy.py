@@ -446,6 +446,11 @@ class TangyBuffer:
         return config
 
     def __repr__(self) -> str:
+        """ String representation of buffer
+
+        Returns:
+            (str): information about the buffer
+        """
         out: str = "Tangy Buffer:\n"
         config = self.configuration()
         longest_key = max([len(k) for k in config.keys()])
@@ -471,13 +476,9 @@ class TangyBuffer:
 
         Examples:
             Find the position bounding the first second in the buffer
-            ```python
-                idx = buffer(1)
-            ```
+            >>> idx = buffer(1)
             Find the position bounding the last second in the buffer
-            ```python
-                idx = buffer(-1)
-            ```
+            >>> idx = buffer(-1)
 
         Returns:
             (int): Index corresponding to requested time
@@ -522,6 +523,9 @@ class TangyBuffer:
     @cython.boundscheck(False)
     @cython.wraparound(False)
     def __getitem__(self, key):
+        """ Access subscript of buffer
+
+        """
         return self._get(key)
 
     @cython.ccall
@@ -598,18 +602,36 @@ class TangyBuffer:
 
     @property
     def name(self):
+        """ Name of buffer
+
+        Returns:
+            (str): buffer name
+        """
         raise NotImplementedError
 
     @property
     def file_descriptor(self):
+        """ File descriptor of buffer
+
+        Returns:
+            (str): buffers file descriptor
+        """
         raise NotImplementedError
 
     @property
     def capacity(self) -> int:
+        """ Maximum number of timetags the buffer can hold
+
+        Returns:
+            (int): maximum number of timetags
+        """
         raise NotImplementedError
 
     @property
     def resolution(self):
+        """ Resolution of timetags in buffer
+
+        """
         raise NotImplementedError
 
     @resolution.setter
@@ -618,6 +640,8 @@ class TangyBuffer:
 
     @property
     def count(self) -> int:
+        """ Number of timetags written to the buffer
+        """
         raise NotImplementedError
 
     @property
@@ -626,10 +650,26 @@ class TangyBuffer:
 
     @property
     def reference_count(self) -> int:
+        """ Number of current connections to the buffer
+
+        Tracks number of connections to buffer, used to determine if it is safe
+            to delete the backing memory and close the memory mapping.
+
+        Returns:
+            (int): number of connections
+        """
         raise NotImplementedError
 
     @property
     def n_channels(self) -> int:
+        """ Maximum number of channels in the buffer
+
+        Typically set by a device or a file to limit the range of valid channels
+            available.
+
+        Returns:
+            (int): number of channels
+        """
         raise NotImplementedError
 
     @cython.ccall
@@ -703,6 +743,10 @@ class TangyBufferStandard(TangyBuffer):
             for the "standard timetags". Unused if connecting. In seconds.
         n_channels (int): Number of channels. Unused if connecting.
         length (int): Length of buffer to create. Unused if connecting.
+
+    Note:
+        If connecting to an existing buffer the resolution, n_channels and
+        length arguments will be ignored even if supplied.
 
     Attributes:
         name (str): Name of buffer
@@ -833,18 +877,38 @@ class TangyBufferStandard(TangyBuffer):
 
     @property
     def name(self):
+        """ Name of buffer
+
+        Returns:
+            (str): buffer name
+        """
         return self._buffer.name
 
     @property
     def file_descriptor(self):
+        """ File descriptor of buffer
+
+        Returns:
+            (str): buffers file descriptor
+        """
         return self._buffer.file_descriptor
 
     @property
     def capacity(self) -> int:
+        """ Maximum number of timetags the buffer can hold
+
+        Returns:
+            (int): maximum number of timetags
+        """
         return self._buffer.capacity[0]
 
     @property
     def resolution(self) -> float:
+        """ Resolution of timetags in buffer
+
+        Returns:
+            (float): resolution
+        """
         return self._buffer.resolution[0]
 
     @resolution.setter
@@ -853,6 +917,11 @@ class TangyBufferStandard(TangyBuffer):
 
     @property
     def count(self) -> int:
+        """ Number of timetags written to the buffer
+
+        Returns:
+            (int): total number of timetags written
+        """
         return self._buffer.count[0]
 
     @property
@@ -861,6 +930,14 @@ class TangyBufferStandard(TangyBuffer):
 
     @property
     def reference_count(self) -> int:
+        """ Number of current connections to the buffer
+
+        Tracks number of connections to buffer, used to determine if it is safe
+            to delete the backing memory and close the memory mapping.
+
+        Returns:
+            (int): number of connections
+        """
         return self._buffer.reference_count[0]
 
     @reference_count.setter
@@ -869,6 +946,14 @@ class TangyBufferStandard(TangyBuffer):
 
     @property
     def n_channels(self) -> int:
+        """ Maximum number of channels in the buffer
+
+        Typically set by a device or a file to limit the range of valid channels
+            available.
+
+        Returns:
+            (int): number of channels
+        """
         return self._buffer.n_channels[0]
 
     @cython.ccall
@@ -1131,16 +1216,15 @@ class TangyBufferClocked(TangyBuffer):
          timetagger would give: ``resolution = (12.5e-9, 1e-12)``
 
     Examples:
-        ```python
-        # Here we will create a buffer called 'clocked' (imaginitive)
-        # that will only except timetags in the ``Clocked`` format, this is
-        # selected by supplying a pair of values for the resolution
-        resolution = (12.5e-9, 1e-12) # 80Mhz Clock and 1ps fine resolution
-        clocked_buffer = tangy.TangyBufferClocked("clocked", resolution, 4, int(1e6))
+        Here we will create a buffer called 'clocked' (imaginitive)
+            that will only except timetags in the ``Clocked`` format, this is
+            selected by supplying a pair of values for the resolution
+        >>> resolution = (12.5e-9, 1e-12) # 80Mhz Clock and 1ps fine resolution
+        >>> clocked_buffer = tangy.TangyBufferClocked("clocked", resolution, 4, int(1e6))
 
-        # A new buffer object can be made by connecting to a buffer with
-        # the correct name
-        clocked_buffer_connection = tangy.TangyBufferClocked("clocked")
+            A new buffer object can be made by connecting to a buffer with
+            the correct name
+        >>> clocked_buffer_connection = tangy.TangyBufferClocked("clocked")
         ```
     """
 
@@ -1263,18 +1347,39 @@ class TangyBufferClocked(TangyBuffer):
 
     @property
     def name(self):
+        """ Name of buffer
+
+        Returns:
+            (str): buffer name
+        """
         return self._buffer.name
 
     @property
     def file_descriptor(self):
+        """ File descriptor of buffer
+
+        Returns:
+            (str): buffers file descriptor
+        """
         return self._buffer.file_descriptor
 
     @property
     def capacity(self) -> int:
+        """ Maximum number of timetags the buffer can hold
+
+        Returns:
+            (int): maximum number of timetags
+        """
         return self._buffer.capacity[0]
 
     @property
     def resolution(self) -> Tuple[float, float]:
+        """ Resolution of timetags in buffer
+
+        Returns:
+            (Tuple[float, float]): Tuple of (coarse, fine) resolutions
+
+        """
         return (self._buffer.resolution[0].coarse,
                 self._buffer.resolution[0].fine)
 
@@ -1287,6 +1392,8 @@ class TangyBufferClocked(TangyBuffer):
 
     @property
     def count(self) -> int:
+        """ Number of timetags written to the buffer
+        """
         return self._buffer.count[0]
 
     @property
@@ -1295,6 +1402,14 @@ class TangyBufferClocked(TangyBuffer):
 
     @property
     def reference_count(self) -> int:
+        """ Number of current connections to the buffer
+
+        Tracks number of connections to buffer, used to determine if it is safe
+            to delete the backing memory and close the memory mapping.
+
+        Returns:
+            (int): number of connections
+        """
         return self._buffer.reference_count[0]
 
     @reference_count.setter
@@ -1303,6 +1418,14 @@ class TangyBufferClocked(TangyBuffer):
 
     @property
     def n_channels(self) -> int:
+        """ Maximum number of channels in the buffer
+
+        Typically set by a device or a file to limit the range of valid channels
+            available.
+
+        Returns:
+            (int): number of channels
+        """
         return self._buffer.n_channels[0]
 
     @cython.ccall
