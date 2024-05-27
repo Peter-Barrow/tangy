@@ -17,13 +17,13 @@ Alternatively, if you have a large file of containing timetags you can read a se
     - Delay finding
 
 ## Installation
-```sh
+```sh title="pypi"
 python3 -m pip install tangy
 ```
 
 ### Advanced
 Install from git to get the latest version
-```sh
+```sh title="git"
 python3 -m pip install git+https://gitlab.com/PeterBarrow/tangy.git
 ```
 
@@ -52,23 +52,43 @@ for i in range(11):
 buffer = ptu.buffer()
 ```
 
-Count coincidences in the last second for channels [0, 1] with a 1ns window
-```python
-count = buffer.coincidence_count(1, 1e-9, [0, 1])
+```python title="Count coincidences in the last second for channels [0, 1] with a 1ns window"
+integration_time = 1
+coincidence_window = 1e-9
+channels = [0, 1]
+count = buffer.coincidence_count(integration_time, coincidence_window, channels)
 ```
 
-Collect coincidences in the last second for channels [0, 1] with a 1ns window
-```python
-records = buffer.coincidence_collect(1, 1e-9, [0, 1])
+```python title="Collect coincident timetags"
+records = buffer.coincidence_collect(integration_time, coincidence_window, channels)
 ```
 
-Find the delay between channels 0 and 1
-```python
-result_delay = tangy.find_delay(buffer, 0, 1, 10, resolution=6.25e-9)
+```python title="Find the delays between pairs of channels"
+channel_a = 0
+channel_b = 1
+integration_time = 10
+measurement_resolution = 6.25e09
+result_delay = tangy.find_delay(buffer,
+                                channel_a channel_b,
+                                integration_time,
+                                resolution=measurement_resolution)
 delays = [0, result_delay.t0]
 ```
 
-Count coincidences in the last second for channels [0, 1] with a 1ns window with a delay on channel 1
-```python
-count = buffer.coincidence_count(1, 1e-9, [0, 1], delays=delays)
+```python title="Count (or collect) coincidences with delays"
+count = buffer.coincidence_count(integration_time,
+                                 coincidence_window,
+                                 channels,
+                                 delays=delays)
+
+records = buffer.coincidence_collect(integration_time,
+                                     coincidence_window,
+                                     channels,
+                                     delays=delays)
 ```
+
+
+## Tools
+
+![Coincidence Counter](img/gui_coincidence_counter.png)
+

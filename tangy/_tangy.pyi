@@ -432,7 +432,7 @@ class TangyBufferStandard(TangyBuffer):
             (int): Number of coincidences found
 
         """
-    def coincidence_collect(self, read_time: float, window: float, channels: list[int], delays: list[int] | None = None):
+    def coincidence_collect(self, read_time: float, window: float, channels: list[int], delays: list[int] | None = None) -> RecordsStandard:
         """ Collect coincident timetags
 
         Args:
@@ -639,7 +639,7 @@ class TangyBufferClocked(TangyBuffer):
             (int): Number of coincidences found
 
         """
-    def coincidence_collect(self, read_time: float, window: float, channels: list[int], delays: list[int] | None = None):
+    def coincidence_collect(self, read_time: float, window: float, channels: list[int], delays: list[int] | None = None) -> RecordsClocked:
         """ Collect coincident timetags
 
         Args:

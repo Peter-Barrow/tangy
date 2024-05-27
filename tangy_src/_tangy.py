@@ -719,6 +719,38 @@ class TangyBuffer:
         """
         raise NotImplementedError
 
+    @cython.ccall
+    def timetrace(self, channels: List[int], read_time: float, resolution: float = 10):
+        n_channels: u64n = len(channels)
+        # channels: u8n[:] = asarray(channels, dtype=u8n)
+        channels_view: cython.uchar[::1] = asarray(channels, dtype=u8n)
+        channels_ptr: cython.pointer(cython.uchar) = cython.address(
+            channels_view[0])
+
+        n: cython.int = 1
+        if resolution < read_time:
+            n = int(read_time // resolution) + 1
+
+        intensity_vec: cython.pointer(_tangy.vec_u64) = _tangy.vector_u64_init(n)
+
+        total: u64n = 0
+        total = self._timetrace(read_time, resolution, n_channels, channels_ptr, n, intensity_vec)
+
+        intensities: u64n[:] = zeros(intensity_vec.length, dtype=u64n)
+        intensities_view: u64[::1] = intensities
+        for i in range(intensity_vec.length):
+            intensities_view[i] = intensity_vec.data[i]
+
+        intensity_vec = _tangy.vector_u64_deinit(intensity_vec)
+
+        return intensities
+
+    @cython.cfunc
+    def _timetrace(self, read_time: f64n, resolution: f64n, n_channels: u64n,
+                   channels: cython.pointer(cython.uchar), n_data_points: u64n,
+                   data: cython.pointer(_tangy.vec_u64)):
+        raise NotImplementedError
+
 
 @cython.cclass
 class TangyBufferStandard(TangyBuffer):
@@ -743,10 +775,6 @@ class TangyBufferStandard(TangyBuffer):
             for the "standard timetags". Unused if connecting. In seconds.
         n_channels (int): Number of channels. Unused if connecting.
         length (int): Length of buffer to create. Unused if connecting.
-
-    Note:
-        If connecting to an existing buffer the resolution, n_channels and
-        length arguments will be ignored even if supplied.
 
     Attributes:
         name (str): Name of buffer
@@ -1109,7 +1137,8 @@ class TangyBufferStandard(TangyBuffer):
     @cython.wraparound(False)
     @cython.ccall
     def coincidence_collect(self, read_time: float, window: float,
-                            channels: List[int], delays: Optional[List[int]] = None):
+                            channels: List[int], delays: Optional[List[int]] = None
+                            ) -> RecordsStandard:
         """ Collect coincident timetags
 
         Args:
@@ -1160,6 +1189,22 @@ class TangyBufferStandard(TangyBuffer):
             records[i] = self._measurement_cc.records.data[i]
 
         return RecordsStandard(total, self.resolution, _channels, records)
+
+    @cython.cfunc
+    def _timetrace(self, read_time: f64n, resolution: f64n, n_channels: u64n,
+                   channels: cython.pointer(cython.uchar), n_data_points: u64n,
+                   data: cython.pointer(_tangy.vec_u64)):
+
+        bin_width: u64n = round(resolution / self.resolution)
+
+        total = _tangy.std_timetrace(self._ptr,
+                                     read_time,
+                                     bin_width,
+                                     channels,
+                                     n_channels,
+                                     n_data_points,
+                                     data)
+        return total
 
 
 @cython.cclass
@@ -1581,7 +1626,8 @@ class TangyBufferClocked(TangyBuffer):
     @cython.wraparound(False)
     @cython.ccall
     def coincidence_collect(self, read_time: float, window: float,
-                            channels: List[int], delays: Optional[List[int]] = None):
+                            channels: List[int], delays: Optional[List[int]] = None
+                            ) -> RecordsClocked:
         """ Collect coincident timetags
 
         Args:
