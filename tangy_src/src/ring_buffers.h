@@ -855,7 +855,7 @@ JOIN(STUB, coincidences_count)(const BUFFER* const buffer,
     }
 
     RESOLUTION res = *(buffer->resolution);
-    u64 radius_bins = BinsFromTime(res, radius);
+    u64 radius_bins = BinsFromTime(res, radius); //TODO: should this be doubled?
     u64 diameter_bins = radius_bins + radius_bins;
 
     // usize iterations = 0;
@@ -1191,6 +1191,9 @@ JOIN(STUB, joint_delay_histogram)(const BUFFER* const buffer,
  * @param[in, out] intensities [TODO:description]
  * @return [TODO:description]
  */
+// TODO: refactor, this should calculate bin_width internally
+// TODO: calculate number of bins in here
+// TODO: intensities should be a pointer an unitialised vec_u64, timetrace should call init
 static inline u64
 JOIN(STUB, timetrace)(const BUFFER* const buffer,
                       const f64 read_time,

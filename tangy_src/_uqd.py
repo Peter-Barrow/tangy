@@ -8,8 +8,10 @@ from cython.cimports.libc.stdint import uint8_t as u8
 from cython.cimports.libc.stdint import uint32_t as u32
 from cython.cimports.libc.stdint import uint64_t as u64
 from cython.cimports.libc.stdint import int64_t as i64
-from numpy import ndarray, zeros, uint8, uint64, float64
+from cython.cimports.cython import view
+from numpy import ndarray, zeros, uint8, uint64, float64, asarray
 
+# from cython.cimports import _tangy as _tangy
 from ._tangy import TangyBufferStandard
 
 
@@ -133,10 +135,10 @@ class UQDLogic16:
         self._input_delay = zeros(self.number_of_channels, dtype=float64)
         self._exclusion = zeros(self.number_of_channels, dtype=uint8)
 
-        if calibrate:
+        if calibrate is True:
             self.calibrate()
 
-        if add_buffer:
+        if add_buffer is True:
             self._buffer = TangyBufferStandard(f"uqdbuffer{self._device_id}",
                                                self.resolution,
                                                buffer_size,
@@ -246,14 +248,14 @@ class UQDLogic16:
 
         n: int = self.number_of_channels
         channel: int = value[0]
-        if (channel < 0) or (channel >= n):
+        if (channel < 1) or (channel > n):
             raise ValueError(f"channel must be in range 0 <= channel < {n}")
 
         voltage: float64 = value[1]
         if abs(voltage) > 2:
             raise ValueError("abs(voltage) must be <= 2V")
 
-        self._input_thresholds[channel] = voltage
+        self._input_thresholds[channel - 1] = voltage
         self._c_timetag.SetInputThreshold(channel, voltage)
 
     @property
@@ -267,7 +269,7 @@ class UQDLogic16:
         return self._inversion
 
     @inversion.setter
-    def inversion(self, channel: uint8):
+    def inversion(self, invert: Tuple[uint8, uint8]):
         """
         Channels set to use negative edge triggering
 
@@ -275,10 +277,23 @@ class UQDLogic16:
             channel (uint8): channel to enable negative edge triggering on
         """
 
+        channel: int = invert[0]
+        mask: int = invert[1]
+
         n: int = self.number_of_channels
         if (channel < 0) or (channel >= n):
             raise ValueError(f"channel must be in range 0 <= channel < {n}")
-        self._inversion[channel] = 1
+        self._inversion[channel] = mask
+
+    @cython.ccall
+    def inversion_apply(self):
+        bits = self.inversion
+        bits.reverse()
+        bit_string = ""
+        for b in bits:
+            bit_string += str(b)
+        mask: cython.int = int(bit_string, 2)
+        self._c_timetag.SetInversionMask(mask)
 
     @property
     def input_delay(self) -> float64:
@@ -393,6 +408,7 @@ class UQDLogic16:
         if (count < 1) and (count > 10):
             raise ValueError("Count filter must be between 1 and 10")
         self._filter_min_count = count
+        self._c_timetag.SetFilterMinCount(count)
 
     @property
     def filter_max_time(self) -> cython.double:
@@ -405,15 +421,16 @@ class UQDLogic16:
         return self._filter_max_time
 
     @filter_max_time.setter
-    def filter_max_time(self, time: cython.double):
+    def filter_max_time(self, max_time: cython.double):
         """
         Maximum time between two pulses in the same group.
 
         Args:
             time (float): maximum time between two pulses in the same group
         """
-        bins: int = time // self.resolution
+        bins: int = max_time // self.resolution
         self._filter_max_time = time
+        self._c_timetag.SetFilterMaxTime(bins)
 
     @property
     def exclusion(self) -> List[uint8]:
@@ -422,13 +439,32 @@ class UQDLogic16:
         return self._exclusion
 
     @exclusion.setter
-    def exclusion(self, value: int):
+    def exclusion(self, value: Tuple[int, int]):
         n: int = self.number_of_channels
         channel: int = value[0]
+        mask: int = value[1]
         if (channel < 0) or (channel >= n):
             raise ValueError(f"channel must be in range 0 <= channel < {n}")
         self._c_timetag.SetFilterException(channel)
-        self._exclusion[channel] = 1
+        self._exclusion[channel] = mask
+
+    @cython.ccall
+    def exclusion_apply(self):
+        bits = self.exclusion
+        if sum(bits) == 0:
+            self._c_timetag.SetInversionMask(0)
+            return
+
+        if sum(bits) == self.number_of_channels:
+            self._c_timetag.SetInversionMask(0)
+            return
+
+        bits.reverse()
+        bit_string = ""
+        for b in bits:
+            bit_string += str(b)
+        mask: cython.int = int(bit_string, 2)
+        self._c_timetag.SetInversionMask(mask)
 
     @property
     def level_gate(self) -> bool:
@@ -485,7 +521,6 @@ class UQDLogic16:
             active_errors[err] = text
         return active_errors
 
-
     def buffer(self) -> TangyBufferStandard:
         """
         Acquire buffer
@@ -493,12 +528,38 @@ class UQDLogic16:
         return self._buffer
 
     @cython.ccall
-    def write_to_buffer(self) -> int:
+    def write_to_buffer(self):
         """
         Write tags directly into buffer
         """
-        (count, channels, tags) = self.read_tags()
-        self._buffer.push(channels, tags)
+        count: int = self._c_timetag.ReadTags(self._channel_ptr, self._timetag_ptr)
+
+        if count == 0:
+            return count
+
+        capacity: u64 = self._buffer.capacity
+        start: u64 = self._buffer.end
+        stop: u64 = start + count
+
+        start = start % capacity
+        stop = stop % capacity
+
+        mid_stop: u64 = stop
+        if start > stop:
+            mid_stop = capacity
+
+        i: cython.Py_ssize_t
+        for i in range(start, mid_stop):
+            self._buffer.ptrs.channel[start + i] = self._channel_ptr[i]
+            self._buffer.ptrs.timestamp[start + i] = self._timetag_ptr[i]
+
+        count_current: cython.Py_ssize_t = i
+
+        if count_current < count - 1:
+            i = 0
+            for i in range(stop):
+                self._buffer.ptrs.channel[i] = self._channel_ptr[count_current + i]
+                self._buffer.ptrs.timestamp[i] = self._timetag_ptr[count_current + i]
 
         return self._buffer.count
 

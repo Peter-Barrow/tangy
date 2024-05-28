@@ -240,7 +240,8 @@ class Pair(ctk.CTkFrame):
         for i, mag in enumerate(self.delay_units_magnitude):
             if order < mag:
                 break
-        i -= 1
+        # i -= 1
+        print(self.delay_units_magnitude[i])
         self.delay_units.set(self.delay_units_options[i])
         d = delay_seconds / (10 ** self.delay_units_magnitude[i])
         self.delay_slider_apply(d)
@@ -401,16 +402,16 @@ class CoincidenceCounter(ctk.CTk):
             window *= (1e-9)
 
             (total, singles_count) = self.buffer_list.buffer.singles(1.0)
-            cc = self.buffer_list.buffer.coincidence_count(1, window, channels, delays=delays)
             rate_i = singles_count[channels[0]]
             rate_s = singles_count[channels[1]]
+            eta = 0
+            cc = 0
+            if not (rate_i == 0 or rate_s == 0):
+                cc = self.buffer_list.buffer.coincidence_count(1, window, channels, delays=delays)
+                eta = (cc / sqrt(rate_i * rate_s)) * 100
             self.hud.rate_idler.text.configure(text=f"{rate_i}")
             self.hud.rate_signal.text.configure(text=f"{rate_s}")
             self.hud.rate_coincidence.text.configure(text=f"{cc}")
-            if rate_i == 0 or rate_s == 0:
-                eta = 0
-            else:
-                eta = (cc / sqrt(rate_i * rate_s)) * 100
             self.hud.efficiency.text.configure(text=f"{eta:.4g}")
             # stop_time = time.perf_counter()
             # print(stop_time - start_time)
@@ -420,7 +421,7 @@ class CoincidenceCounter(ctk.CTk):
             channels, delays = self.pair.configuration()
             delay_result = find_delay(self.buffer_list.buffer,
                                       channels[0], channels[1], 10,
-                                      resolution=6.25e-9, window=80e-7)
+                                      resolution=6.25e-9, window=100e-7)
             new_delay = delay_result.t0
             self.pair.delay_from_found(new_delay)
 

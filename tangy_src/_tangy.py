@@ -900,8 +900,9 @@ class TangyBufferStandard(TangyBuffer):
         ptrs.length = n_channels
         ptrs.channel = cython.address(channels_view[0])
         ptrs.timestamp = cython.address(timetags_view[0])
+
         count = _tangy.std_buffer_push(self._ptr, ptrs, start, stop)
-        return
+        return count
 
     @property
     def name(self):
@@ -1080,11 +1081,12 @@ class TangyBufferStandard(TangyBuffer):
         counters_view: u64[::1] = counters
 
         if read_time:
-            read_time: f64n = read_time
+            read_time: f64n = self.time_in_buffer() - read_time
             start: u64n = self.lower_bound(read_time)
 
         if stop is None:
-            stop: u64n = self.count - 1
+        # stop: u64n = self.count - 1
+            stop: u64n = self.end
 
         total: u64n = 0
 
@@ -1569,11 +1571,12 @@ class TangyBufferClocked(TangyBuffer):
         counters_view: u64[::1] = counters
 
         if read_time:
-            read_time: f64n = read_time
+            read_time: f64n = self.time_in_buffer() - read_time
             start: u64n = self.lower_bound(read_time)
 
         if stop is None:
-            stop: u64n = self.count - 1
+        # stop: u64n = self.count - 1
+            stop: u64n = self.end
 
         total: u64n = 0
 
@@ -1682,6 +1685,22 @@ class TangyBufferClocked(TangyBuffer):
         (coarse, fine) = self.resolution
 
         return RecordsClocked(total, coarse, fine, _channels, clocks, deltas)
+
+    @cython.cfunc
+    def _timetrace(self, read_time: f64n, resolution: f64n, n_channels: u64n,
+                   channels: cython.pointer(cython.uchar), n_data_points: u64n,
+                   data: cython.pointer(_tangy.vec_u64)):
+
+        bin_width: u64n = round(resolution / self.resolution[1])
+
+        total = _tangy.clk_timetrace(self._ptr,
+                                     read_time,
+                                     bin_width,
+                                     channels,
+                                     n_channels,
+                                     n_data_points,
+                                     data)
+        return total
 
 
 TangyBufferT = cython.fused_type(TangyBufferStandard, TangyBufferClocked)
@@ -1962,6 +1981,10 @@ def timetrace(buffer: TangyBufferT, channels: List[int], read_time: float,
 
     return intensities
 
+
+# TODO: refactor!
+# everything up to the point of curve fitting should be possible to do in the 
+# c library backend
 
 @cython.ccall
 def find_delay(buffer: TangyBufferT, channel_a: int, channel_b: int,

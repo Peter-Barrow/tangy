@@ -252,6 +252,7 @@ class TangyBuffer:
             (int): Index in buffer corresponding to the timetag that is greater            than or equal to ``buffer.time_in_buffer() - time``
 
         '''
+    def timetrace(self, channels: list[int], read_time: float, resolution: float = 10): ...
 
 class TangyBufferStandard(TangyBuffer):
     '''Interface to ```standard``` style buffers

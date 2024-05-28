@@ -7,7 +7,7 @@ import time
 from queue import Queue
 import customtkinter as ctk
 from tkinter.filedialog import askopenfilename, asksaveasfilename
-from .._uqd import UQDLogic16
+from tangy import UQDLogic16
 
 
 class FloatSpinbox(ctk.CTkFrame):
@@ -216,7 +216,6 @@ class Channel(ctk.CTkFrame):
         return
 
 
-
 class Channels(ctk.CTkScrollableFrame):
     def __init__(self, parent, n_channels, **kwargs):
         super().__init__(parent, label_text="Channels", **kwargs)
@@ -297,8 +296,14 @@ class Filtering(ctk.CTkFrame):
         self.max_time_label = ctk.CTkLabel(self, text="Maximum Time Filter")
         self.max_time_label.grid(row=1, column=0, padx=(10, 10), sticky="nsew")
 
-        self.max_time = FloatSpinbox(self, step_size=1, value_range=(1, 10))
+        self.max_time = FloatSpinbox(self, step_size=1, value_range=(0, 1000))
         self.max_time.grid(row=1, column=1, padx=(10, 10), sticky="nsew")
+
+        self.max_time_options = ["ps", "ns", "µs"]
+        self.max_time_magnitude = [-12, -9, -6]
+        self.max_time_choice = ctk.CTkComboBox(
+            self, width=60, values=self.max_time_options)
+        self.max_time_choice.grid(row=1, column=2, sticky="ew", padx=(5, 5))
 
 
 class LoadSave(ctk.CTkFrame):
@@ -325,16 +330,17 @@ class LoadSave(ctk.CTkFrame):
         with open(file_name, "w") as file:
             json.dump(self.config, file, indent=4)
 
+
 class DeviceThread:
-    def __init__(self, parent, device_id: int, buffer_size: int):
+    def __init__(self, parent, device_id: int, buffer_size: int, calibrate: bool):
 
         self.parent = parent
 
         self.queue = Queue()
         self.parent.queue = self.queue
 
-        self.device = UQDLogic16(device_id=device_id, add_buffer=True, 
-                                 buffer_size=buffer_size)
+        self.device = UQDLogic16(device_id=device_id, add_buffer=True,
+                                 buffer_size=buffer_size, calibrate=calibrate)
 
         self.count = 0
         self.config = {}
@@ -350,24 +356,23 @@ class DeviceThread:
 
         self.sync()
 
-
     def sync(self):
         self.parent.process()
 
         start_stop_state = self.parent.start_stop_state.get()
         event_set = self.event.isSet()
 
-        if self.reading == False and start_stop_state == "Start":
+        if self.reading is False and start_stop_state == "Start":
             self.device.start_timetags()
             self.reading = True
 
-        if self.reading == True and start_stop_state == "Stop":
+        if self.reading is True and start_stop_state == "Stop":
             self.device.stop_timetags()
             self.reading = False
 
-        if start_stop_state == "Stop" and self.running == True and event_set == True:
+        if start_stop_state == "Stop" and self.running is True and event_set is True:
             self.event.clear()
-        elif start_stop_state == "Start" and self.running == True and event_set == False:
+        elif start_stop_state == "Start" and self.running is True and event_set is False:
             self.event.set()
 
         while self.parent.messages.qsize():
@@ -385,21 +390,46 @@ class DeviceThread:
         while self.running:
             if self.new_config:
                 print(self.config)
+
+                # for k, v in self.config["enabled"].items():
+                #     i = int(k[2:]) - 1
+                #     if v is True:
+                #         self.device.exclusion = (i, 0)
+                #     if v is False:
+                #         self.device.exclusion = (i, 1)
+
+                # print(self.device.exclusion)
+
+                # for k, v in self.config["edges"].items():
+                #     i = int(k[2:]) - 1
+                #     if k == "Rising":
+                #         self.device.inversion = (i, 0)
+                #     if k == "Falling":
+                #         self.device.inversion = (i, 1)
+
+                # print(self.device.inversion)
+
+                # for i, v in enumerate(voltages):
+                #     self.device.input_threshold = (i + 1, v)
+
                 self.new_config = False
-            time.sleep(1/20)
+
+            time.sleep(1 / 20)
             if not event.isSet():
                 self.count = 0
-                event.wait(1/20)
+                event.wait(1 / 20)
                 event.clear()
             else:
-                if self.reading == True:
-                    self.count = self.device.write_to_buffer()
+                if self.reading is True:
+                    self.count += self.device.write_to_buffer()
+                    self.count += 1
                 self.queue.put(self.count)
-            if self.running == False:
+            if self.running is False:
                 event.clear()
 
     def on_quit(self):
         self.running = False
+
 
 class UQD(ctk.CTk):
     def __init__(self):
@@ -423,13 +453,13 @@ class UQD(ctk.CTk):
 
         self.config = {}
 
-        n_channels = 16
+        self._channel_count = 0
 
-        self.enabled = [True for i in range(n_channels)]
-        self.voltages = [0 for i in range(n_channels)]
-        self.edges = [0 for i in range(n_channels)]
+        self.enabled = [True for i in range(self._channel_count)]
+        self.voltages = [0 for i in range(self._channel_count)]
+        self.edges = [0 for i in range(self._channel_count)]
 
-        self.channels = Channels(self, n_channels)
+        self.channels = Channels(self, self._channel_count)
         self.channels.grid(row=2, column=0, pady=(5, 0), sticky="nsew")
 
         self.filtering = Filtering(self)
@@ -450,6 +480,26 @@ class UQD(ctk.CTk):
                                                    command=self.start_stop)
         self.start_button.grid(row=6, column=0, padx=5, pady=(5, 5),
                                sticky="ew")
+
+    @property
+    def channel_count(self) -> int:
+        return self._channel_count
+
+    def channels_init(self):
+        self.enabled = [True for i in range(self._channel_count)]
+        self.voltages = [0 for i in range(self._channel_count)]
+        self.edges = [0 for i in range(self._channel_count)]
+
+        self.channels = Channels(self, self._channel_count)
+        self.channels.grid(row=2, column=0, pady=(5, 0), sticky="nsew")
+
+    @channel_count.setter
+    def channel_count(self, n: int):
+        self._channel_count = n
+
+    @channel_count.setter
+    def channel_count(self, value: type):
+        self._channel_count = value
 
     def process(self):
         while self.queue.qsize():
@@ -500,10 +550,22 @@ class UQD(ctk.CTk):
             self.voltages[i] = voltage
             self.edges[i] = edge.value
 
+        min_count = int(self.filtering.min_count.get())
+
+        max_time = float(self.filtering.max_time.get())
+        max_time_unit = self.filtering.max_time_choice.get()
+        for i, unit in enumerate(self.filtering.max_time_options):
+            if unit == max_time_unit:
+                break
+        max_time_magnitude = self.filtering.max_time_magnitude[i]
+        max_time_scaled = max_time / (10 ** max_time_magnitude)
+
         config = {
             "enabled": {f"ch{i+1}": e for i, e in enumerate(self.enabled)},
             "voltages": {f"ch{i+1}": v for i, v in enumerate(self.voltages)},
             "edges": {f"ch{i+1}": EdgeDetection(e).name for i, e in enumerate(self.edges)},
+            "filter_count": min_count,
+            "filter_time": max_time_scaled
         }
 
         self.load_save.save_button.configure(state="normal")
@@ -526,18 +588,20 @@ class UQD(ctk.CTk):
     def stop(self):
         self.uptime.after_cancel(self.timer_id)
 
-def run():
+
+if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser(description="Options for UQDLogic16")
     parser.add_argument("--device_id", type=int, default=1, help="Device id")
-    parser.add_argument("--buffer_size", type=int, default=10_000_000, help="Size of buffer to create")
+    parser.add_argument("--buffer_size", type=int, default=100_000_000,
+                        help="Size of buffer to create")
+    parser.add_argument("--calibrate", default=True, help="Run calibration on start up")
     args = parser.parse_args()
 
     app = UQD()
-    device = DeviceThread(app, args.device_id, args.buffer_size)
+    device = DeviceThread(app, args.device_id, args.buffer_size, args.calibrate)
+    app.channel_count = device.device.number_of_channels
+    app.channels_init()
     app.mainloop()
     device.on_quit()
-
-if __name__ == '__main__':
-    run()
