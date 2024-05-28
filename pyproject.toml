@@ -31,10 +31,10 @@ docs = [
 ]
 
 [project.urls]
-Homepage = "https://gitlab.com/PeterBarrow/tangy"
+Homepage = "https://github.com/Peter-Barrow/tangy"
 # Documentation = ""
-Repository = "https://gitlab.com/PeterBarrow/tangy.git"
-Issues = "https://gitlab.com/PeterBarrow/tangy/-/issues"
+Repository = "https://github.com/Peter-Barrow/tangy.git"
+Issues = "https://github.com/Peter-Barrow/tangy/issues"
 
 [project.scripts]
 tangy-list-buffers = "tangy:buffer_list_show"

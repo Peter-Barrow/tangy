@@ -7,7 +7,7 @@ import time
 from queue import Queue
 import customtkinter as ctk
 from tkinter.filedialog import askopenfilename, asksaveasfilename
-from tangy import UQDLogic16
+from tangy import tangy_config_location, UQDLogic16
 
 
 class FloatSpinbox(ctk.CTkFrame):
@@ -326,7 +326,8 @@ class LoadSave(ctk.CTkFrame):
             5, 5), pady=(5, 0), sticky="ew")
 
     def save_path(self):
-        file_name = asksaveasfilename(filetypes=[("json", "*.json")])
+        file_name = asksaveasfilename(filetypes=[("json", "*.json")],
+                                      initialdir=tangy_config_location())
         with open(file_name, "w") as file:
             json.dump(self.config, file, indent=4)
 
@@ -391,26 +392,29 @@ class DeviceThread:
             if self.new_config:
                 print(self.config)
 
-                # for k, v in self.config["enabled"].items():
-                #     i = int(k[2:]) - 1
-                #     if v is True:
-                #         self.device.exclusion = (i, 0)
-                #     if v is False:
-                #         self.device.exclusion = (i, 1)
+                for k, v in self.config["enabled"].items():
+                    i = int(k[2:]) - 1
+                    if v is True:
+                        self.device.exclusion = (i, 0)
+                    if v is False:
+                        self.device.exclusion = (i, 1)
 
-                # print(self.device.exclusion)
+                print(self.device.exclusion)
 
-                # for k, v in self.config["edges"].items():
-                #     i = int(k[2:]) - 1
-                #     if k == "Rising":
-                #         self.device.inversion = (i, 0)
-                #     if k == "Falling":
-                #         self.device.inversion = (i, 1)
+                for k, v in self.config["edges"].items():
+                    i = int(k[2:]) - 1
+                    if k == "Rising":
+                        self.device.inversion = (i, 0)
+                    if k == "Falling":
+                        self.device.inversion = (i, 1)
 
-                # print(self.device.inversion)
+                print(self.device.inversion)
 
-                # for i, v in enumerate(voltages):
-                #     self.device.input_threshold = (i + 1, v)
+                for k, v in self.config["voltages"].items():
+                    i = int(k[2:]) - 1
+                    self.device.input_threshold = (i + 1, v)
+
+                print(self.device.input_threshold)
 
                 self.new_config = False
 
@@ -422,7 +426,6 @@ class DeviceThread:
             else:
                 if self.reading is True:
                     self.count += self.device.write_to_buffer()
-                    self.count += 1
                 self.queue.put(self.count)
             if self.running is False:
                 event.clear()
@@ -510,7 +513,7 @@ class UQD(ctk.CTk):
                 pass
 
     def load_path(self):
-        file_name = askopenfilename()
+        file_name = askopenfilename(initialdir=tangy_config_location())
         config = None
         with open(file_name, "r") as file:
             config = json.load(file)

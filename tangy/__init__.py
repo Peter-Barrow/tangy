@@ -1,4 +1,5 @@
-from ._tangy import tangy_config_location, buffer_list_update, buffer_list_append, buffer_list_show, buffer_list_delete_all
+from ._tangy import tangy_config_location, buffer_list_update
+from ._tangy import buffer_list_append, buffer_list_show, buffer_list_delete_all
 from ._tangy import RecordsStandard, RecordsClocked
 from ._tangy import TangyBuffer, TangyBufferStandard, TangyBufferClocked
 # from ._tangy import JointDelayHistogram, JointHistogram
