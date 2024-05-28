@@ -48,11 +48,11 @@ before-build = [
     "pwd",
     "ls ./",
     "pip install requests",
-    "mkdir opt",
     "python {package}/scripts/downloader.py",
     "ls ./opt",
     "cp ./opt/CTimeTag/Linux/libtimetag64.so /lib/libtimetag64.so",
 ]
+repair-wheel-command = "auditwheel repair --exclude libtimetag64.so -w {dest_dir} {wheel}"
 
 [tool.setuptools.package-data]
 "tangy" = ["py.typed", "_tangy.pyi", "_uqd.pyi"]

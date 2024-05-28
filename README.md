@@ -67,7 +67,7 @@ records = buffer.coincidence_collect(integration_time, coincidence_window, chann
 channel_a = 0
 channel_b = 1
 integration_time = 10
-measurement_resolution = 6.25e09
+measurement_resolution = 6.25e-9
 result_delay = tangy.find_delay(buffer,
                                 channel_a channel_b,
                                 integration_time,
