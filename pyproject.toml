@@ -39,7 +39,7 @@ Issues = "https://github.com/Peter-Barrow/tangy/issues"
 [project.scripts]
 tangy-list-buffers = "tangy:buffer_list_show"
 tangy-close-all-buffers = "tangy:buffer_list_delete_all"
-tangy-gui-uqdlogic16 = "tangy.apps.gui_uqd:run"
+tangy-gui-uqdlogic16 = "tangy.apps.gui_uqd:__main__"
 tangy-gui-coincidence-counter = "tangy.apps.gui_coincidence_counter:run"
 
 [tool.cibuildwheel.linux]

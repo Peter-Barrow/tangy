@@ -243,7 +243,7 @@ def buffer_list_show():
     for name, details in buffer_list.items():
         f = details["format"]
         p = details["path"]
-        out += f"{name} : \n\tFormat : {f}\n\tPath: {p}"
+        out += f"{name} : \n\tFormat : {f}\n\tPath: {p}\n"
 
     print(out)
 
@@ -510,7 +510,7 @@ class TangyBuffer:
         Returns:
             (int): Index of last record in buffer
         """
-        return self.count - 1
+        return self.count
 
     @property
     def begin(self) -> int:
@@ -551,14 +551,17 @@ class TangyBuffer:
                     raise IndexError("out of range")
                 start = key.start
                 stop = key.stop
+                print("here", start, stop, stop)
                 return (start, stop, step)
 
             # if key.start < self.begin:
             #     start = oldest + self.begin
             if key.start < 0:
+                print("a")
                 start = (self.count + key.start - 1) % self.capacity
                 stop = start + dist + 1
             else:
+                print("b")
                 start = key.start
                 if start < self.begin:
                     start += self.begin
@@ -594,6 +597,7 @@ class TangyBuffer:
         if abs(abs(stop) - abs(start)) > self.count:
             raise IndexError("out of range")
 
+        print("down here", start, stop, stop)
         return (start, stop, step)
 
     @cython.ccall
@@ -879,6 +883,8 @@ class TangyBufferStandard(TangyBuffer):
         count = _tangy.std_buffer_slice(self._ptr,
                                         cython.address(ptrs),
                                         start, stop)
+
+        print(channels, timestamps)
 
         return (channels[::step], timestamps[::step])
 

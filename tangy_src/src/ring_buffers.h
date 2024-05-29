@@ -303,7 +303,7 @@ usize JOIN(STUB, buffer_slice)(const BUFFER* const buffer,
                                usize start,
                                usize stop);
 
-usize JOIN(STUB, buffer_push)(const BUFFER* const buffer,
+usize JOIN(STUB, buffer_push)(BUFFER* const buffer,
                               FIELD_PTRS slice,
                               usize start,
                               usize stop);

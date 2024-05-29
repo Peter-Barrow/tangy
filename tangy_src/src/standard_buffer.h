@@ -18,7 +18,6 @@ typedef struct std_slice {
     timetag* timestamp;
 } std_slice;
 
-
 #define VEC_T timetag
 #define VEC_NAME std_vec
 #include "vector.h"
@@ -96,7 +95,8 @@ std_init_base_ptrs(const std_buffer* const buffer) {
 
     slice.length = num_elems;
     slice.channel = (u8*)buffer->map_ptr + channel_offset;
-    slice.timestamp = (u64*)buffer->map_ptr + (timestamp_offset / 8);
+    // slice.timestamp = (u64*)buffer->map_ptr + (timestamp_offset / 8);
+    slice.timestamp = (u64*)(&(buffer->map_ptr[channel_offset + num_elems + 1]));
     return slice;
 }
 
@@ -144,27 +144,47 @@ std_buffer_slice(const std_buffer* const buffer,
         return 0;
     }
 
+    // printf("Start:(%lu)\tStop:(%lu)\n", start, stop);
+
     usize capacity = *(buffer->capacity);
-    circular_iterator iter = {0};
+    circular_iterator iter = { 0 };
     if (iterator_init(&iter, capacity, start, stop) == -1) {
         return 0;
     }
 
+    // printf("iter count:\t%lu\n", iter.count);
+    // printf("lower\t->\t(%lu) : (%lu)\n", iter.lower.index, iter.lower.count);
+    // printf("upper\t->\t(%lu) : (%lu)\n", iter.upper.index, iter.upper.count);
+
     usize i = iter.lower.index;
-    for (usize j = 0; j < ptrs->length; j ++) {
-        j += 1;
-        ptrs->timestamp[j] = buffer->ptrs.timestamp[i];
+    for (usize j = 0; j < ptrs->length; j++) {
+        // printf("i:%lu\tj:%lu ->\t(%d\t%lu)->\t(%d\t%lu)\n",
+        //        i,
+        //        j,
+        //        ptrs->channel[j],
+        //        ptrs->timestamp[j],
+        //        buffer->ptrs.channel[i],
+        //        buffer->ptrs.timestamp[i]);
         ptrs->channel[j] = buffer->ptrs.channel[i];
+        ptrs->timestamp[j] = buffer->ptrs.timestamp[i];
+        // printf("i:%lu\tj:%lu ->\t(%d\t%lu)->\t(%d\t%lu)\n",
+        //        i,
+        //        j,
+        //        ptrs->channel[j],
+        //        ptrs->timestamp[j],
+        //        buffer->ptrs.channel[i],
+        //        buffer->ptrs.timestamp[i]);
         i = next(&iter);
     }
+
     return i;
 }
 
 usize
-std_buffer_push(const std_buffer* const buffer,
-                 FIELD_PTRS slice,
-                 usize start,
-                 usize stop) {
+std_buffer_push(std_buffer* const buffer,
+                FIELD_PTRS slice,
+                usize start,
+                usize stop) {
     if (slice.length == 0) {
         return 0;
     }
@@ -173,23 +193,80 @@ std_buffer_push(const std_buffer* const buffer,
         return 0;
     }
 
-    usize capacity = *(buffer->capacity);
-    circular_iterator iter = {0};
-    if (iterator_init(&iter, capacity, start, stop) == -1) {
-        return 0;
+    u64 capacity = *buffer->capacity;
+    u64 start_abs = start % capacity;
+
+    // u64 stop_abs =
+    //   start > capacity ? stop % capacity : start_abs + slice.length;
+
+    u64 stop_abs = stop % capacity;
+
+    // printf("Start:(%lu)\tStop:(%lu)\n", start, stop);
+    // printf("Start:(%lu)\tStop:(%lu)\n", start_abs, stop_abs);
+
+    u64 total = stop - start;
+
+    u64 mid_stop = start_abs > stop_abs ? capacity : stop_abs;
+
+    if ((*buffer->count) == 0) {
+        mid_stop = total > capacity ? capacity : total;
     }
 
-    int j = 0;
-    usize i = iter.lower.index;
-    buffer->ptrs.timestamp[i] = slice.timestamp[j];
-    buffer->ptrs.channel[i] = slice.channel[j];
-    while ((i = next(&iter)) != 0) {
-        j += 1;
-        buffer->ptrs.timestamp[i] = slice.timestamp[j];
-        buffer->ptrs.channel[i] = slice.channel[j];
+    // u64 mid_stop = capacity;
+
+    // if (!(start_abs > stop_abs)) {
+    //     mid_stop = stop_abs;
+    // }
+
+    // if ((*buffer->count == 0) & (!(total > capacity))) {
+    //     mid_stop = total;
+    // }
+
+    // printf("Mid stop:(%lu)\n", mid_stop);
+
+    u64 i = 0;
+    for (i = 0; (i + start_abs) < mid_stop; i++) {
+        buffer->ptrs.channel[start_abs + i] = slice.channel[i];
+        buffer->ptrs.timestamp[start_abs + i] = slice.timestamp[i];
+        // printf("i:%lu, j:%lu ->\t(%d\t%lu)->\t(%d\t%lu)\n",
+        //        i,
+        //        start_abs + i,
+        //        slice.channel[start_abs + i],
+        //        slice.timestamp[start_abs + i],
+        //        buffer->ptrs.channel[i],
+        //        buffer->ptrs.timestamp[i]);
     }
 
-    return j;
+    u64 count = i;
+    // printf("Count:(%lu)\tTotal:(%lu)\n", count, total);
+    if (count < total) {
+        // printf("second half\n");
+        i = 0;
+        for (i = 0; i < stop_abs; i++) {
+            buffer->ptrs.channel[i] = slice.channel[count];
+            buffer->ptrs.timestamp[i] = slice.timestamp[count];
+            // printf("i:%lu ->\t(%d\t%lu)->\t(%d\t%lu)\n",
+            //        i,
+            //        slice.channel[count],
+            //        slice.timestamp[count],
+            //        buffer->ptrs.channel[i],
+            //        buffer->ptrs.timestamp[i]);
+            count += 1;
+        }
+        // count += i;
+    }
+
+    // for (i = 0; i < capacity; i++) {
+    //     printf(
+    //       "[%lu]\t(%d\t%lu)\n", i, buffer->ptrs.channel[i], buffer->ptrs.timestamp[i]);
+    // }
+
+    // printf("Count:\t%lu\n", *buffer->count);
+    // printf("Count:\t%lu\n", slice.length);
+
+    *buffer->count += count;
+
+    return count;
 }
 
 bool

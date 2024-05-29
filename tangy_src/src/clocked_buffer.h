@@ -228,7 +228,8 @@ clk_init_base_ptrs(const clk_buffer* const buffer) {
 
     slice.length = num_elems;
     slice.channel = (u8*)buffer->map_ptr + channel_offset;
-    slice.timestamp = (clk_timetag*)buffer->map_ptr + (timestamp_offset / 16);
+    // slice.timestamp = (clk_timetag*)buffer->map_ptr + (timestamp_offset / 16);
+    slice.timestamp = (clk_timetag*)(&(buffer->map_ptr[channel_offset + num_elems + 1]));
     return slice;
 }
 
@@ -310,7 +311,7 @@ clk_buffer_slice(const clk_buffer* const buffer,
 }
 
 usize
-clk_buffer_push(const clk_buffer* const buffer,
+clk_buffer_push(clk_buffer* const buffer,
                 FIELD_PTRS slice,
                 usize start,
                 usize stop) {
@@ -341,6 +342,9 @@ clk_buffer_push(const clk_buffer* const buffer,
         buffer->ptrs.timestamp[i] = timestamp;
         buffer->ptrs.channel[i] = slice.channels[j];
     }
+
+    printf("Count:\t%lu\n", slice.length);
+    *buffer->count += slice.length;
 
     return j;
 }

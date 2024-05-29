@@ -118,7 +118,7 @@ cdef extern from "./src/standard_buffer.h":
                  usize start,
                  usize stop)
 
-    usize std_buffer_push(const std_buffer* const buffer,
+    usize std_buffer_push(std_buffer* const buffer,
                  std_slice ptrs,
                  usize start,
                  usize stop)
@@ -280,7 +280,7 @@ cdef extern from "./src/clocked_buffer.h":
                  usize start,
                  usize stop)
 
-    usize clk_buffer_push(const clk_buffer* const buffer,
+    usize clk_buffer_push(clk_buffer* const buffer,
                  clk_field_ptrs ptrs,
                  usize start,
                  usize stop)

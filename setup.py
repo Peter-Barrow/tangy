@@ -15,8 +15,8 @@ if "Linux" in platform.platform():
     # compiler_flags = ["-march=native"]
     uqd_include_dirs = [get_include(), "./opt/CTimeTag/Include", "."]
     libusb = "usb"
-    # if "ubuntu" in platform.version().lower():
-    #     libusb = "usb-1.0"
+    if "ubuntu" in platform.version().lower():
+        libusb = "usb-1.0"
     uqd_link_args = []
 
     uqd_libraries = [libusb, 'timetag64']

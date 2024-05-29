@@ -109,7 +109,7 @@ next(circular_iterator* iter) {
         iter->count--;
         iter->upper.count--;
         iter->upper.index++;
-        return iter->upper.index;
+        return iter->upper.index - 1;
     }
     return 0;
 }
@@ -146,6 +146,7 @@ iterator_init(circular_iterator* iter,
         iter->lower.count = iter->count;
         iter->upper.index = 0;
         iter->upper.count = 0;
+        printf("case 1\n");
         return 0;
     }
 
@@ -156,19 +157,21 @@ iterator_init(circular_iterator* iter,
     // printf("%lu\t%lu\n", x, y);
 
     //if (x <= y) {
-    if ((x+iter->count) <= capacity){
-        iter->lower.index = x;
-        iter->lower.count = iter->count;
-        iter->upper.index = 0;
-        iter->upper.count = 0;
-        // printf("TOTAL:\t%lu\n", iter->count);
-        // printf("ITER:\t%lu\t%lu\t%lu\t%lu\n", iter->lower.index, iter->lower.count, iter->upper.index, iter->upper.count);
-        return 0;
-    }
+    // if ((x+iter->count) <= capacity){
+    //     iter->lower.index = x;
+    //     iter->lower.count = iter->count;
+    //     iter->upper.index = 0;
+    //     iter->upper.count = 0;
+    //     // printf("TOTAL:\t%lu\n", iter->count);
+    //     // printf("ITER:\t%lu\t%lu\t%lu\t%lu\n", iter->lower.index, iter->lower.count, iter->upper.index, iter->upper.count);
+    //     printf("case 2\n");
+    //     return 0;
+    // }
 
     // now for x > y
     iter->lower.index = x;
-    iter->lower.count = capacity - x;
+    // iter->lower.count = capacity - x;
+    iter->lower.count = (iter->count - x) - 1;
     iter->upper.index = 0;
     iter->upper.count = iter->count - iter->lower.count;
 
@@ -183,6 +186,7 @@ iterator_init(circular_iterator* iter,
     // printf("TOTAL:\t%lu\n", iter->count);
     // printf("ITER:\t%lu\t%lu\t%lu\t%lu\n", iter->lower.index, iter->lower.count, iter->upper.index, iter->upper.count);
 
+    printf("case 3\n");
     return 0;
 }
 
