@@ -19,6 +19,7 @@ Alternatively, if you have a large file of containing timetags you can read a se
 ## Installation
 ```sh title="pypi"
 python3 -m pip install tangy
+python3 -m pip install tangy[gui] # if you intend on using the guis
 ```
 
 ### Advanced
