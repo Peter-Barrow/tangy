@@ -340,8 +340,9 @@ class DeviceThread:
         self.queue = Queue()
         self.parent.queue = self.queue
 
-        self.device = UQDLogic16(device_id=device_id, add_buffer=True,
-                                 buffer_size=buffer_size, calibrate=calibrate)
+        # self.device = UQDLogic16(device_id=device_id, add_buffer=True,
+        #                          buffer_size=buffer_size, calibrate=calibrate)
+        self.device = None
 
         self.count = 0
         self.config = {}
@@ -593,7 +594,7 @@ class UQD(ctk.CTk):
         self.uptime.after_cancel(self.timer_id)
 
 
-if __name__ == '__main__':
+def run():
     import argparse
 
     parser = argparse.ArgumentParser(description="Options for UQDLogic16")
@@ -603,9 +604,15 @@ if __name__ == '__main__':
     parser.add_argument("--calibrate", default=True, help="Run calibration on start up")
     args = parser.parse_args()
 
+    print(args)
+
     app = UQD()
     device = DeviceThread(app, args.device_id, args.buffer_size, args.calibrate)
     app.channel_count = device.device.number_of_channels
     app.channels_init()
     app.mainloop()
     device.on_quit()
+
+
+if __name__ == '__main__':
+    run()

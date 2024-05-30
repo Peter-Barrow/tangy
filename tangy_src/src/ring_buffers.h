@@ -1069,11 +1069,11 @@ JOIN(STUB, joint_delay_histogram)(const BUFFER* const buffer,
                                   DH_MEASUREMENT* measurement,
                                   u64** histogram_2d) {
 
-    printf("entry point\n");
-    printf("measurement: CLK[%d]\tSIG[%d]\tIDL[%d]\n",
-           measurement->channels[measurement->idx_clock],
-           measurement->idx_signal,
-           measurement->idx_idler);
+    // printf("entry point\n");
+    // printf("measurement: CLK[%d]\tSIG[%d]\tIDL[%d]\n",
+    //        measurement->channels[measurement->idx_clock],
+    //        measurement->idx_signal,
+    //        measurement->idx_idler);
 
     if (measurement == NULL) {
         // TODO: error message here
