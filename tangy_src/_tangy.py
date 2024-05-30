@@ -122,132 +122,6 @@ def tangy_config_location() -> str:
     return config_path
 
 
-@cython.ccall
-def buffer_list_update() -> dict:
-    """
-    Up-to-date list of available buffers
-
-    Gets the list of available buffers from the Tangy configuration directory
-        [```~/.config/Tangy/buffers``` on linux and
-        ```C:\\Users\\user_name\\AppData\\Local\\PeterBarrow\\Tangy\\buffers```
-        on Windows]. For each buffer configuration file the existence of the
-        associated buffer is checked, buffers that no longer exists have their
-        corresponding configuration file removed. Upon completion this returns
-        a dictionary containing the buffer name, buffer format and path to the
-        configuration file.
-
-    Returns:
-        (dict): Dictionary of {"name": {"format": fmt, "path": "/path/to/config"}
-
-    """
-    buffer_list_path = join(tangy_config_location(), "buffers")
-    if not exists(buffer_list_path):
-        makedirs(buffer_list_path)
-    buffer_list = {}
-
-    for file in listdir(buffer_list_path):
-        if file.endswith(".json") or file.endswith(".JSON"):
-            file_name = join(buffer_list_path, file)
-            with open(file_name, "r") as f:
-                config = {k.lower(): v for k, v in json.load(f).items()}
-                keys = config.keys()
-                if "name" not in keys:
-                    continue
-                if "format" not in keys:
-                    continue
-                buffer_list[config["name"]] = {
-                    "format": config["format"],
-                    "path": file_name
-                }
-
-    buffer_list_available = {}
-    result: _tangy.tbResult
-    flag: u8 = 0
-    for name, details in buffer_list.items():
-        name_encoded = name.encode('utf-8')
-        c_name: cython.p_char = name_encoded
-        result = _tangy.shmem_exists(c_name, cython.address(flag))
-        if result.Ok is False:
-            continue
-        if flag == 0:
-            # buffer doesn't exist anymore so delete its json file
-            remove(details["path"])
-            continue
-
-        # if we got here then the buffer exists, but we don't know about its
-        # reference count, the reference count can also be higher than it should
-        # if the last connection to that buffer crashed (no decrement)
-
-        name_stub_free = ""
-        # if details["format"].lower() == "standard":
-        if details["format"] == 0:
-            name_stub_free = name.replace("std_", "")
-
-        # if details["format"].lower() == "clocked":
-        if details["format"] == 1:
-            name_stub_free = name.replace("clk_", "")
-
-        buffer_list_available[name_stub_free] = details
-
-    return buffer_list_available
-
-
-@cython.ccall
-def buffer_list_append(buffer: TangyBuffer):
-    """
-    Adds the configuration of a buffer to the Tangy configuration directory
-
-    Args:
-        buffer (TangyBuffer): buffer with configuration to save
-    """
-
-    config = buffer.configuration()
-    buffer_list_path = join(tangy_config_location(), "buffers")
-    file_name = join(buffer_list_path, config["name"] + ".json")
-    with open(file_name, "w") as file:
-        json.dump(config, file, indent=4)
-
-
-@cython.ccall
-def buffer_list_contains():
-    ...
-
-
-@cython.ccall
-def buffer_list_delete_all():
-    buffer_list = buffer_list_update()
-
-    for name in buffer_list.keys():
-        format = buffer_list[name]["format"]
-        if format == 0:
-            buffer = TangyBufferStandard(name)
-            buffer._buffer.reference_count = 0
-            buffer.__del__()
-
-        if format == 1:
-            buffer = TangyBufferClocked(name)
-            buffer.reference_count = 0
-            buffer.__del__()
-
-    buffer_list_update()
-
-
-@cython.ccall
-def buffer_list_show():
-    tangy_config_path = tangy_config_location()
-    buffer_list_path = join(tangy_config_path, "buffers")
-    buffer_list = buffer_list_update()
-    out = f"Tangy configuration: {tangy_config_path}\n"
-    out += f"Buffer configurations: {buffer_list_path}\n"
-    out += "Available Tangy buffers\n"
-    for name, details in buffer_list.items():
-        f = details["format"]
-        p = details["path"]
-        out += f"{name} : \n\tFormat : {f}\n\tPath: {p}\n"
-
-    print(out)
-
-
 @cython.dataclasses.dataclass(frozen=True)
 class RecordsStandard:
     """Container for Standard format Timetags
@@ -346,29 +220,6 @@ _Buffer = cython.union(
 _Buffer_Ptr = cython.union(
     standard=cython.pointer(_tangy.std_buffer),
     clocked=cython.pointer(_tangy.clk_buffer))
-
-# StandardData = Tuple[ndarray(u8n), ndarray(u64n)]
-# ClockedData = Tuple[ndarray(u8n), Tuple[ndarray(u64n), ndarray(u64n)]]
-# TagData = Union[StandardData, ClockedData]
-
-
-def double_decay(time, tau1, tau2, t0, max_intensity):
-    tau = where(time < t0, tau1, tau2)
-    decay = max_intensity * exp(-nabs(time - t0) / tau)
-    return decay
-
-
-@cython.dataclasses.dataclass(frozen=True)
-class delay_result:
-    # TODO: add a "central_delay" field
-    times: ndarray(f64n) = cython.dataclasses.field()
-    intensities: ndarray(u64n) = cython.dataclasses.field()
-    fit: ndarray(f64n) = cython.dataclasses.field()
-    tau1: cython.double = cython.dataclasses.field()
-    tau2: cython.double = cython.dataclasses.field()
-    t0: cython.double = cython.dataclasses.field()
-    central_delay: cython.double = cython.dataclasses.field()
-    max_intensity: cython.double = cython.dataclasses.field()
 
 
 @cython.cclass
@@ -535,6 +386,7 @@ class TangyBuffer:
     @cython.ccall
     def oldest_index(self) -> int:
         raise NotImplementedError
+        return 0
 
     @cython.ccall
     def _make_slice(self, key):
@@ -597,7 +449,7 @@ class TangyBuffer:
         if abs(abs(stop) - abs(start)) > self.count:
             raise IndexError("out of range")
 
-        print("down here", start, stop, stop)
+        # print("down here", start, stop, stop)
         return (start, stop, step)
 
     @cython.ccall
@@ -612,6 +464,7 @@ class TangyBuffer:
             (str): buffer name
         """
         raise NotImplementedError
+        return ""
 
     @property
     def file_descriptor(self):
@@ -621,6 +474,7 @@ class TangyBuffer:
             (str): buffers file descriptor
         """
         raise NotImplementedError
+        return 0
 
     @property
     def capacity(self) -> int:
@@ -630,6 +484,7 @@ class TangyBuffer:
             (int): maximum number of timetags
         """
         raise NotImplementedError
+        return 0
 
     @property
     def resolution(self):
@@ -637,6 +492,7 @@ class TangyBuffer:
 
         """
         raise NotImplementedError
+        return 1
 
     @resolution.setter
     def resolution(self, resolution):
@@ -647,10 +503,12 @@ class TangyBuffer:
         """ Number of timetags written to the buffer
         """
         raise NotImplementedError
+        return 0
 
     @property
     def index_of_reference(self) -> int:
         raise NotImplementedError
+        return 0
 
     @property
     def reference_count(self) -> int:
@@ -663,6 +521,7 @@ class TangyBuffer:
             (int): number of connections
         """
         raise NotImplementedError
+        return 0
 
     @property
     def n_channels(self) -> int:
@@ -675,6 +534,16 @@ class TangyBuffer:
             (int): number of channels
         """
         raise NotImplementedError
+        return 0
+
+    @cython.ccall
+    def current_time(self) -> float:
+        """ Returns the time of the most recent timetag
+        Returns:
+            (float): Most recent timetag as time
+        """
+        raise NotImplementedError
+        return 0.0
 
     @cython.ccall
     def time_in_buffer(self) -> float:
@@ -683,10 +552,12 @@ class TangyBuffer:
             (float): Time between oldest and newest timetags
         """
         raise NotImplementedError
+        return 0.0
 
     @cython.ccall
     def time_range(self) -> Tuple[float, float]:
         raise NotImplementedError
+        return (0.0, 0.0)
 
     @cython.ccall
     def bins_from_time(self, time: float) -> int:
@@ -704,6 +575,7 @@ class TangyBuffer:
 
         """
         raise NotImplementedError
+        return 0
 
     @cython.ccall
     def lower_bound(self, time: float) -> int:
@@ -722,6 +594,7 @@ class TangyBuffer:
 
         """
         raise NotImplementedError
+        return 0
 
     @cython.ccall
     def timetrace(self, channels: List[int], read_time: float, resolution: float = 10):
@@ -843,7 +716,7 @@ class TangyBufferStandard(TangyBuffer):
         _tangy.std_buffer_info_init(self._buffer.map_ptr,
                                     cython.address(self._buffer))
         self._ptr = cython.address(self._buffer)
-        self._type = _tangy.BufferType.Clocked
+        self._type = _tangy.BufferType.Standard
 
         buffer_list_append(self)
         return
@@ -909,6 +782,13 @@ class TangyBufferStandard(TangyBuffer):
 
         count = _tangy.std_buffer_push(self._ptr, ptrs, start, stop)
         return count
+
+    @cython.ccall
+    def clear(self):
+        for i in range(self.capacity):
+            self._buffer.ptrs.channel[i] = 0
+            self._buffer.ptrs.timestamp[i] = 0
+        self._buffer.count[0] = 0
 
     @property
     def name(self):
@@ -990,6 +870,15 @@ class TangyBufferStandard(TangyBuffer):
             (int): number of channels
         """
         return self._buffer.n_channels[0]
+
+    @cython.ccall
+    def current_time(self) -> float:
+        """ Returns the time of the most recent timetag
+        Returns:
+            (float): Most recent timetag as time
+        """
+        current: f64n = _tangy.std_current_time(self._ptr)
+        return current
 
     @cython.ccall
     def time_in_buffer(self) -> float:
@@ -1087,11 +976,19 @@ class TangyBufferStandard(TangyBuffer):
         counters_view: u64[::1] = counters
 
         if read_time:
-            read_time: f64n = self.time_in_buffer() - read_time
-            start: u64n = self.lower_bound(read_time)
+            time_in_buffer = self.time_in_buffer()
+            current_time: f64n = self.current_time()
+            if read_time >= time_in_buffer:
+                # TODO: really should have a warning here
+                start: u64n = self.begin
+            else:
+                read_time: f64n = current_time - read_time
+                # print(f"Read time:\t({read_time})")
+                start: u64n = self.lower_bound(read_time)
+                # print(f"Start:\t({start})")
 
         if stop is None:
-        # stop: u64n = self.count - 1
+            # stop: u64n = self.count - 1
             stop: u64n = self.end
 
         total: u64n = 0
@@ -1372,8 +1269,7 @@ class TangyBufferClocked(TangyBuffer):
 
     @cython.ccall
     def push(self, channels: ndarray(u8n),
-             timetags: Union[ndarray(u64n),
-                             Tuple(ndarray(u64n), ndarray(u64n))]):
+             timetags: (ndarray(u64n), ndarray(u64n))):
 
         count: u64n = 0
         n_channels: int = len(channels)
@@ -1395,6 +1291,7 @@ class TangyBufferClocked(TangyBuffer):
         ptrs.channels = cython.address(channels_view[0])
         ptrs.clocks = cython.address(clocks_view[0])
         ptrs.deltas = cython.address(deltas_view[0])
+
         count = _tangy.clk_buffer_push(self._ptr, ptrs, start, stop)
         return
 
@@ -1480,6 +1377,15 @@ class TangyBufferClocked(TangyBuffer):
             (int): number of channels
         """
         return self._buffer.n_channels[0]
+
+    @cython.ccall
+    def current_time(self) -> float:
+        """ Returns the time of the most recent timetag
+        Returns:
+            (float): Most recent timetag as time
+        """
+        current: f64n = _tangy.clk_current_time(self._ptr)
+        return current
 
     @cython.ccall
     def time_in_buffer(self) -> float:
@@ -1577,11 +1483,20 @@ class TangyBufferClocked(TangyBuffer):
         counters_view: u64[::1] = counters
 
         if read_time:
-            read_time: f64n = self.time_in_buffer() - read_time
-            start: u64n = self.lower_bound(read_time)
+            time_in_buffer = self.time_in_buffer()
+            # current_time: f64n = _tangy.clk_current_time(self._ptr)
+            current_time: f64n = self.current_time()
+            if read_time >= time_in_buffer:
+                # TODO: really should have a warning here
+                start: u64n = self.begin
+            else:
+                read_time: f64n = current_time - read_time
+                # print(f"Read time:\t({read_time})")
+                start: u64n = self.lower_bound(read_time)
+                # print(f"Start:\t({start})")
 
         if stop is None:
-        # stop: u64n = self.count - 1
+            # stop: u64n = self.count - 1
             stop: u64n = self.end
 
         total: u64n = 0
@@ -1616,11 +1531,12 @@ class TangyBufferClocked(TangyBuffer):
 #             f"Requested channel {max(channels)} when maximum channel available in {self.n_channels}"
 #
         _channels: ndarray(u8n) = array(channels, dtype=u8n)
+        _channels_view: cython.uchar[::1] = _channels
 
         if delays is None:
-            delays: ndarray(f64n) = zeros(_n_channels, dtype=f64n)
+            # delays: ndarray(f64n) = zeros(_n_channels, dtype=f64n)
+            delays: List[float] = [0 for i in range(_n_channels)]
 
-        _channels_view: cython.uchar[::1] = _channels
         _delays_view: cython.double[::1] = array(delays, dtype=f64n)
 
         count = _tangy.clk_coincidences_count(self._ptr,
@@ -1989,8 +1905,27 @@ def timetrace(buffer: TangyBufferT, channels: List[int], read_time: float,
 
 
 # TODO: refactor!
-# everything up to the point of curve fitting should be possible to do in the 
+# everything up to the point of curve fitting should be possible to do in the
 # c library backend
+
+def double_decay(time, tau1, tau2, t0, max_intensity):
+    tau = where(time < t0, tau1, tau2)
+    decay = max_intensity * exp(-nabs(time - t0) / tau)
+    return decay
+
+
+@cython.dataclasses.dataclass(frozen=True)
+class delay_result:
+    # TODO: add a "central_delay" field
+    times: ndarray(f64n) = cython.dataclasses.field()
+    intensities: ndarray(u64n) = cython.dataclasses.field()
+    fit: ndarray(f64n) = cython.dataclasses.field()
+    tau1: cython.double = cython.dataclasses.field()
+    tau2: cython.double = cython.dataclasses.field()
+    t0: cython.double = cython.dataclasses.field()
+    central_delay: cython.double = cython.dataclasses.field()
+    max_intensity: cython.double = cython.dataclasses.field()
+
 
 @cython.ccall
 def find_delay(buffer: TangyBufferT, channel_a: int, channel_b: int,
@@ -2430,100 +2365,122 @@ class PTUFile():
     #     return res
 
 
-@cython.cclass
-class IFace:
+@cython.ccall
+def buffer_list_update() -> dict:
+    """
+    Up-to-date list of available buffers
 
-    name: str
+    Gets the list of available buffers from the Tangy configuration directory
+        [```~/.config/Tangy/buffers``` on linux and
+        ```C:\\Users\\user_name\\AppData\\Local\\PeterBarrow\\Tangy\\buffers```
+        on Windows]. For each buffer configuration file the existence of the
+        associated buffer is checked, buffers that no longer exists have their
+        corresponding configuration file removed. Upon completion this returns
+        a dictionary containing the buffer name, buffer format and path to the
+        configuration file.
 
-    def __init__(self, name):
-        ...
+    Returns:
+        (dict): Dictionary of {"name": {"format": fmt, "path": "/path/to/config"}
 
-    @property
-    def foo(self):
-        """doc"""
-        return self._foo[0]
+    """
+    buffer_list_path = join(tangy_config_location(), "buffers")
+    if not exists(buffer_list_path):
+        makedirs(buffer_list_path)
+    buffer_list = {}
 
-    @foo.setter
-    def foo(self, value):
-        self._foo[0] = value
+    for file in listdir(buffer_list_path):
+        if file.endswith(".json") or file.endswith(".JSON"):
+            file_name = join(buffer_list_path, file)
+            with open(file_name, "r") as f:
+                config = {k.lower(): v for k, v in json.load(f).items()}
+                keys = config.keys()
+                if "name" not in keys:
+                    continue
+                if "format" not in keys:
+                    continue
+                buffer_list[config["name"]] = {
+                    "format": config["format"],
+                    "path": file_name
+                }
 
-    @property
-    def name(self) -> str:
-        return self.name
+    buffer_list_available = {}
+    result: _tangy.tbResult
+    flag: u8 = 0
+    for name, details in buffer_list.items():
+        name_encoded = name.encode('utf-8')
+        c_name: cython.p_char = name_encoded
+        result = _tangy.shmem_exists(c_name, cython.address(flag))
+        if result.Ok is False:
+            continue
+        if flag == 0:
+            # buffer doesn't exist anymore so delete its json file
+            remove(details["path"])
+            continue
 
-    @cython.ccall
-    def greet(self) -> cython.void:
-        g: str = f"object, {self.name}, says hello"
-        print(g)
+        # if we got here then the buffer exists, but we don't know about its
+        # reference count, the reference count can also be higher than it should
+        # if the last connection to that buffer crashed (no decrement)
 
-    def adds(self, a, b):
-        pass
+        name_stub_free = ""
+        # if details["format"].lower() == "standard":
+        if details["format"] == 0:
+            name_stub_free = name.replace("std_", "")
 
+        # if details["format"].lower() == "clocked":
+        if details["format"] == 1:
+            name_stub_free = name.replace("clk_", "")
 
-@cython.cclass
-class ImplA(IFace):
+        buffer_list_available[name_stub_free] = details
 
-    _foo = cython.declare(cython.pointer(cython.int))
-
-    def __init__(self, name, a):
-        self.name = name
-
-    @cython.ccall
-    def adds(self, a: cython.int, b: cython.int) -> cython.int:
-        return a + b
-
-    # @property
-    # def foo(self):
-    #     """doc"""
-    #     return self._foo[0]
-
-
-@cython.cclass
-class ImplB(IFace):
-
-    def __init__(self, name):
-        self.name = name
-
-    @cython.ccall
-    def adds(self, a: cython.double, b: cython.double) -> cython.double:
-        return a + b
+    return buffer_list_available
 
 
-# @cython.cclass
-# class TestBuffer:
-#     #_ptr: Union[cython.pointer(_tangy.std_buffer), cython.pointer(_tangy.clk_buffer)]
-#     #_buffer: Union[_tangy.std_buffer, _tangy.clk_buffer]
-#
-#     def __init__(self, buf: TangyBufferT):
-#         if TangyBufferT is TangyBufferStandard:
-#             self._buffer: buf._ptr
-#         if TangyBufferT is TangyBufferClocked:
-#             self._buffer: buf._ptr
-#
-#     @property
-#     def file_descriptor(self):
-#         return self._buffer.file_descriptor
-#
-#     @property
-#     def capacity(self) -> int:
-#         return self._buffer.capacity[0]
-#
-#     @property
-#     def resolution(self) -> float:
-#         return self._buffer.resolution[0]
-#
-#     @resolution.setter
-#     def resolution(self, resolution: float):
-#         self._buffer.resolution[0] = resolution
-#
-#     @property
-#     def count(self) -> int:
-#         return self._buffer.count[0]
-#
-#     @property
-#     def index_of_reference(self) -> int:
-#         return self._buffer.index_of_reference[0]
-#
-#     @property
-#     def n_channels(self) -> int:
-#         return self._buffer.n_channels[0]
+@cython.ccall
+def buffer_list_append(buffer: TangyBuffer):
+    """
+    Adds the configuration of a buffer to the Tangy configuration directory
+
+    Args:
+        buffer (TangyBuffer): buffer with configuration to save
+    """
+
+    config = buffer.configuration()
+    buffer_list_path = join(tangy_config_location(), "buffers")
+    file_name = join(buffer_list_path, config["name"] + ".json")
+    with open(file_name, "w") as file:
+        json.dump(config, file, indent=4)
+
+
+@cython.ccall
+def buffer_list_delete_all():
+    buffer_list = buffer_list_update()
+
+    for name in buffer_list.keys():
+        format = buffer_list[name]["format"]
+        if format == 0:
+            buffer = TangyBufferStandard(name)
+            buffer._buffer.reference_count = 1
+
+        if format == 1:
+            buffer = TangyBufferClocked(name)
+            buffer.reference_count = 1
+
+        buffer.__del__()
+
+    buffer_list_update()
+
+
+@cython.ccall
+def buffer_list_show():
+    tangy_config_path = tangy_config_location()
+    buffer_list_path = join(tangy_config_path, "buffers")
+    buffer_list = buffer_list_update()
+    out = f"Tangy configuration: {tangy_config_path}\n"
+    out += f"Buffer configurations: {buffer_list_path}\n"
+    out += "Available Tangy buffers\n"
+    for name, details in buffer_list.items():
+        f = details["format"]
+        p = details["path"]
+        out += f"{name} : \n\tFormat : {f}\n\tPath: {p}\n"
+
+    print(out)

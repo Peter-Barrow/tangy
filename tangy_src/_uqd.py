@@ -1,17 +1,15 @@
 import cython
 import time
 from cython.cimports import _uqd as _uqd
-from cython.cimports.libc.stdlib import malloc, free
 from cython.cimports.libcpp import bool as cbool
-from typing import List, Tuple, Optional, Union
+from typing import List, Tuple, Optional
 from cython.cimports.libc.stdint import uint8_t as u8
 from cython.cimports.libc.stdint import uint32_t as u32
 from cython.cimports.libc.stdint import uint64_t as u64
-from cython.cimports.libc.stdint import int64_t as i64
-from cython.cimports.cython import view
 from numpy import ndarray, zeros, uint8, uint64, float64, asarray
+from cython.cimports.numpy import PyArray_SimpleNewFromData, npy_intp, NPY_UINT8, NPY_INT64
 
-# from cython.cimports import _tangy as _tangy
+# from cython.cimports import _tangy
 from ._tangy import TangyBufferStandard
 
 
@@ -113,7 +111,9 @@ class UQDLogic16:
     _10MHz: cbool = False
     _time_gate: cbool = False
     _gate_width: int
+    _have_buffer: bool
     _buffer: TangyBufferStandard
+    # _buffer: _tangy.TangyBufferStandard
 
     def __init__(self, device_id: int = 1, calibrate: bool = True,
                  add_buffer: bool = False,
@@ -138,11 +138,13 @@ class UQDLogic16:
         if calibrate is True:
             self.calibrate()
 
+        self._have_buffer = False
         if add_buffer is True:
             self._buffer = TangyBufferStandard(f"uqdbuffer{self._device_id}",
                                                self.resolution,
                                                buffer_size,
                                                self.number_of_channels)
+            self._have_buffer = True
         return
 
     def is_open(self) -> bool:
@@ -288,9 +290,9 @@ class UQDLogic16:
     @cython.ccall
     def inversion_apply(self):
         bits = self.inversion
-        bits.reverse()
+        # bits.reverse()
         bit_string = ""
-        for b in bits:
+        for b in bits[::-1]:
             bit_string += str(b)
         mask: cython.int = int(bit_string, 2)
         self._c_timetag.SetInversionMask(mask)
@@ -363,6 +365,10 @@ class UQDLogic16:
         """
         Start transmitting timetags from the device to the host computer
         """
+
+        if self._have_buffer is True:
+            self._buffer.clear()
+
         self._c_timetag.StartTimetags()
 
     def stop_timetags(self):
@@ -459,9 +465,9 @@ class UQDLogic16:
             self._c_timetag.SetInversionMask(0)
             return
 
-        bits.reverse()
+        # bits.reverse()
         bit_string = ""
-        for b in bits:
+        for b in bits[::-1]:
             bit_string += str(b)
         mask: cython.int = int(bit_string, 2)
         self._c_timetag.SetInversionMask(mask)
@@ -537,29 +543,11 @@ class UQDLogic16:
         if count == 0:
             return count
 
-        capacity: u64 = self._buffer.capacity
-        start: u64 = self._buffer.end
-        stop: u64 = start + count
+        shape: npy_intp[1]
+        shape[0] = count
+        channels = PyArray_SimpleNewFromData(1, shape, NPY_UINT8, self._channel_ptr)
 
-        start = start % capacity
-        stop = stop % capacity
+        timestamps = PyArray_SimpleNewFromData(1, shape, NPY_INT64, self._timetag_ptr)
 
-        mid_stop: u64 = stop
-        if start > stop:
-            mid_stop = capacity
-
-        i: cython.Py_ssize_t
-        for i in range(start, mid_stop):
-            self._buffer.ptrs.channel[start + i] = self._channel_ptr[i]
-            self._buffer.ptrs.timestamp[start + i] = self._timetag_ptr[i]
-
-        count_current: cython.Py_ssize_t = i
-
-        if count_current < count - 1:
-            i = 0
-            for i in range(stop):
-                self._buffer.ptrs.channel[i] = self._channel_ptr[count_current + i]
-                self._buffer.ptrs.timestamp[i] = self._timetag_ptr[count_current + i]
-
+        self._buffer.push(channels - 1, asarray(timestamps, uint64))
         return self._buffer.count
-

@@ -280,7 +280,7 @@ u64 JOIN(STUB, arrival_time_at_next)(u64 conversion_factor, TS timestamp);
 #define ArrivalTimeAt(BUF, ABS_IDX) JOIN(STUB, arrival_time_at)(BUF, ABS_IDX)
 #define ArrivalTimeAtNext(CF, TT) JOIN(STUB, arrival_time_at_next)(CF, TT)
 
-usize
+static inline usize
 JOIN(STUB, oldest_index)(const BUFFER* const buffer) {
     usize count = *(buffer->count);
     usize capacity = *(buffer->capacity);
@@ -427,6 +427,20 @@ JOIN(STUB, time_in_buffer)(const BUFFER* buffer) {
 }
 #define TimeInBuffer(BUF) JOIN(STUB, time_in_buffer)(BUF)
 
+
+static inline f64 JOIN(STUB, current_time)(const BUFFER* buffer) {
+    u64 count = *(buffer->count) - 1;
+    u64 capacity = *(buffer->capacity);
+    RESOLUTION resolution = *(buffer->resolution);
+
+    // head of buffer
+    u64 index = count > capacity ? count - capacity : count;
+
+    f64 current_time = ToTime(RecordAt(buffer, index % capacity), resolution);
+    return current_time;
+}
+
+
 /**
  * @brief Converts a an array of delays in time to delays in units of time bins
  *
@@ -518,7 +532,11 @@ JOIN(STUB, singles)(const BUFFER* const buffer,
 
     u64 total = stop - start;
 
-    u64 mid_stop = start_abs > stop_abs ? capacity : stop_abs;
+    u64 mid_stop = start_abs >= stop_abs ? capacity : stop_abs;
+
+    if ((*buffer->count) == 0) {
+        mid_stop = total > capacity ? capacity : total;
+    }
 
     u64 i = 0;
     for (i = 0; (i + start_abs) < mid_stop; i++) {
@@ -529,7 +547,7 @@ JOIN(STUB, singles)(const BUFFER* const buffer,
     if (count < total) {
         i = 0;
         for (i = 0; i < stop_abs; i++) {
-            counters[buffer->ptrs.channel[stop_abs + i]] += 1;
+            counters[buffer->ptrs.channel[i]] += 1;
         }
         count += i;
     }
@@ -579,7 +597,7 @@ JOIN(STUB, pattern_init)(const BUFFER* const buffer,
     u64* delays = (u64*)malloc(sizeof(u64) * n);
     BinsFromTimeDelays(buffer, n, time_delays, delays);
 
-    u64 count = *(buffer->count) - 1;
+    u64 count = *(buffer->count); // - 1;
     u64 capacity = *(buffer->capacity);
     RESOLUTION res = *(buffer->resolution);
     u64 read_bins = BinsFromTime(res, read_time);
@@ -595,19 +613,11 @@ JOIN(STUB, pattern_init)(const BUFFER* const buffer,
     }
 
     u64 channel_min;
-    u64 most_recent = ArrivalTimeAt(buffer, count % capacity);
-    // u64 time_in_buffer = TimeInBuffer(buffer);
-    //  u64 time_in_buffer = ArrivalTimeAt(buffer, (count-1) % capacity);
-    //  u64 time_in_buffer = BinsFromTime(res, TimeInBuffer(buffer));
-    //  printf("Latest time: %lu\n", most_recent);
-    //  printf("read bins:\t%lu\n", read_bins);
-
-    // printf("most_recent: %lu\t|\tread_bins: %lu\t| Diff: %lu\n",
-    // most_recent, read_bins, most_recent - read_bins);
+    u64 most_recent = JOIN(STUB, as_bins)(RecordAt(buffer, (count - 1) % capacity), res);
 
     for (usize i = 0; i < n; i++) {
         if (most_recent <= delays[i]) {
-            channel_max[i] = 0;
+            channel_max[i] = most_recent;
         } else {
             channel_max[i] = most_recent - delays[i];
         }
@@ -618,9 +628,7 @@ JOIN(STUB, pattern_init)(const BUFFER* const buffer,
             channel_min = channel_max[i] - read_bins;
         }
 
-        // NOTE: The "+1" on index is suspicious, where are we off?
-        // This is only needed when wanting to read the entire buffer
-        index[i] = LowerBound(buffer, channel_min) + 1;
+        index[i] = LowerBound(buffer, channel_min);
 
         while (ChannelAt(buffer, index[i] % capacity) != channels[i]) {
             index[i] += 1;
@@ -632,21 +640,6 @@ JOIN(STUB, pattern_init)(const BUFFER* const buffer,
 
     free(delays);
 
-    // u64 index_min = count;
-    // u64 index_max = 0;
-    // for (usize i = 0; i < n; i++){
-    //     if (index[i] < index_min) {
-    //         index_min = index[i];
-    //     }
-    //     if (channel_max[i] > index_max) {
-    //         index_max = channel_max[i];
-    //     }
-
-    // }
-
-    // printf("MAX_ITER:\t%lu\n", index_max - index_min);
-
-
     pattern_iterator pattern_iter = { 0 };
     pattern_iter.length = n;
     pattern_iter.oldest = ArgMin(buffer, channel_max, index, n);
@@ -654,6 +647,7 @@ JOIN(STUB, pattern_init)(const BUFFER* const buffer,
     pattern_iter.index = index;
     pattern_iter.limit = channel_max;
     pattern_iter.iters = iters;
+
     return pattern_iter;
 }
 #define PatternIteratorInit(BUF, N, CH, DELAYS, RT)                            \
@@ -675,21 +669,14 @@ JOIN(STUB, next_for_channel)(const BUFFER* const buffer,
                              u64* index) {
 
     usize i = next(iter);
-    if (i == 0) {
-        return false;
-    }
-    while (ChannelAt(buffer, i) != channel) {
+    while ((ChannelAt(buffer, i) != channel) & (iter->count != 0)) {
         i = next(iter);
-        if (i == 0) {
-            return false;
-        }
     }
+    *index = i;
 
     if (iter->count == 0) {
         return false;
     }
-
-    *index = i;
 
     return true;
 }
@@ -840,12 +827,10 @@ JOIN(STUB, coincidences_count)(const BUFFER* const buffer,
                                const f64 radius,
                                const f64 read_time) {
 
+    // TODO: add singles counters
+
     pattern_iterator pattern =
       PatternIteratorInit(buffer, n_channels, channels, delays, read_time);
-
-    // for (usize i = 0; i < n_channels; i++){
-    //     printf("%lu\t", pattern.index[i]);
-    // }
 
     u64 conversion_factor = *(buffer->conversion_factor);
     u64* current_times = (u64*)malloc(n_channels * sizeof(u64));
@@ -858,7 +843,6 @@ JOIN(STUB, coincidences_count)(const BUFFER* const buffer,
     u64 radius_bins = BinsFromTime(res, radius); //TODO: should this be doubled?
     u64 diameter_bins = radius_bins + radius_bins;
 
-    // usize iterations = 0;
     bool in_range = true;
     u64 count = 0;
     while (in_range == true) {
@@ -884,14 +868,8 @@ JOIN(STUB, coincidences_count)(const BUFFER* const buffer,
         current_times[pattern.oldest] =
           ArrivalTimeAtNext(conversion_factor,
                             TimestampAt(buffer, pattern.index[pattern.oldest]));
-        // iterations += 1;
-    }
 
-    // for (usize i = 0; i < n_channels; i++){
-    //     printf("%lu\t", pattern.index[i]);
-    // }
-    // printf("%lu", iterations);
-    // printf("\n");
+    }
 
     PatternIteratorDeinit(&pattern);
     free(current_times);
@@ -924,7 +902,8 @@ JOIN(STUB, coincidence_measurement_new)(RESOLUTION resolution,
     measurement->total_records = 0;
     measurement->n_channels = n_channels;
     measurement->channels = channels;
-    measurement->records = TT_VECTOR_INIT(128);
+    // measurement->records = TT_VECTOR_INIT(128);
+    measurement->records = TT_VECTOR_INIT(512);
 
     return measurement;
 }

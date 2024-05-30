@@ -134,60 +134,51 @@ iterator_init(circular_iterator* iter,
               usize capacity,
               usize start,
               usize stop) {
-    if (start > stop) {
+
+    // start and stop and free running indexes into the buffer, meaning, if they
+    // are less than the capacity the capacity has not been met yet. Conversely,
+    // if either is greater than the capacity then the capacity has been met and
+    // they require modulo division. Iteration is always forward.
+
+    // case 1: start > stop
+    //      invalid input, iteration is always forward therefore the statement
+    //      start < stop always holds
+
+    if (start >= stop) {
         iter->count = 0;
         return -1;
     }
 
-    iter->count = stop - start;
+    u64 count = stop - start; // total iterations to perform
 
-    if (stop <= capacity) {
-        iter->lower.index = start;
-        iter->lower.count = iter->count;
+    u64 abs_start = start % capacity;
+    u64 abs_stop = stop % capacity;
+
+    // case 2: (abs_start + count) < capacity
+    //      our start point and count do not need to wrap-around
+    if ((abs_start + count) < capacity) {
+        iter->count = count;
+        iter->lower.index = abs_start;
+        iter->lower.count = count;
         iter->upper.index = 0;
         iter->upper.count = 0;
-        printf("case 1\n");
         return 0;
     }
 
-    usize x = start % capacity;
-    usize y = stop % capacity;
+    // case 3: (abs_start > abs_stop)
+    //      wrap-around is required
+    u64 distance_to_capacity = capacity - abs_start - 1;
+    u64 distance_after_capacity = count - distance_to_capacity;
+    if (abs_start >= abs_stop) {
+        iter->count = count;
+        iter->lower.index = abs_start;
+        iter->lower.count = distance_to_capacity;
+        iter->upper.index = 0;
+        iter->upper.count = distance_after_capacity;
+        return 0;
+    }
 
-    // printf("%lu\t%lu\n", start, stop);
-    // printf("%lu\t%lu\n", x, y);
-
-    //if (x <= y) {
-    // if ((x+iter->count) <= capacity){
-    //     iter->lower.index = x;
-    //     iter->lower.count = iter->count;
-    //     iter->upper.index = 0;
-    //     iter->upper.count = 0;
-    //     // printf("TOTAL:\t%lu\n", iter->count);
-    //     // printf("ITER:\t%lu\t%lu\t%lu\t%lu\n", iter->lower.index, iter->lower.count, iter->upper.index, iter->upper.count);
-    //     printf("case 2\n");
-    //     return 0;
-    // }
-
-    // now for x > y
-    iter->lower.index = x;
-    // iter->lower.count = capacity - x;
-    iter->lower.count = (iter->count - x) - 1;
-    iter->upper.index = 0;
-    iter->upper.count = iter->count - iter->lower.count;
-
-    // usize total = stop - start;
-
-    // iter->lower.index = x;
-    // iter->lower.count = capacity - x;
-    // iter->upper.index = 0;
-    // // iter->upper.count = y;
-    // iter->upper.count = total - iter->lower.count;
-
-    // printf("TOTAL:\t%lu\n", iter->count);
-    // printf("ITER:\t%lu\t%lu\t%lu\t%lu\n", iter->lower.index, iter->lower.count, iter->upper.index, iter->upper.count);
-
-    printf("case 3\n");
-    return 0;
+    return -1;
 }
 
 // TODO: add arrival_times field
@@ -233,7 +224,6 @@ buffer_name(char* prefix, char* name) {
 
     char* buffer = (char*)malloc(sizeof(char) * len_buffer);
 
-    // int len = snprintf(buffer, len_buffer, "%s_%s", prefix, name);
     snprintf(buffer, len_buffer, "%s_%s", prefix, name);
 
     return buffer;

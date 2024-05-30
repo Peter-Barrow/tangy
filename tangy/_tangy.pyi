@@ -221,6 +221,11 @@ class TangyBuffer:
         Returns:
             (int): number of channels
         """
+    def current_time(self) -> float:
+        """ Returns the time of the most recent timetag
+        Returns:
+            (float): Most recent timetag as time
+        """
     def time_in_buffer(self) -> float:
         """ Amount of time held in the buffer
         Returns:
@@ -306,6 +311,7 @@ class TangyBufferStandard(TangyBuffer):
     def __del__(self) -> None: ...
     def oldest_index(self) -> int: ...
     def push(self, channels: None, timetags: None): ...
+    def clear(self) -> None: ...
     @property
     def name(self):
         """ Name of buffer
@@ -366,6 +372,11 @@ class TangyBufferStandard(TangyBuffer):
 
         Returns:
             (int): number of channels
+        """
+    def current_time(self) -> float:
+        """ Returns the time of the most recent timetag
+        Returns:
+            (float): Most recent timetag as time
         """
     def time_in_buffer(self) -> float:
         """ Amount of time held in the buffer
@@ -514,7 +525,7 @@ class TangyBufferClocked(TangyBuffer):
     def __init__(self, name: str, resolution: tuple[float, float] | None = None, length: int | None = None, n_channels: int | None = None) -> None: ...
     def __del__(self) -> None: ...
     def oldest_index(self) -> int: ...
-    def push(self, channels: None, timetags: None | None): ...
+    def push(self, channels: None, timetags: tuple[None, None]): ...
     @property
     def name(self):
         """ Name of buffer
@@ -573,6 +584,11 @@ class TangyBufferClocked(TangyBuffer):
 
         Returns:
             (int): number of channels
+        """
+    def current_time(self) -> float:
+        """ Returns the time of the most recent timetag
+        Returns:
+            (float): Most recent timetag as time
         """
     def time_in_buffer(self) -> float:
         """ Amount of time held in the buffer
@@ -745,26 +761,3 @@ class PTUFile:
 
         :param n: [TODO:description]
         """
-
-class IFace:
-    name: str
-    def __init__(self, name) -> None: ...
-    @property
-    def foo(self):
-        """doc"""
-    @foo.setter
-    def foo(self, value) -> None: ...
-    @property
-    def name(self) -> str: ...
-    def greet(self) -> cython.void: ...
-    def adds(self, a, b) -> None: ...
-
-class ImplA(IFace):
-    name: Incomplete
-    def __init__(self, name, a) -> None: ...
-    def adds(self, a: cython.int, b: cython.int) -> cython.int: ...
-
-class ImplB(IFace):
-    name: Incomplete
-    def __init__(self, name) -> None: ...
-    def adds(self, a: cython.double, b: cython.double) -> cython.double: ...

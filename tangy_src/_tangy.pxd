@@ -134,6 +134,8 @@ cdef extern from "./src/standard_buffer.h":
 
     f64 std_time_in_buffer(const std_buffer *buffer)
 
+    f64 std_current_time(const std_buffer* buffer)
+
     u64 std_singles(const std_buffer *buffer, const u64 start, const u64 stop, u64 *counters)
 
     void std_bins_from_time_delays(const std_buffer * buffer, const int length, const f64 *const delays, u64 * bins)
@@ -296,6 +298,8 @@ cdef extern from "./src/clocked_buffer.h":
 
     f64 clk_time_in_buffer(const clk_buffer *buffer)
 
+    f64 clk_current_time(const clk_buffer* buffer)
+
     u64 clk_singles(const clk_buffer *buffer, const u64 start, const u64 stop, u64 *counters)
 
     void clk_bins_from_time_delays(const clk_buffer * buffer, const int length, const f64 *const delays, u64 * bins)
@@ -417,6 +421,13 @@ cdef extern from './src/picoquant_reader.h':
     READER_STATUS* set_reader_status(u64 num_records)
 
     void delete_reader_status(const READER_STATUS* const reader_stat)
+
+# cdef class TangyBufferStandard:
+#     cdef std_buffer _buffer
+#     cdef std_buffer* _ptr
+#     cdef BufferType _type
+#     cdef bint _have_measurement
+#     cdef std_cc_measurement* _measurement_cc
 
 # cimport numpy as cnp
 # 

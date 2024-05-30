@@ -181,8 +181,8 @@ class Channel(ctk.CTkFrame):
         self.edge_button.grid(row=0, column=2, padx=(0, 0), pady=(6, 6),
                               sticky="nsew")
 
-        self.threshold = FloatSpinbox(self, height=24, step_size=0.1,
-                                      step_size_big=1, units="V",
+        self.threshold = FloatSpinbox(self, height=24, step_size=0.01,
+                                      step_size_big=0.1, units="V",
                                       value_range=voltage_range)
         self.threshold.grid(row=0, column=3, pady=3, sticky="nsew")
 
@@ -364,10 +364,12 @@ class DeviceThread:
         event_set = self.event.isSet()
 
         if self.reading is False and start_stop_state == "Start":
+            # print("Started")
             self.device.start_timetags()
             self.reading = True
 
         if self.reading is True and start_stop_state == "Stop":
+            # print("Stopped")
             self.device.stop_timetags()
             self.reading = False
 
@@ -383,8 +385,6 @@ class DeviceThread:
             except Queue.empty():
                 pass
 
-        is_alive = self.thread.is_alive()
-
         self.id = self.parent.after(200, self.sync)
 
     def worker(self, event: threading.Event):
@@ -399,22 +399,23 @@ class DeviceThread:
                     if v is False:
                         self.device.exclusion = (i, 1)
 
-                print(self.device.exclusion)
+                # print(self.device.exclusion)
 
                 for k, v in self.config["edges"].items():
                     i = int(k[2:]) - 1
-                    if k == "Rising":
+                    if v == "Rising":
                         self.device.inversion = (i, 0)
-                    if k == "Falling":
+                    if v == "Falling":
                         self.device.inversion = (i, 1)
 
-                print(self.device.inversion)
+                # print(self.device.inversion)
+                self.device.inversion_apply()
 
                 for k, v in self.config["voltages"].items():
                     i = int(k[2:]) - 1
                     self.device.input_threshold = (i + 1, v)
 
-                print(self.device.input_threshold)
+                # print(self.device.input_threshold)
 
                 self.new_config = False
 
@@ -425,7 +426,7 @@ class DeviceThread:
                 event.clear()
             else:
                 if self.reading is True:
-                    self.count += self.device.write_to_buffer()
+                    self.count = self.device.write_to_buffer()
                 self.queue.put(self.count)
             if self.running is False:
                 event.clear()

@@ -47,9 +47,11 @@ extensions = [
         "tangy._tangy",
         sources=[
             os.path.join(cython_dir, "_tangy.py"),
+            # cython_dir + "/src/standard_buffer.c",
+            # cython_dir + "/src/clocked_buffer.c",
         ],
         define_macros=[('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')],
-        include_dirs=[get_include()],
+        include_dirs=[get_include(), cython_dir + "./src"],
         extra_compile_args=compiler_flags,
         extra_link_args=link_args,
         optional=os.environ.get('CIBUILDWHEEL', '0') != '1',

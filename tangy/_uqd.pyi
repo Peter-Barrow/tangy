@@ -1,7 +1,7 @@
 import cython
 from ._tangy import TangyBufferStandard
 from _typeshed import Incomplete
-from cython.cimports.libc.stdlib import free as free, malloc as malloc
+from cython.cimports.numpy import npy_intp as npy_intp
 from numpy import float64, ndarray as ndarray, uint64, uint8
 
 UQD_ERROR_FLAG: Incomplete
@@ -95,13 +95,14 @@ class UQDLogic16:
             (List[uint8]): List of channels set to trigger on negative edges
         """
     @inversion.setter
-    def inversion(self, channel: uint8):
+    def inversion(self, invert: tuple[uint8, uint8]):
         """
         Channels set to use negative edge triggering
 
         Args:
             channel (uint8): channel to enable negative edge triggering on
         """
+    def inversion_apply(self) -> None: ...
     @property
     def input_delay(self) -> float64:
         """
@@ -165,7 +166,7 @@ class UQDLogic16:
             (float): maximum time between two pulses in the same group
         """
     @filter_max_time.setter
-    def filter_max_time(self, time: cython.double):
+    def filter_max_time(self, max_time: cython.double):
         """
         Maximum time between two pulses in the same group.
 
@@ -177,7 +178,8 @@ class UQDLogic16:
         """
         """
     @exclusion.setter
-    def exclusion(self, value: int): ...
+    def exclusion(self, value: tuple[int, int]): ...
+    def exclusion_apply(self) -> None: ...
     @property
     def level_gate(self) -> bool:
         """
@@ -201,7 +203,7 @@ class UQDLogic16:
         """
         Acquire buffer
         """
-    def write_to_buffer(self) -> int:
+    def write_to_buffer(self):
         """
         Write tags directly into buffer
         """
