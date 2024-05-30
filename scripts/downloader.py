@@ -27,14 +27,13 @@ url_universalquantum = "https://uqdevices.com/wp-content/uploads/2021/05/CD-V2.3
 zip_universalquantum = os.path.join(opt_path, "CD-V2.35.01.zip")
 if not os.path.exists(zip_universalquantum):
     download_url(url_universalquantum, zip_universalquantum)
-
-with zipfile.ZipFile(zip_universalquantum, 'r') as zip:
-    stub = "CD V2.35.01/Applications/DLL/Release_2_35/CTimeTag/"
-    for file in zip.namelist():
-        if file.startswith(stub):
-            destination = zip.getinfo(file).filename.replace(stub[:-1], "CTimeTag")
-            zip.getinfo(file).filename = destination
-            zip.extract(file, path=os.path.relpath(opt_path))
+    with zipfile.ZipFile(zip_universalquantum, 'r') as zip:
+        stub = "CD V2.35.01/Applications/DLL/Release_2_35/CTimeTag/"
+        for file in zip.namelist():
+            if file.startswith(stub):
+                destination = zip.getinfo(file).filename.replace(stub[:-1], "CTimeTag")
+                zip.getinfo(file).filename = destination
+                zip.extract(file, path=os.path.relpath(opt_path))
 
 # if "Linux" in platform.platform():
 #     url_qutag = "https://qutools.com/files/quTAG/QUTAG-LX64QT5-V1.5.10.tgz"
