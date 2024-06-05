@@ -340,9 +340,8 @@ class DeviceThread:
         self.queue = Queue()
         self.parent.queue = self.queue
 
-        # self.device = UQDLogic16(device_id=device_id, add_buffer=True,
-        #                          buffer_size=buffer_size, calibrate=calibrate)
-        self.device = None
+        self.device = UQDLogic16(device_id=device_id, add_buffer=True,
+                                 buffer_size=buffer_size, calibrate=calibrate)
 
         self.count = 0
         self.config = {}
@@ -362,7 +361,7 @@ class DeviceThread:
         self.parent.process()
 
         start_stop_state = self.parent.start_stop_state.get()
-        event_set = self.event.isSet()
+        event_set = self.event.is_set()
 
         if self.reading is False and start_stop_state == "Start":
             # print("Started")
@@ -421,7 +420,7 @@ class DeviceThread:
                 self.new_config = False
 
             time.sleep(1 / 20)
-            if not event.isSet():
+            if not event.is_set():
                 self.count = 0
                 event.wait(1 / 20)
                 event.clear()

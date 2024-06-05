@@ -19,7 +19,7 @@ typedef int fd_t;
 
 typedef struct shared_mapping {
   fd_t file_descriptor;
-  const char *name;
+  char *name;
   char *data;
 } shared_mapping;
 
@@ -59,6 +59,6 @@ tbResult shmem_close(shared_mapping *map);
  * @return tbResult Indicating whether the mapping exists.
  */
 // tbResult shmem_exists(char *const map_name, bool *exists);
-tbResult shmem_exists(char *const map_name, u8 *exists);
+tbResult shmem_exists(char* map_name, u8 *exists);
 
 #endif

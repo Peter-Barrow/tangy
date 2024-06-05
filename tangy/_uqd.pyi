@@ -1,5 +1,4 @@
 import cython
-from ._tangy import TangyBufferStandard
 from _typeshed import Incomplete
 from cython.cimports.numpy import npy_intp as npy_intp
 from numpy import float64, ndarray as ndarray, uint64, uint8

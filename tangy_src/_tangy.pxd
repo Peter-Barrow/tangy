@@ -422,6 +422,19 @@ cdef extern from './src/picoquant_reader.h':
 
     void delete_reader_status(const READER_STATUS* const reader_stat)
 
+    u64 rb_read_next_HH2_T2(ring_buffer* buf,
+                            astd_slice* data,
+                            FILE* filehandle,
+                            READER_STATUS* status,
+                            u64 count_tags)
+
+    u64 rb_read_next_HH2_T3(ring_buffer* buf,
+                            aclk_slice* data,
+                            FILE* filehandle,
+                            READER_STATUS* status,
+                            u64 count_tags)
+
+
 # cdef class TangyBufferStandard:
 #     cdef std_buffer _buffer
 #     cdef std_buffer* _ptr
@@ -439,3 +452,248 @@ cdef extern from './src/picoquant_reader.h':
 #     dims[1] = length
 #     cdef object res = cnp.PyArray_SimpleNew(1, dims, cnp.NPY_UINT64, data)
 #     return res
+
+cdef extern from "./src/ring_buffer_context.h":
+
+    ctypedef struct ring_buffer:
+        char* map_ptr
+        u64 length_bytes
+        fd_t file_descriptor
+        char* name
+
+    ctypedef struct ring_buffer_context:
+        f64 resolution
+        f64 clock_period
+        u64 resolution_bins
+        u64 clock_period_bins
+        u64 conversion_factor
+        u64 capacity
+        u64 count
+        u64 reference_count
+        u64 channel_count
+
+    u64 rb_context_size()
+    u64 rb_conversion_factor(f64 resolution, f64 clock_period)
+
+    f64 rb_get_resolution(ring_buffer* buffer)
+    void rb_set_resolution(ring_buffer* buffer, f64 resolution)
+
+    f64 rb_get_clock_period(ring_buffer* buffer)
+    void rb_set_clock_period(ring_buffer* buffer, f64 clock_period)
+
+    u64 rb_get_resolution_bins(ring_buffer* buffer)
+    void rb_set_resolution_bins(ring_buffer* buffer, u64 resolution_bins)
+
+    u64 rb_get_clock_period_bins(ring_buffer* buffer)
+    void rb_set_clock_period_bins(ring_buffer* buffer, u64 clock_period_bins)
+
+    u64 rb_get_conversion_factor(ring_buffer* buffer)
+    void rb_set_conversion_factor(ring_buffer* buffer, u64 conversion_factor)
+
+    u64 rb_get_capacity(ring_buffer* buffer)
+    void rb_set_capacity(ring_buffer* buffer, u64 capacity)
+
+    u64 rb_get_count(ring_buffer* buffer)
+    void rb_set_count(ring_buffer* buffer, u64 count)
+
+    u64 rb_get_reference_count(ring_buffer* buffer)
+    void rb_set_reference_count(ring_buffer* buffer, u64 reference_count)
+
+    u64 rb_get_channel_count(ring_buffer* buffer)
+    void rb_set_channel_count(ring_buffer* buffer, u64 channel_count)
+
+    tbResult rb_init(const u64 length_bytes,
+                     char* name,
+                     f64 resolution,
+                     f64 clock_period,
+                     u64 conversion_factor,
+                     u64 capacity,
+                     u64 count,
+                     u64 reference_count,
+                     u64 channel_count,
+                     ring_buffer* buffer)
+
+    tbResult rb_deinit(ring_buffer* buffer)
+
+    tbResult rb_connect(char* name,
+                        ring_buffer* buffer,
+                        ring_buffer_context* context)
+
+    void rb_set_context(ring_buffer* buffer,
+                        f64 resolution,
+                        f64 clock_period,
+                        u64 conversion_factor,
+                        u64 count,
+                        u64 reference_count,
+                        u64 channel_count)
+
+    void rb_get_context(ring_buffer* buffer, ring_buffer_context* context)
+
+cdef extern from "./src/analysis_impl_standard.h":
+
+    ctypedef u64 astd_timetag
+
+    ctypedef struct astd:
+        u8 channel
+        astd_timetag timestamp
+
+    ctypedef f64 astd_res
+
+    ctypedef struct astd_slice:
+        usize length
+        u8* channel
+        astd_timetag* timestamp
+
+    ctypedef struct vec_astd_timetag:
+        isize length
+        isize capacity
+        u64* data
+
+    # tt_vector_init(C) astd_vec_init(C)
+    # tt_vector_deinit(C) astd_vec_deinit(C)
+    # tt_vector_push(V_PTR, E) astd_vec_push(V_PTR, E)
+    # tt_vector_reset(V_PTR) astd_vec_reset(V_PTR)
+
+
+cdef extern from "./src/analysis_impl_clocked.h":
+
+    ctypedef struct aclk_timetag:
+        u64 clock
+        u64 delta
+
+    ctypedef struct clk:
+        u8 channel
+        aclk_timetag timestamp
+
+    ctypedef struct aclk_res:
+        f64 coarse
+        f64 fine
+
+    ctypedef struct aclk_slice:
+        usize length
+        u8* channel
+        aclk_timetag* timestamp
+
+    ctypedef struct aclk_field_ptrs:
+        usize length
+        u8* channels
+        u64* clocks
+        u64* deltas
+
+    ctypedef struct aclk_field_ptrs:
+        u64* clock
+        u64* delta
+
+    ctypedef struct vec_aclk_timetag:
+        isize length
+        isize capacity
+        aclk_field_ptrs data
+
+
+cdef extern from "./src/tangy.h":
+
+    ctypedef enum  buffer_format:
+        STANDARD,
+        CLOCKED
+
+    ctypedef union tangy_slice:
+        astd_slice standard
+        aclk_slice clocked
+
+    ctypedef union tangy_field_ptrs:
+        astd_slice standard
+        aclk_field_ptrs clocked
+
+    ctypedef union tangy_record_vec:
+        vec_astd_timetag standard
+        vec_aclk_timetag clocked
+
+    ctypedef struct tangy_buffer:
+        ring_buffer buffer
+        ring_buffer_context context
+        tangy_slice slice
+        tangy_record_vec records
+        buffer_format format
+
+    tbResult tangy_buffer_init(buffer_format format,
+                      char* name,
+                      const u64 capacity,
+                      f64 resolution,
+                      f64 clock_period,
+                      u64 channel_count,
+                      tangy_buffer* t_buffer)
+
+    tbResult tangy_buffer_deinit(tangy_buffer* t_buf)
+
+    tbResult tangy_buffer_connect(char* name, tangy_buffer* t_buf)
+
+    u64 tangy_bins_from_time(tangy_buffer* t_buf, f64 time)
+
+    u64 tangy_buffer_slice(tangy_buffer* t_buf,
+                           tangy_field_ptrs* ptrs,
+                           u64 start,
+                           u64 stop)
+
+    u64 tangy_buffer_push(tangy_buffer* t_buf,
+                          tangy_field_ptrs* ptrs,
+                          u64 start,
+                          u64 stop)
+
+    u64 tangy_oldest_index(tangy_buffer* t_buf)
+
+    f64 tangy_current_time(tangy_buffer* t_buf)
+
+    f64 tangy_time_in_buffer(tangy_buffer* t_buf)
+
+    u64 tangy_lower_bound(tangy_buffer* t_buf, u64 key)
+
+    u64 tangy_singles(tangy_buffer* t_buf, u64 start, u64 stop, u64* counters)
+
+    u64 tangy_coincidence_count(tangy_buffer* t_buf,
+                                u64 channel_count,
+                                u8* channels,
+                                f64* delays,
+                                f64 time_coincidence_radius,
+                                f64 time_read)
+
+    u64 tangy_coincidence_collect(tangy_buffer* t_buf,
+                                  u64 channel_count,
+                                  u8* channels,
+                                  f64* delays,
+                                  f64 time_coincidence_radius,
+                                  f64 time_read,
+                                  tangy_record_vec* records)
+
+    void tangy_records_copy(buffer_format format,
+                            tangy_record_vec* records,
+                            tangy_field_ptrs* slice)
+
+    u64 tangy_timetrace(tangy_buffer* t_buf,
+                        const u64 start,
+                        const u64 stop,
+                        const u64 bin_width,
+                        const u8* channels,
+                        const u64 n_channels,
+                        const u64 length,
+                        u64* intensities)
+
+    void tangy_relative_delay(tangy_buffer* t_buf,
+                              const u64 start,
+                              const u64 stop,
+                              const u64 correlation_window,
+                              const u64 resolution,
+                              const u8 channels_a,
+                              const u8 channels_b,
+                              const u64 length,
+                              u64* intensities)
+
+    u64 tangy_joint_delay_histogram(tangy_buffer* t_buf,
+                                    u8 clock,
+                                    u8 signal,
+                                    u8 idler,
+                                    u64 n_channels,
+                                    u8* channels,
+                                    f64* delays,
+                                    f64 radius,
+                                    f64 read_time,
+                                    u64* intensities)

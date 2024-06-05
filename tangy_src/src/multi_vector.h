@@ -82,6 +82,7 @@ bool JOIN(VEC_STUB, grow)(MULTI_VECTOR* multivec);
 void JOIN(VEC_STUB, push)(MULTI_VECTOR* multivec, VEC_T value);
 
 #undef VEC_T
+#undef VEC_T_PTRS
 #undef VEC_NAME
 #undef GROWTH_FACTOR
 #undef VEC_STUB

@@ -56,19 +56,19 @@ extensions = [
         extra_link_args=link_args,
         optional=os.environ.get('CIBUILDWHEEL', '0') != '1',
     ),
-    Extension(
-        "tangy._uqd",
-        sources=[
-            os.path.join(cython_dir, "_uqd.py")],
-        define_macros=[('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')],
-        include_dirs=uqd_include_dirs,
-        libraries=uqd_libraries,
-        library_dirs=uqd_libraries_dirs,
-        extra_link_args=link_args + uqd_link_args,
-        extra_compile_args=compiler_flags,
-        language="c++",
-        optional=os.environ.get('CIBUILDWHEEL', '0') != '1',
-    ),
+    # Extension(
+    #     "tangy._uqd",
+    #     sources=[
+    #         os.path.join(cython_dir, "_uqd.py")],
+    #     define_macros=[('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')],
+    #     include_dirs=uqd_include_dirs,
+    #     libraries=uqd_libraries,
+    #     library_dirs=uqd_libraries_dirs,
+    #     extra_link_args=link_args + uqd_link_args,
+    #     extra_compile_args=compiler_flags,
+    #     language="c++",
+    #     optional=os.environ.get('CIBUILDWHEEL', '0') != '1',
+    # ),
 ]
 
 ext_modules = cythonize(

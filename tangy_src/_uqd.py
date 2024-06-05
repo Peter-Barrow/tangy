@@ -10,7 +10,7 @@ from numpy import ndarray, zeros, uint8, uint64, float64, asarray
 from cython.cimports.numpy import PyArray_SimpleNewFromData, npy_intp, NPY_UINT8, NPY_INT64
 
 # from cython.cimports import _tangy
-from ._tangy import TangyBufferStandard
+from ._tangy import TangyBuffer
 
 
 UQD_ERROR_FLAG = {
@@ -140,10 +140,10 @@ class UQDLogic16:
 
         self._have_buffer = False
         if add_buffer is True:
-            self._buffer = TangyBufferStandard(f"uqdbuffer{self._device_id}",
-                                               self.resolution,
-                                               buffer_size,
-                                               self.number_of_channels)
+            self._buffer = TangyBuffer(f"uqdbuffer{self._device_id}",
+                                       resolution=self.resolution,
+                                       capacity=buffer_size,
+                                       channel_count=self.number_of_channels)
             self._have_buffer = True
         return
 
