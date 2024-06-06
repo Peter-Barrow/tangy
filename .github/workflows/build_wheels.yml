@@ -25,10 +25,10 @@ jobs:
           name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
           path: ./wheelhouse/*.whl
 
-      - name: Release wheels
-        uses: softprops/action-gh-release@v1
-        with:
-          files: ./wheelhouse/*.whl
+      #- name: Release wheels
+      #  uses: softprops/action-gh-release@v1
+      #  with:
+      #    files: ./wheelhouse/*.whl
 
   upload_pypi:
     needs: [build_wheels]
