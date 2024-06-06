@@ -185,7 +185,7 @@ iterator_init(circular_iterator* iter,
 typedef struct {
     u64 length;
     u64 oldest; // not the best name for the result of argmin
-    u8* channels;
+    const u8* channels;
     u64* index;
     u64* limit;
     circular_iterator* iters;

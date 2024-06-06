@@ -1,74 +1,40 @@
 import cython
-from _typeshed import Incomplete
 from cython.cimports import _tangy as _tangy
 from cython.cimports.libc.stdint import int64_t as i64
-from cython.cimports.libc.stdlib import malloc as malloc
 from enum import Enum
-from numpy import ndarray as ndarray, uint64 as u64n
+from numpy import uint64 as u64n
 
-TimeTag: Incomplete
-Resolution: Incomplete
-std_buf_ptr: Incomplete
-clk_buf_ptr: Incomplete
-TangyBufferPtr: Incomplete
+__all__ = ['tangy_config_location', 'Records', 'JointHistogram', 'centre_histogram', 'bin_histogram', 'delay_result', 'TangyBufferType', 'TangyBuffer', 'PTUFile', 'buffer_list_update', 'buffer_list_append', 'buffer_list_delete_all', 'buffer_list_show']
 
-def to_time(tag: TimeTag, resolution: Resolution) -> cython.double: ...
-def timetag_at(ptr: TangyBufferPtr, idx: u64n): ...
-def buffer_type(ptr: TangyBufferPtr): ...
 def tangy_config_location() -> str: ...
 
-class RecordsStandard:
-    """Container for Standard format Timetags
-
-    Args:
-        count (u64n):
-        resolution (float):
-        channels (ndarray(u8n)):
-        timetags (ndarray(u64n)):
-    """
-    count: u64n
-    resolution: float
-    channels: None
-    timetags: None
-    def asTime(self): ...
-    def __len__(self) -> cython.Py_ssize_t: ...
-
-class RecordsClocked:
-    """Container for Standard format Timetags
-
-    Args:
-        count (u64n):
-        resolution_coarse (float):
-        resolution_fine (float):
-        channels (ndarray(u8n)):
-        clocks (ndarray(u64n)):
-        deltas (ndarray(u64n)):
-    """
-    count: u64n
-    resolution_coarse: float
-    resolution_fine: float
-    channels: None
-    clocks: None
-    deltas: None
-    def asTime(self): ...
-    def __len__(self) -> cython.Py_ssize_t: ...
-
-class RecordsNew:
+class Records:
     """Container for timetags
 
+    Contains array of timetags, required channel information will be either an
+        array of the same dimensions as timetags or simply the only channels.
+        allowed corresponding to a specific coincidence pattern.
+
     Args:
-        count (u64n):
-        resolution (float):
-        channels (ndarray(u8n)):
-        timetags (Union[ndarray(u64n), Tuple[ndarray(u64n), ndarray(u64n)]]):
+        count (u64n): Number of events
+        resolution (float): Resolution of timetags
+        clock_period (float): Clock period (if required)
+        channels (ndarray(u8n)): Channels
+        timetags (Union[ndarray(u64n), Tuple[ndarray(u64n), ndarray(u64n)]]): Timetags
+
+    Examples:
+        records = Records(count=10, resolution=1e-9, clock_period=1.0,
+                          channels=[0, 1], timetags=[0, ..., 10])
+
+        records = Records(count=4, resolution=1e-9, clock_period=1.0,
+                          channels=[0, 1, 1, 0], timetags=[0, 1, 4, 5])
+
     """
     count: u64n
     resolution: float
     clock_period: float
     channels: None
     timetags: None | tuple[None, None]
-
-Record: Incomplete
 
 class JointHistogram:
     """JSI result
@@ -100,7 +66,6 @@ def centre_histogram(central_bin: int, temporal_window: int, marginal_idler: Non
         (Tuple[ndarray(u64n),ndarray(u64n),ndarray(u64n)]): Tuple of idler        marginal, signal marginal and joint histogram
     """
 def bin_histogram(histogram: None, x_width: i64, y_width: i64) -> tuple[tuple[u64n, u64n], None, None, None]: ...
-def double_decay(time, tau1, tau2, t0, max_intensity): ...
 
 class delay_result:
     times: None
@@ -113,11 +78,88 @@ class delay_result:
     max_intensity: cython.double
 
 class TangyBufferType(Enum):
+    """ Format of timetags to use in instance of TangyBuffer
+    """
     Standard: int
     Clocked: int
 
 class TangyBuffer:
-    def __init__(self, name: str, resolution: float, clock_period: float = 1.0, channel_count: int = 4, capacity: int = 10000000, format: TangyBufferType = ...) -> None: ...
+    '''Interface to underlying ring buffer
+
+    Provides ability to create, connect and modify a buffer of timetags and
+        includes method to analyse the timetags currently held within it.
+
+    Args:
+        name (str): Name of buffer to be created or attached to.
+        resolution (float = 0.1, optional): Resolution of timetags in seconds.
+            Unused if connecting.
+        clock_period (float = 1.0, optional): Length of clock period in seconds for
+            measurements that include clock information in each timetag. Unused
+            if connecting
+        channel_count (Optional[int] = 4, optional): Number of channels. Unused
+            if connecting.
+        length (Optional[int] = 10_000_000, optional): Length of buffer to create.
+            Unused if connecting.
+        format (TangyBufferType = TangyBufferType.Standard, optional): Format of
+            timetags in the buffer, default is the ```standard``` format with a
+            single value for the channel and single value for timeing information.
+            Unused if connecting.
+
+    Attributes:
+        name (str): Name of buffer
+        resolution (float): Resolution of timetags in seconds
+        clock_period (float): Clock period of clock signal used if timetags with
+            clock information are used. Defaults to 1.0 otherwise
+        resolution_bins (int): Resolution in bins
+        clock_period_bins (int): Clock period in units of resolution
+        conversion_factor (int): Factor to convert between time and bins
+        capacity (int): Maximum number of timetags that can be stored
+        count (int): total number of timetags written to the buffer
+        reference_count (int): Number of reference to current open buffer. Other
+            processes can connect to the same buffer
+        channel_count (int): Number of available channels in the buffer
+        begin (int): Index of first timetag. Can be greater than capacity
+        end (int): Index of last timetag. Can be greater than capacity and will
+            always be greater than ```begin```
+
+    Note:
+        If connecting to an existing buffer the resolution, clock_period,
+        n_channels, capacity and format arguments will be ignored even if
+        supplied. The correct values will be made available from the buffer
+        connected to.
+
+    Examples:
+        Creation of a TangyBuffer object for both the ``Standard`` and         ``Clocked`` timetag formats that can hold 1,000,000 timetags for a         device with 4 channels. The method to connect to these buffers is also         shown. This method of creating new buffers and connecting to existing         ones allows the user to hold on to and continously read timetags from         a device in one process and then connect to that buffer in another to         perform analysis on the current data.
+        === "Buffer in ``Standard`` format"
+            ```python
+            # Here we will create a buffer called \'standard\' (imaginitive)
+            # that will only except timetags in the ``Standard`` format
+            standard_buffer = tangy.TangyBuffer("standard", 1e-9,
+                                                channel_count=4,
+                                                capacity=int(1e6)
+                                                format=TangyBufferType.Standard)
+
+            # A new buffer object can be made by connecting to a buffer with
+            # the correct name
+            standard_buffer_connection = tangy.TangyBuffer("standard")
+            ```
+
+        === "Buffer in ``Clocked`` format"
+            ```python
+            # Here we will create a buffer called \'clocked\' (imaginitive)
+            # that will only except timetags in the ``Clocked`` format
+            clocked_buffer = tangy.TangyBuffer("clocked", 1e-12,
+                                                clock_period=12.5e-9,  # 80MHz Ti-Sapph
+                                                channel_count=4,
+                                                capacity=int(1e6)
+                                                format=TangyBufferType.Clocked)
+
+            # A new buffer object can be made by connecting to a buffer with
+            # the correct name
+            clocked_buffer_connection = tangy.TangyBuffer("clocked")
+            ```
+    '''
+    def __init__(self, name: str, resolution: float = 0.1, clock_period: float = 1.0, channel_count: int = 4, capacity: int = 10000000, format: TangyBufferType = ...) -> None: ...
     def __del__(self) -> None: ...
     def __len__(self) -> int:
         """ Length of buffer
@@ -297,35 +339,105 @@ class TangyBuffer:
             Count the singles in the last 1000 tags
             >>> tangy.singles(buffer, buffer.count - 1000, buffer.count)
         """
-    def coincidence_count(self, read_time: float, window: float, channels: list[int], delays: list[int] | None = None):
+    def coincidence_count(self, read_time: float, window: float, channels: list[int], delays: list[float] | None = None) -> int:
         """ Count coincidences
+
+        Counts the coincidences for the chosen channels over the specified read
+            time provided the timetags have a distance between them less than
+            the window. Optionally delays can be applied to each channel.The
+            read time is taken as time from the most recent timetag in the
+            buffer, e.g. a read time of 1s in a buffer containing 100s will
+            give a result from the 99th second to the 100th.
 
         Args:
             read_time (float): time to integrate over
-            window (float): maximum distance between timetags allows
-            channels: (List[int]): channels to find coincidences between
-            delays: (Optional[List[float]]): delays for each channel
+            window (float): maximum distance between timetags allowed
+            channels (List[int]): channels to find coincidences between
+            delays (Optional[List[float]] = None,): delays for each channel
 
         Returns:
             (int): Number of coincidences found
 
         """
-    def coincidence_collect(self, read_time: float, window: float, channels: list[int], delays: list[int] | None = None) -> RecordsNew:
+    def coincidence_collect(self, read_time: float, window: float, channels: list[int], delays: list[float] | None = None) -> Records:
         """ Collect coincident timetags
+
+        Collects the timetags in coincdience for the chosen channels over the
+            specified read time provided the timetags have a distance between
+            them less than the window. Optionally delays can be applied to each
+            channel.The read time is taken as time from the most recent timetag
+            in the buffer, e.g. a read time of 1s in a buffer containing 100s
+            will give a result from the 99th second to the 100th.
 
         Args:
             read_time (float): time to integrate over
-            window (float): maximum distance between timetags allows
-            channels: (List[int]): channels to find coincidences between
-            delays: (Optional[List[float]]): delays for each channel
+            window (float): maximum distance between timetags allowed
+            channels (List[int]): channels to find coincidences between
+            delays (Optional[List[float]] = None,): delays for each channel
 
         Returns:
-            (Union[RecordsStandard, RecordsClocked]): Records found in coincidence
+            (Records): Records found in coincidence
 
         """
-    def timetrace(self, channels: list[int], read_time: float, resolution: float = 10.0): ...
-    def relative_delay(self, channel_a: int, channel_b: int, read_time: float, resolution: float = 1e-09, window: float | None = None): ...
-    def joint_delay_histogram(self, signal: int, idler: int, channels: list[int], read_time: float, radius: float, delays: list[float] | None = None, clock: int | None = None, bin_width: int = 1, centre: bool = True): ...
+    def timetrace(self, channels: list[int], read_time: float, resolution: float = 10.0):
+        """ Time trace of buffer for chosen channels and read time
+
+        Produces an array of count rates accumulated for the chosen channels
+            over the read time specified. The read time is taken as time from
+            the most recent timetag in the buffer, e.g. a read time of 1s in a
+            buffer containing 100s will give a result from the 99th second to the
+            100th.
+
+        Args:
+            channels (List[int]): Channels to count timetags of
+            read_time (float): Amount of time to measure over, In seconds
+            resolution (float = 10.0): Size of bins in seconds
+
+        Returns:
+            (ndarray): intensities
+
+        """
+    def relative_delay(self, channel_a: int, channel_b: int, read_time: float, resolution: float = 1e-09, window: float | None = None) -> delay_result:
+        """ Relative delay between two channels
+
+        Args:
+            channel_a (int): First channel
+            channel_b (int): Second channel
+            read_time (float,): Time to integrate over
+            resolution (float = 1e-9,): Resolution of bins
+            window (Optional[float] = None): Correlation window
+
+        Returns:
+            (delay_result): Dataclass containing histogram data and fitting results
+        """
+    def joint_delay_histogram(self, signal: int, idler: int, channels: list[int], read_time: float, radius: float, delays: list[float] | None = None, clock: int | None = None, bin_width: int = 1, centre: bool = True) -> JointHistogram:
+        """ 2-D histogram of delays between channels
+
+        Histograms relative delays of channsl found to be in coincdience for
+            over the specified read time provided the timetags have a distance
+            between them less than the window. Optionally delays can be applied
+            to each channel.The read time is taken as time from the most recent
+            timetag in the buffer, e.g. a read time of 1s in a buffer containing
+            100s will give a result from the 99th second to the 100th. Can be
+            used to produce a joint spectral intensity if the conversion from
+            time to wavelength (frequency) is known.
+
+        Args:
+            signal (int): channel of signal photon
+            idler (int): channel of idler photon
+            channels (List[int],): channels to test for coincidence, must contain
+                signal, idler and optionally a clock channel
+            read_time (float): time to integrate over
+            radius (float,): maximum distance between timetags allowed
+            delays (Optional[List[float]] = None,): delays for each channel
+            clock (Optional[int] = None,): Optional clock channel
+            bin_width (int = 1,): Width of bins in histogram
+            centre (bool = True): Whether or not to centre the histogram
+
+        Returns:
+            (JointHistogram): Joint delay histogram and marginal distributions
+
+        """
 
 class PTUFile:
     '''Class to read data from Picoquant PTU file and write into buffer.
@@ -376,17 +488,18 @@ def buffer_list_update() -> dict:
     '''
     Up-to-date list of available buffers
 
-    Gets the list of available buffers from the Tangy configuration directory
-        [```~/.config/Tangy/buffers``` on linux and
+    Gets the list of available buffers from the Tangy configuration directory,
+        for example, ```~/.config/Tangy/buffers``` on linux and
         ```C:\\Users\\user_name\\AppData\\Local\\PeterBarrow\\Tangy\\buffers```
-        on Windows]. For each buffer configuration file the existence of the
+        on Windows. For each buffer configuration file the existence of the
         associated buffer is checked, buffers that no longer exists have their
         corresponding configuration file removed. Upon completion this returns
         a dictionary containing the buffer name, buffer format and path to the
         configuration file.
 
     Returns:
-        (dict): Dictionary of {"name": {"format": fmt, "path": "/path/to/config"}
+        (dict): Dictionary of
+            ```{"name": {"format": fmt, "path": "/path/to/config"}```
 
     '''
 def buffer_list_append(buffer: TangyBuffer):

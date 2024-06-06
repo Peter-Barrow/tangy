@@ -112,7 +112,7 @@ class UQDLogic16:
     _time_gate: cbool = False
     _gate_width: int
     _have_buffer: bool
-    _buffer: TangyBufferStandard
+    _buffer: TangyBuffer
     # _buffer: _tangy.TangyBufferStandard
 
     def __init__(self, device_id: int = 1, calibrate: bool = True,
@@ -527,7 +527,7 @@ class UQDLogic16:
             active_errors[err] = text
         return active_errors
 
-    def buffer(self) -> TangyBufferStandard:
+    def buffer(self) -> TangyBuffer:
         """
         Acquire buffer
         """
@@ -543,11 +543,14 @@ class UQDLogic16:
         if count == 0:
             return count
 
-        shape: npy_intp[1]
+        shape: npy_intp[:] = zeros(1, dtype=uint64)
         shape[0] = count
-        channels = PyArray_SimpleNewFromData(1, shape, NPY_UINT8, self._channel_ptr)
 
-        timestamps = PyArray_SimpleNewFromData(1, shape, NPY_INT64, self._timetag_ptr)
+        channels = PyArray_SimpleNewFromData(
+            1, cython.address(shape[0]), NPY_UINT8, self._channel_ptr)
+
+        timestamps = PyArray_SimpleNewFromData(
+            1, cython.address(shape[0]), NPY_INT64, self._timetag_ptr)
 
         self._buffer.push(channels - 1, asarray(timestamps, uint64))
         return self._buffer.count

@@ -14,11 +14,12 @@ maintainers = [
 ]
 readme = "README.md"
 keywords = []
-license = {text = "GPLv2"}
+license = {text = "GPLv3"}
 dependencies = [
     "numpy",
     "scipy",
-    "platformdirs", "customtkinter"
+    "platformdirs",
+    "customtkinter"
 ]
 
 [project.optional-dependencies]

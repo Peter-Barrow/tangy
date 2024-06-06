@@ -8,7 +8,7 @@ import time
 import customtkinter as ctk
 
 from tangy import buffer_list_update
-from tangy import TangyBufferStandard, TangyBufferClocked
+from tangy import TangyBuffer
 from tangy import find_delay
 
 
@@ -316,13 +316,14 @@ class BufferList(ctk.CTkFrame):
 
         buffer_format = self.buffer_list[buffer_name]["format"]
 
-        self.format = buffer_format
-        if buffer_format == 0:
-            self.buffer = TangyBufferStandard(name=buffer_name)
-        elif buffer_format == 1:
-            self.buffer = TangyBufferClocked(name=buffer_name)
-        else:
-            pass
+        # self.format = buffer_format
+        # if buffer_format == 0:
+        #     self.buffer = TangyBufferStandard(name=buffer_name)
+        # elif buffer_format == 1:
+        #     self.buffer = TangyBufferClocked(name=buffer_name)
+        # else:
+        #     pass
+        self.buffer = TangyBuffer(buffer_name, 1.0)
 
         self.start_button.configure(state="normal")
 
@@ -419,9 +420,8 @@ class CoincidenceCounter(ctk.CTk):
         if self.pair.searching is True:
             self.pair.searching = False
             channels, delays = self.pair.configuration()
-            delay_result = find_delay(self.buffer_list.buffer,
-                                      channels[0], channels[1], 10,
-                                      resolution=6.25e-9, window=100e-7)
+            delay_result = self.buffer_list.buffer.relative_delay(
+                channels[0], channels[1], 10, resolution=6.25e-9, window=100e-7)
             new_delay = delay_result.t0
             self.pair.delay_from_found(new_delay)
 

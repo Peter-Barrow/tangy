@@ -34,46 +34,51 @@
         } resolution_clocked;
         ```
 
-#### :::tangy.RecordsStandard
+### :::tangy.Records
     options:
+        allow_inspection: false
         show_root_heading: true
         show_source: false
 
-#### :::tangy.RecordsClocked
+### :::tangy.TangyBufferType
     options:
+        allow_inspection: true
         show_root_heading: true
         show_source: false
+
 
 ### :::tangy.TangyBuffer
     options:
         allow_inspection: true
-        show_symbol_type_heading: true
         show_root_heading: true
         show_source: false
 
-### :::tangy.TangyBufferStandard
+## Buffer Management
+
+### :::tangy.buffer_list_update
     options:
-        inherited_members: true
         allow_inspection: true
         show_symbol_type_heading: true
         show_root_heading: true
         show_source: false
 
-### :::tangy.TangyBufferClocked
+### :::tangy.buffer_list_append
     options:
+        allow_inspection: true
         show_symbol_type_heading: true
         show_root_heading: true
         show_source: false
 
-## Measurements
-### :::tangy.timetrace
+### :::tangy.buffer_list_delete_all
     options:
+        allow_inspection: true
         show_symbol_type_heading: true
         show_root_heading: true
         show_source: false
 
-### :::tangy.find_delay
+### :::tangy.buffer_list_show
     options:
+        allow_inspection: true
         show_symbol_type_heading: true
         show_root_heading: true
         show_source: false

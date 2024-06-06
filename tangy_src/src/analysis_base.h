@@ -284,7 +284,7 @@ static inline pattern_iterator
 JOIN(stub, pattern_init)(ring_buffer* const buf,
                          const slice* data,
                          const u32 n,
-                         u8* const channels,
+                         const u8* const channels,
                          const f64* const time_delays,
                          const f64 read_time) {
 
@@ -662,11 +662,11 @@ JOIN(stub, relative_delay)(ring_buffer* buf,
     }
 }
 
-histogram2D_coords JOIN(stub, joint_histogram_position)(slice* data,
-                                                        u8 ch_idx_idler,
-                                                        u8 ch_idx_signal,
-                                                        u8 ch_idx_clock,
-                                                        timestamp* timetags);
+histogram2D_coords JOIN(stub, joint_histogram_position)(const slice* data,
+                                                        const u8 ch_idx_idler,
+                                                        const u8 ch_idx_signal,
+                                                        const u8 ch_idx_clock,
+                                                        const timestamp* timetags);
 
 #define jointHistogramPosition(s, i_i, i_s, i_c, ts)                           \
     JOIN(stub, joint_histogram_position)(s, i_i, i_s, i_c, ts)
@@ -674,14 +674,14 @@ histogram2D_coords JOIN(stub, joint_histogram_position)(slice* data,
 static inline u64
 JOIN(stub, joint_delay_histogram)(ring_buffer* const buf,
                                   const slice* data,
-                                  u8 clock,
-                                  u8 signal,
-                                  u8 idler,
-                                  u64 n_channels,
-                                  u8* channels,
-                                  f64* delays,
-                                  f64 radius,
-                                  f64 read_time,
+                                  const u8 clock,
+                                  const u8 signal,
+                                  const u8 idler,
+                                  const u64 n_channels,
+                                  const u8* channels,
+                                  const f64* delays,
+                                  const f64 radius,
+                                  const f64 read_time,
                                   u64* intensities) {
 
     bool has_signal = false;

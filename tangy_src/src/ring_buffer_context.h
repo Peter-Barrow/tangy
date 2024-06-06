@@ -124,6 +124,18 @@ rb_set_channel_count(ring_buffer* buffer, u64 channel_count) {
     ((u64*)buffer->map_ptr)[8] = channel_count;
 }
 
+static inline void rb_reference_count_increment(ring_buffer* buffer) {
+    u64 rc = rb_get_reference_count(buffer);
+    rb_set_reference_count(buffer, rc + 1);
+}
+
+static inline void rb_reference_count_decrement(ring_buffer* buffer) {
+    u64 rc = rb_get_reference_count(buffer);
+    if (rc > 0) {
+        rb_set_reference_count(buffer, rc - 1);
+    }
+}
+
 static inline tbResult
 rb_init(const u64 length_bytes,
         char* name,
@@ -132,7 +144,6 @@ rb_init(const u64 length_bytes,
         u64 conversion_factor,
         u64 capacity,
         u64 count,
-        u64 reference_count,
         u64 channel_count,
         ring_buffer* buffer) {
 
@@ -148,7 +159,6 @@ rb_init(const u64 length_bytes,
     buffer->file_descriptor = map.file_descriptor;
     buffer->name = name;
 
-
     rb_set_resolution(buffer, resolution);
     rb_set_resolution_bins(buffer, (u64)roundl(1 / resolution));
     rb_set_clock_period(buffer, clock_period);
@@ -156,7 +166,7 @@ rb_init(const u64 length_bytes,
     rb_set_conversion_factor(buffer, conversion_factor);
     rb_set_capacity(buffer, capacity);
     rb_set_count(buffer, count);
-    rb_set_reference_count(buffer, reference_count);
+    rb_set_reference_count(buffer, 1);
     rb_set_channel_count(buffer, channel_count);
 
     return result;
@@ -173,12 +183,9 @@ rb_deinit(ring_buffer* buffer) {
         return result;
     }
 
-    u64 reference_count = rb_get_reference_count(buffer);
-    if (reference_count >= 1) {
-        rb_set_reference_count(buffer, reference_count - 1);
-    }
+    rb_reference_count_decrement(buffer);
 
-    reference_count = rb_get_reference_count(buffer);
+    u64 reference_count = rb_get_reference_count(buffer);
     if ((exists == 1) & (reference_count <= 0)) {
         result = shmem_close(&map);
         if (result.Ok == false) {
@@ -210,6 +217,7 @@ rb_connect(char* name, ring_buffer* buffer, ring_buffer_context* context) {
     buffer->name = map.name;
 
     result.Ok = true;
+    rb_reference_count_increment(buffer);
     return result;
 }
 

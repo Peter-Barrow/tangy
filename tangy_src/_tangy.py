@@ -1,114 +1,46 @@
-# import datetime
 import cython
-# from cython.cimports.cython import view
 from cython.cimports import _tangy as _tangy
 
 import mmap
 from os import dup, listdir, remove, makedirs
 from os.path import getsize, join, exists
 import json
-# import time
 from scipy.optimize import curve_fit
 from numpy import mean, where, exp, roll
-# from numpy import sum as npsum
 from numpy import round as npround
 from numpy import abs as nabs
-from numpy import histogram as nphist
 from numpy import arange, array, ndarray, asarray, zeros, frombuffer, reshape
 from numpy import uint8 as u8n
 from numpy import uint64 as u64n
 from numpy import int64 as i64n
 from numpy import float64 as f64n
-from cython.cimports.libc.stdlib import malloc
-from cython.cimports.libc.stdio import FILE, fdopen, fclose
 
+from cython.cimports.libc.stdio import FILE, fdopen, fclose
 from cython.cimports.libc.stdint import uint8_t as u8
 # from cython.cimports.libc.stdint import uint32_t as u32
 from cython.cimports.libc.stdint import uint64_t as u64
 from cython.cimports.libc.stdint import int64_t as i64
 import struct
-# from cython.cimports.numpy import npu64n_t
-
-# import numpy.typing as npt
 from typing import List, Tuple, Optional, Union
 from enum import Enum
 from platformdirs import user_config_dir
+from warnings import warn
 
-
-# __all__ = ["RecordsStandard", "RecordsClocked", "TagBuffer", "singles",
-#            "timetrace", "find_zero_delay", "zero_delay_result", "Coincidences",
-#            "JointDelayHistogram", "JointHistogram", "PTUFile"]
-
-TimeTag = cython.fused_type(_tangy.standard, _tangy.clocked)
-Resolution = cython.fused_type(_tangy.std_res, _tangy.clk_res)
-# TangyBuffer = cython.fused_type(_tangy.std_buffer, _tangy.clk_buffer)
-std_buf_ptr = cython.typedef(cython.pointer(_tangy.std_buffer))
-clk_buf_ptr = cython.typedef(cython.pointer(_tangy.clk_buffer))
-TangyBufferPtr = cython.fused_type(std_buf_ptr, clk_buf_ptr)
-_Resolution = cython.fused_type(float, Tuple[float, float])
-
-
-# @cython.cfunc
-# def into_std_buffer(void_ptr: cython.pointer(cython.void)) -> std_buf_ptr:
-#     return cython.cast(std_buf_ptr, void_ptr)
-#
-#
-# @cython.cfunc
-# def into_clk_buffer(void_ptr: cython.pointer(cython.void)) -> clk_buf_ptr:
-#     return cython.cast(clk_buf_ptr, void_ptr)
-
-
-# @cython.cfunc
-# def into_tangy_buffer(void_ptr: cython.pointer(cython.void),
-#                       choice: _tangy.BufferType):
-#
-#     if choice is _tangy.BufferType.Standard:
-#         return into_std_buffer(void_ptr)
-#
-#     if choice is _tangy.BufferType.Clocked:
-#         return into_clk_buffer(void_ptr)
-
-
-@cython.cfunc
-def to_time(tag: TimeTag, resolution: Resolution) -> cython.double:
-
-    if (TimeTag is _tangy.standard) and (Resolution is _tangy.std_res):
-        return _tangy.std_to_time(tag, resolution)
-
-    elif (TimeTag is _tangy.clocked) and (Resolution is _tangy.clk_res):
-        return _tangy.clk_to_time(tag, resolution)
-
-
-@cython.cfunc
-def timetag_at(ptr: TangyBufferPtr, idx: u64n):
-    if TangyBufferPtr is std_buf_ptr:
-        return _tangy.std_record_at(ptr, idx)
-    elif TangyBufferPtr is clk_buf_ptr:
-        return _tangy.clk_record_at(ptr, idx)
-
-
-# @cython.cfunc
-# def time_at_index(buf_ptr: cython.pointer(cython.void),
-#                   buf_type: _tangy.BufferType, index: u64n) -> float:
-#
-#     if buf_type is _tangy.BufferType.Standard:
-#         ptr_std = into_std_buffer(buf_ptr)
-#         rec_std: _tangy.standard = timetag_at(ptr_std, index)
-#         return to_time[_tangy.standard, _tangy.std_res](rec_std, ptr_std[0].resolution[0])
-#
-#     elif buf_type is _tangy.BufferType.Clocked:
-#         ptr_clk = into_clk_buffer(buf_ptr)
-#         rec_clk: _tangy.clocked = timetag_at(ptr_clk, index)
-#         print(ptr_clk.resolution[0].coarse, ptr_clk.resolution[0].fine)
-#         return to_time[_tangy.clocked, _tangy.clk_res](rec_clk, ptr_clk[0].resolution[0])
-
-
-@cython.cfunc
-def buffer_type(ptr: TangyBufferPtr):
-    if TangyBufferPtr is cython.pointer(_tangy.std_buffer):
-        print("found standard")
-    if TangyBufferPtr is cython.pointer(_tangy.clk_buffer):
-        print("found clocked")
+__all__ = [
+    "tangy_config_location",
+    "Records",
+    "JointHistogram",
+    "centre_histogram",
+    "bin_histogram",
+    "delay_result",
+    "TangyBufferType",
+    "TangyBuffer",
+    "PTUFile",
+    "buffer_list_update",
+    "buffer_list_append",
+    "buffer_list_delete_all",
+    "buffer_list_show",
+]
 
 
 @cython.ccall
@@ -123,1526 +55,33 @@ def tangy_config_location() -> str:
 
 
 @cython.dataclasses.dataclass(frozen=True)
-class RecordsStandard:
-    """Container for Standard format Timetags
-
-    Args:
-        count (u64n):
-        resolution (float):
-        channels (ndarray(u8n)):
-        timetags (ndarray(u64n)):
-    """
-    count: u64n = cython.dataclasses.field()
-    resolution: float = cython.dataclasses.field()
-    channels: ndarray(u8n) = cython.dataclasses.field()
-    timetags: ndarray(u64n) = cython.dataclasses.field()
-
-    @cython.ccall
-    @cython.boundscheck(False)
-    @cython.wraparound(False)
-    def asTime(self):
-        resolution: cython.typeof(self.resolution) = self.resolution
-
-        timetag_view: cython.ulonglong[:] = self.timetags
-
-        # count: cython.Py_ssize_t = len(self)
-        if 1 == self.count:
-            return _tangy.std_time_from_bins(resolution, timetag_view[0])
-
-        result: f64n[:] = zeros(self.count, dtype=f64n)
-        result_view: cython.double[:] = result
-        i: cython.Py_ssize_t
-        for i in range(self.count):
-            result_view[i] = _tangy.std_time_from_bins(resolution,
-                                                       timetag_view[i])
-        return result
-
-    def __len__(self) -> cython.Py_ssize_t:
-        return len(self.channels)
-
-
-@cython.dataclasses.dataclass(frozen=True)
-class RecordsClocked:
-    """Container for Standard format Timetags
-
-    Args:
-        count (u64n):
-        resolution_coarse (float):
-        resolution_fine (float):
-        channels (ndarray(u8n)):
-        clocks (ndarray(u64n)):
-        deltas (ndarray(u64n)):
-    """
-    count: u64n = cython.dataclasses.field()
-    resolution_coarse: float = cython.dataclasses.field()
-    resolution_fine: float = cython.dataclasses.field()
-    channels: ndarray(u8n) = cython.dataclasses.field()
-    clocks: ndarray(u64n) = cython.dataclasses.field()
-    deltas: ndarray(u64n) = cython.dataclasses.field()
-
-    @cython.ccall
-    @cython.boundscheck(False)
-    @cython.wraparound(False)
-    def asTime(self):
-        record: _tangy.clocked
-        resolution: _tangy.clk_res
-        resolution.coarse = self.resolution_coarse
-        resolution.fine = self.resolution_fine
-
-        clocks_view: cython.ulonglong[:] = self.clocks
-        deltas_view: cython.ulonglong[:] = self.deltas
-
-        # count: cython.Py_ssize_t = len(self)
-        if 1 == self.count:
-            record.timestamp.clock = clocks_view[0]
-            record.timestamp.delta = deltas_view[0]
-            return _tangy.clk_to_time(record, resolution)
-
-        result: f64n[:] = zeros(self.count, dtype=f64n)
-        result_view: cython.double[:] = result
-        i: cython.Py_ssize_t
-        for i in range(self.count):
-            record.timestamp.clock = clocks_view[i]
-            record.timestamp.delta = deltas_view[i]
-            result_view[i] = _tangy.clk_to_time(record, resolution)
-        return result
-
-    def __len__(self) -> cython.Py_ssize_t:
-        return len(self.channels)
-
-
-@cython.dataclasses.dataclass(frozen=True)
-class RecordsNew:
+class Records:
     """Container for timetags
 
+    Contains array of timetags, required channel information will be either an
+        array of the same dimensions as timetags or simply the only channels.
+        allowed corresponding to a specific coincidence pattern.
+
     Args:
-        count (u64n):
-        resolution (float):
-        channels (ndarray(u8n)):
-        timetags (Union[ndarray(u64n), Tuple[ndarray(u64n), ndarray(u64n)]]):
+        count (u64n): Number of events
+        resolution (float): Resolution of timetags
+        clock_period (float): Clock period (if required)
+        channels (ndarray(u8n)): Channels
+        timetags (Union[ndarray(u64n), Tuple[ndarray(u64n), ndarray(u64n)]]): Timetags
+
+    Examples:
+        records = Records(count=10, resolution=1e-9, clock_period=1.0,
+                          channels=[0, 1], timetags=[0, ..., 10])
+
+        records = Records(count=4, resolution=1e-9, clock_period=1.0,
+                          channels=[0, 1, 1, 0], timetags=[0, 1, 4, 5])
+
     """
     count: u64n = cython.dataclasses.field()
     resolution: float = cython.dataclasses.field()
     clock_period: float = cython.dataclasses.field()
     channels: ndarray(u8n) = cython.dataclasses.field()
     timetags: Union[ndarray(u64n), Tuple[ndarray(u64n), ndarray(u64n)]] = cython.dataclasses.field()
-
-
-Record = cython.fused_type(_tangy.standard, _tangy.clocked)
-
-_Buffer = cython.union(
-    standard=_tangy.std_buffer,
-    clocked=_tangy.clk_buffer)
-
-_Buffer_Ptr = cython.union(
-    standard=cython.pointer(_tangy.std_buffer),
-    clocked=cython.pointer(_tangy.clk_buffer))
-
-
-# @cython.cclass
-# class TangyBuffer:
-#     """Mixin for concrete buffer implementations
-# 
-#     Buffer mixin class defining basic functionality that all implementors will
-#         employ. Provides buffer subscripting utilities in the form of
-#         ```TangyBuffer().begin``` and ```TangyBuffer().end``` to get correct
-#         positions in underlying buffer for where data begins and ends along with
-#         ```__getitem__``` for subscripting and ```__call__``` providing the
-#         user with the means to request a position in the buffer according to a
-#         point in time.
-# 
-#     Attributes:
-#         name (str): Name of buffer
-#         file_descriptor (int): File descriptor of underlying ring buffer
-#             capacity (int): Size of buffer
-#         resolution (Union[float, Tuple[float, float]]): Single float for
-#             a buffer of ``standard timetags`` or a pair of floats for buffers of
-#             ``clocked timetags`` (coarse resolution, fine resolution).
-#             Resolutions are in seconds.
-#         count (int): Number of elements that have been written to the buffer
-#         index_of_reference (int): On/off marker
-#         n_channels (int): Number of channels the buffer can contain
-# 
-#     """
-#     _name = cython.declare(bytes)
-#     _vptr: cython.pointer(cython.void)
-#     _type: _tangy.BufferType
-# 
-# #     def __init__(self, name: str,
-# #                  resolution: Optional(Union[float, Tuple[float, float]]) = 1e-12,
-# #                  length: int = 10_000_000,
-# #                  n_channels: int = 8):
-# #
-# #         if type(resolution) is float:
-# #             super(self, TangyBufferStandard).__init__(name, resolution, length, n_channels)
-# #
-# #         elif type(resolution) is Tuple[float, float]:
-# #             super(self, TangyBufferClocked).__init__(name, resolution, length, n_channels)
-# 
-#     @classmethod
-#     def make_new_standard(cls, name: str, resolution: float,
-#                           length: int, n_channels: int):
-#         return TangyBufferStandard(name, resolution, length, n_channels)
-# 
-#     @classmethod
-#     def make_new_clocked(cls, name: str, resolution: Tuple[float, float],
-#                          length: int, n_channels: int):
-#         return TangyBufferClocked(name, resolution, length, n_channels)
-# 
-#     def __del__(self):
-#         raise NotImplementedError
-# 
-#     def configuration(self) -> dict:
-#         """ Serialise buffer configuration
-# 
-#         Returns:
-#             (dict): information about underlying buffer
-#         """
-#         buffer_type = 0
-#         if self._type == _tangy.BufferType.Clocked:
-#             buffer_type = 1
-# 
-#         config = {
-#             "name": self.name.decode("ascii"),
-#             "format": buffer_type,  # TODO: Enum module should be used so we can give this a name
-#             "capacity": self.capacity,
-#             "count": self.count,
-#             "resolution": self.resolution,
-#             "reference_count": self.reference_count,
-#             "n_channels": self.n_channels,
-#         }
-#         return config
-# 
-#     def __repr__(self) -> str:
-#         """ String representation of buffer
-# 
-#         Returns:
-#             (str): information about the buffer
-#         """
-#         out: str = "Tangy Buffer:\n"
-#         config = self.configuration()
-#         longest_key = max([len(k) for k in config.keys()])
-#         for k, v in config.items():
-#             out += f"{k.rjust(longest_key)} : {v}\n"
-#         return out
-# 
-#     def __len__(self):
-#         """ Length of buffer
-# 
-#         Returns:
-#             (int): Length of buffer
-#         """
-#         return self.capacity
-# 
-#     def __call__(self, time: float) -> int:
-#         """ Converts a time to an buffer position
-# 
-#         Takes a time and converts it to a position in the buffer relative to the
-#             total time currently held within the buffer. Positive numbers find
-#             positions from the start of the buffer whilst negative numbers find
-#             positions from the end of the buffer.
-# 
-#         Examples:
-#             Find the position bounding the first second in the buffer
-#             >>> idx = buffer(1)
-#             Find the position bounding the last second in the buffer
-#             >>> idx = buffer(-1)
-# 
-#         Returns:
-#             (int): Index corresponding to requested time
-#         """
-#         return self._call(time)
-# 
-#     @cython.cfunc
-#     def _call(self, time: float) -> int:
-# 
-#         time_at_start: f64n = 0
-#         time_at_stop: f64n = 0
-#         (time_at_start, time_at_stop) = self.time_range()
-# 
-#         # idx: int = self.begin
-# 
-#         if time < 0:
-#             return self.lower_bound(time_at_stop + time)
-# 
-#         if time <= time_at_stop:
-#             return self.lower_bound(time_at_start + time)
-# 
-#         # NOTE: should look into upper_bound here for searching from startraise NotImplementedError
-# 
-#         return 0
-# 
-#     @property
-#     def end(self) -> int:
-#         """ Index of last record in buffer
-#         Returns:
-#             (int): Index of last record in buffer
-#         """
-#         return self.count
-# 
-#     @property
-#     def begin(self) -> int:
-#         """ Index of first record in buffer
-#         Returns:
-#             (int): Index of first record in buffer
-#         """
-#         return self.oldest_index()
-# 
-#     @cython.boundscheck(False)
-#     @cython.wraparound(False)
-#     def __getitem__(self, key):
-#         """ Access subscript of buffer
-# 
-#         """
-#         return self._get(key)
-# 
-#     @cython.ccall
-#     def _get(self, key):
-#         raise NotImplementedError
-# 
-#     @cython.ccall
-#     def oldest_index(self) -> int:
-#         raise NotImplementedError
-#         return 0
-# 
-#     @cython.ccall
-#     def _make_slice(self, key):
-#         start: int
-#         stop: int
-#         step: int = 1
-# 
-#         if type(key) is slice:
-#             # oldest = self.begin
-# 
-#             dist: int = abs(abs(key.stop) - abs(key.start))
-#             if (key.start > self.capacity) or (key.stop > self.capacity):
-#                 if dist > self.capacity:
-#                     raise IndexError("out of range")
-#                 start = key.start
-#                 stop = key.stop
-#                 print("here", start, stop, stop)
-#                 return (start, stop, step)
-# 
-#             # if key.start < self.begin:
-#             #     start = oldest + self.begin
-#             if key.start < 0:
-#                 print("a")
-#                 start = (self.count + key.start - 1) % self.capacity
-#                 stop = start + dist + 1
-#             else:
-#                 print("b")
-#                 start = key.start
-#                 if start < self.begin:
-#                     start += self.begin
-#                 start = (start % self.capacity)
-#                 # stop = start + dist + 1
-#                 stop = key.stop
-#                 if stop < self.begin:
-#                     stop += self.begin
-#                 stop = (stop % self.capacity) + 1
-# 
-#             # start = (key.start % self.capacity)
-#             # # stop = start + key.stop
-#             # stop = start + dist + 1
-# 
-#         if type(key) is int:
-#             if abs(key) > self.count:
-#                 raise IndexError("out of range")
-# 
-#             if (key > self.capacity):
-#                 start = key
-#                 stop = key + 1
-#                 return (start, stop, step)
-# 
-#             if key < 0:
-#                 start = (self.count + key - 1) % self.capacity
-#                 stop = start + 1
-#             else:
-#                 if key < self.begin:
-#                     key += self.begin
-#                 start = (key % self.capacity)
-#                 stop = start + 1
-# 
-#         if abs(abs(stop) - abs(start)) > self.count:
-#             raise IndexError("out of range")
-# 
-#         # print("down here", start, stop, stop)
-#         return (start, stop, step)
-# 
-#     @cython.ccall
-#     def push(self, channels: ndarray(u8n), timetags):
-#         raise NotImplementedError
-# 
-#     @property
-#     def name(self):
-#         """ Name of buffer
-# 
-#         Returns:
-#             (str): buffer name
-#         """
-#         raise NotImplementedError
-#         return ""
-# 
-#     @property
-#     def file_descriptor(self):
-#         """ File descriptor of buffer
-# 
-#         Returns:
-#             (str): buffers file descriptor
-#         """
-#         raise NotImplementedError
-#         return 0
-# 
-#     @property
-#     def capacity(self) -> int:
-#         """ Maximum number of timetags the buffer can hold
-# 
-#         Returns:
-#             (int): maximum number of timetags
-#         """
-#         raise NotImplementedError
-#         return 0
-# 
-#     @property
-#     def resolution(self):
-#         """ Resolution of timetags in buffer
-# 
-#         """
-#         raise NotImplementedError
-#         return 1
-# 
-#     @resolution.setter
-#     def resolution(self, resolution):
-#         raise NotImplementedError
-# 
-#     @property
-#     def count(self) -> int:
-#         """ Number of timetags written to the buffer
-#         """
-#         raise NotImplementedError
-#         return 0
-# 
-#     @property
-#     def index_of_reference(self) -> int:
-#         raise NotImplementedError
-#         return 0
-# 
-#     @property
-#     def reference_count(self) -> int:
-#         """ Number of current connections to the buffer
-# 
-#         Tracks number of connections to buffer, used to determine if it is safe
-#             to delete the backing memory and close the memory mapping.
-# 
-#         Returns:
-#             (int): number of connections
-#         """
-#         raise NotImplementedError
-#         return 0
-# 
-#     @property
-#     def n_channels(self) -> int:
-#         """ Maximum number of channels in the buffer
-# 
-#         Typically set by a device or a file to limit the range of valid channels
-#             available.
-# 
-#         Returns:
-#             (int): number of channels
-#         """
-#         raise NotImplementedError
-#         return 0
-# 
-#     @cython.ccall
-#     def current_time(self) -> float:
-#         """ Returns the time of the most recent timetag
-#         Returns:
-#             (float): Most recent timetag as time
-#         """
-#         raise NotImplementedError
-#         return 0.0
-# 
-#     @cython.ccall
-#     def time_in_buffer(self) -> float:
-#         """ Amount of time held in the buffer
-#         Returns:
-#             (float): Time between oldest and newest timetags
-#         """
-#         raise NotImplementedError
-#         return 0.0
-# 
-#     @cython.ccall
-#     def time_range(self) -> Tuple[float, float]:
-#         raise NotImplementedError
-#         return (0.0, 0.0)
-# 
-#     @cython.ccall
-#     def bins_from_time(self, time: float) -> int:
-#         """ Convert amount of time to a number of time bins
-# 
-#         Args:
-#             time (float): Amount of time in seconds
-# 
-#         Returns:
-#             (int): number of bins
-# 
-#         Note:
-#             For buffers with the clocked timetag format this will be in units\
-#             of the fine resolution.
-# 
-#         """
-#         raise NotImplementedError
-#         return 0
-# 
-#     @cython.ccall
-#     def lower_bound(self, time: float) -> int:
-#         """ Find the position in the buffer that gives the last "time" seconds\
-#         in the buffer
-# 
-#         Performs a binary search on the buffer where the location being \
-#         searched for is ``buffer.time_in_buffer() - time``.
-# 
-#         Args:
-#             time (float): Amount of time, in seconds, to split the buffer by
-# 
-#         Returns:
-#             (int): Index in buffer corresponding to the timetag that is greater\
-#             than or equal to ``buffer.time_in_buffer() - time``
-# 
-#         """
-#         raise NotImplementedError
-#         return 0
-# 
-#     @cython.ccall
-#     def timetrace(self, channels: List[int], read_time: float, resolution: float = 10):
-#         n_channels: u64n = len(channels)
-#         # channels: u8n[:] = asarray(channels, dtype=u8n)
-#         channels_view: cython.uchar[::1] = asarray(channels, dtype=u8n)
-#         channels_ptr: cython.pointer(cython.uchar) = cython.address(
-#             channels_view[0])
-# 
-#         n: cython.int = 1
-#         if resolution < read_time:
-#             n = int(read_time // resolution) + 1
-# 
-#         intensity_vec: cython.pointer(_tangy.vec_u64) = _tangy.vector_u64_init(n)
-# 
-#         total: u64n = 0
-#         total = self._timetrace(read_time, resolution, n_channels, channels_ptr, n, intensity_vec)
-# 
-#         intensities: u64n[:] = zeros(intensity_vec.length, dtype=u64n)
-#         intensities_view: u64[::1] = intensities
-#         for i in range(intensity_vec.length):
-#             intensities_view[i] = intensity_vec.data[i]
-# 
-#         intensity_vec = _tangy.vector_u64_deinit(intensity_vec)
-# 
-#         return intensities
-# 
-#     @cython.cfunc
-#     def _timetrace(self, read_time: f64n, resolution: f64n, n_channels: u64n,
-#                    channels: cython.pointer(cython.uchar), n_data_points: u64n,
-#                    data: cython.pointer(_tangy.vec_u64)):
-#         raise NotImplementedError
-# 
-# 
-# @cython.cclass
-# class TangyBufferStandard(TangyBuffer):
-#     """Interface to ```standard``` style buffers
-# 
-#     Buffer implementation for ```standard``` style buffers with ```channel```
-#         field and a single field for timing information, ```timestamp```. Such
-#         buffers have timetags with the following structure in the c-api:
-#         ```c
-#         // Timetag format
-#         typedef struct std {
-#             u8 channel;
-#             u64 timestamp;
-#         } timetag_standard;
-# 
-#         typedef f64 resolution_standard;
-#         ```
-# 
-#     Args:
-#         name (str): Name of buffer to be created or attached to.
-#         resolution (float): Resolution of timetags in seconds. A single float
-#             for the "standard timetags". Unused if connecting. In seconds.
-#         n_channels (int): Number of channels. Unused if connecting.
-#         length (int): Length of buffer to create. Unused if connecting.
-# 
-#     Attributes:
-#         name (str): Name of buffer
-#         file_descriptor (int): File descriptor of underlying ring buffer
-#             capacity (int): Size of buffer
-#         resolution (float): Resolution are in seconds.
-#         count (int): Number of elements that have been written to the buffer
-#         index_of_reference (int): On/off marker
-#         n_channels (int): Number of channels the buffer can contain
-# 
-#     Note:
-#         If connecting to an existing buffer the resolution, n_channels and
-#         length arguments will be ignored even if supplied.
-# 
-#     Examples:
-#         ```python
-#         # Here we will create a buffer called 'standard' (imaginitive)
-#         # that will only except timetags in the ``Standard`` format, this is
-#         # selected by only supplying a single value for the resolution
-#         standard_buffer = tangy.TangyBufferStandard("standard", 1e-9, 4, int(1e6))
-# 
-#         # A new buffer object can be made by connecting to a buffer with
-#         # the correct name
-#         standard_buffer_connection = tangy.TangyBufferStandard("standard")
-#         ```
-#     """
-# 
-#     _buffer: _tangy.std_buffer
-#     _ptr: cython.pointer(_tangy.std_buffer)
-#     _type: _tangy.BufferType
-#     _have_measurement: bool = False
-#     _measurement_cc: cython.pointer(_tangy.std_cc_measurement)
-# 
-#     def __init__(self, name: str,
-#                  resolution: Optional[float] = None,
-#                  length: Optional[int] = None,
-#                  n_channels: Optional[int] = None):
-# 
-#         buffer_list_update()
-#         self._name = name.encode('utf-8')
-#         c_name: cython.p_char = self._name
-# 
-#         result: _tangy.tbResult = _tangy.std_buffer_connect(c_name, cython.address(self._buffer))
-#         if result.Ok is True:
-#             self._ptr = cython.address(self._buffer)
-#             return
-# 
-#         if resolution is None:
-#             raise ValueError("Must supply a resolution when creating a new buffer")
-# 
-#         if length is None:
-#             raise ValueError("Must supply a length when creating a new buffer")
-# 
-#         if n_channels is None:
-#             raise ValueError("Must specifiy the number of channels when creating a new buffer")
-# 
-#         result = _tangy.std_buffer_init(length, resolution, n_channels, c_name,
-#                                         cython.address(self._buffer))
-#         if False is result.Ok:
-#             # raise an error
-#             raise MemoryError
-#         _tangy.std_buffer_info_init(self._buffer.map_ptr,
-#                                     cython.address(self._buffer))
-#         self._ptr = cython.address(self._buffer)
-#         self._type = _tangy.BufferType.Standard
-# 
-#         buffer_list_append(self)
-#         return
-# 
-#     def __del__(self):
-#         result: _tangy.tbResult = _tangy.std_buffer_deinit(self._ptr)
-#         if result.Ok is False:
-#             print("something went wrong...")
-#         # TODO: check result...
-#         # TODO: update buffer list
-# 
-#     @cython.ccall
-#     def oldest_index(self) -> int:
-#         return _tangy.std_oldest_index(self._ptr)
-# 
-#     @cython.ccall
-#     def _get(self, key):
-#         start: int
-#         stop: int
-#         step: int
-# 
-#         (start, stop, step) = self._make_slice(key)
-#         n: u64n = abs(stop - start)
-# 
-#         count: u64n
-#         channels: u8n[:] = zeros(n, dtype=u8n)
-#         channels_view: cython.uchar[:] = channels
-# 
-#         ptrs: _tangy.std_slice
-#         ptrs.length = n
-#         ptrs.channel = cython.address(channels_view[0])
-# 
-#         timestamps: u64n[:] = zeros(n, dtype=u64n)
-#         timestamps_view: u64[:] = timestamps
-#         ptrs.timestamp = cython.address(timestamps_view[0])
-# 
-#         count = _tangy.std_buffer_slice(self._ptr,
-#                                         cython.address(ptrs),
-#                                         start, stop)
-# 
-#         print(channels, timestamps)
-# 
-#         return (channels[::step], timestamps[::step])
-# 
-#     @cython.ccall
-#     def push(self, channels: ndarray(u8n), timetags: ndarray(u64n)):
-# 
-#         count: u64n = 0
-#         n_channels: int = len(channels)
-# 
-#         start: u64n = self.count
-#         stop: u64n = start + n_channels
-# 
-#         n_timetags: int = len(timetags)
-#         if n_channels != n_timetags:
-#             ValueError
-#         channels_view: cython.uchar[:] = channels
-#         timetags_view: u64[:] = timetags
-#         ptrs: _tangy.std_slice
-#         ptrs.length = n_channels
-#         ptrs.channel = cython.address(channels_view[0])
-#         ptrs.timestamp = cython.address(timetags_view[0])
-# 
-#         count = _tangy.std_buffer_push(self._ptr, ptrs, start, stop)
-#         return count
-# 
-#     @cython.ccall
-#     def clear(self):
-#         for i in range(self.capacity):
-#             self._buffer.ptrs.channel[i] = 0
-#             self._buffer.ptrs.timestamp[i] = 0
-#         self._buffer.count[0] = 0
-# 
-#     @property
-#     def name(self):
-#         """ Name of buffer
-# 
-#         Returns:
-#             (str): buffer name
-#         """
-#         return self._buffer.name
-# 
-#     @property
-#     def file_descriptor(self):
-#         """ File descriptor of buffer
-# 
-#         Returns:
-#             (str): buffers file descriptor
-#         """
-#         return self._buffer.file_descriptor
-# 
-#     @property
-#     def capacity(self) -> int:
-#         """ Maximum number of timetags the buffer can hold
-# 
-#         Returns:
-#             (int): maximum number of timetags
-#         """
-#         return self._buffer.capacity[0]
-# 
-#     @property
-#     def resolution(self) -> float:
-#         """ Resolution of timetags in buffer
-# 
-#         Returns:
-#             (float): resolution
-#         """
-#         return self._buffer.resolution[0]
-# 
-#     @resolution.setter
-#     def resolution(self, resolution: float):
-#         self._buffer.resolution[0] = resolution
-# 
-#     @property
-#     def count(self) -> int:
-#         """ Number of timetags written to the buffer
-# 
-#         Returns:
-#             (int): total number of timetags written
-#         """
-#         return self._buffer.count[0]
-# 
-#     @property
-#     def index_of_reference(self) -> int:
-#         return self._buffer.index_of_reference[0]
-# 
-#     @property
-#     def reference_count(self) -> int:
-#         """ Number of current connections to the buffer
-# 
-#         Tracks number of connections to buffer, used to determine if it is safe
-#             to delete the backing memory and close the memory mapping.
-# 
-#         Returns:
-#             (int): number of connections
-#         """
-#         return self._buffer.reference_count[0]
-# 
-#     @reference_count.setter
-#     def reference_count(self, int):
-#         self._buffer.reference_count[0] = 0
-# 
-#     @property
-#     def n_channels(self) -> int:
-#         """ Maximum number of channels in the buffer
-# 
-#         Typically set by a device or a file to limit the range of valid channels
-#             available.
-# 
-#         Returns:
-#             (int): number of channels
-#         """
-#         return self._buffer.n_channels[0]
-# 
-#     @cython.ccall
-#     def current_time(self) -> float:
-#         """ Returns the time of the most recent timetag
-#         Returns:
-#             (float): Most recent timetag as time
-#         """
-#         current: f64n = _tangy.std_current_time(self._ptr)
-#         return current
-# 
-#     @cython.ccall
-#     def time_in_buffer(self) -> float:
-#         """ Amount of time held in the buffer
-#         Returns:
-#             (float): Time between oldest and newest timetags
-#         """
-#         return _tangy.std_time_in_buffer(self._ptr)
-# 
-#     @cython.ccall
-#     def time_range(self) -> Tuple[float, float]:
-#         # begin: float = time_at_index(self._v_ptr, self._type, self.begin % self.capacity)
-#         # end: float = time_at_index(self._v_ptr, self._type, self.end % self.capacity)
-#         begin: float
-#         end: float
-#         idx: int
-#         idx = (self.begin + 1) % self.capacity
-#         rec: _tangy.standard = _tangy.std_record_at(self._ptr, idx)
-#         begin = _tangy.std_to_time(rec, self._buffer.resolution[0])
-# 
-#         idx = self.end % self.capacity
-#         rec = _tangy.std_record_at(self._ptr, idx)
-#         end = _tangy.std_to_time(rec, self._buffer.resolution[0])
-# 
-#         return (begin, end)
-# 
-#     @cython.ccall
-#     def bins_from_time(self, time: float) -> int:
-#         """ Convert amount of time to a number of time bins
-# 
-#         Args:
-#             time (float): Amount of time in seconds
-# 
-#         Returns:
-#             (int): number of bins
-# 
-#         Note:
-#             For buffers with the clocked timetag format this will be in units\
-#             of the fine resolution.
-# 
-#         """
-#         bins: u64n = _tangy.std_bins_from_time(self._buffer.resolution[0], time)
-# 
-#         return bins
-# 
-#     @cython.ccall
-#     def lower_bound(self, time: float) -> int:
-#         """ Find the position in the buffer that gives the last "time" seconds\
-#         in the buffer
-# 
-#         Performs a binary search on the buffer where the location being \
-#         searched for is ``buffer.time_in_buffer() - time``.
-# 
-#         Args:
-#             time (float): Amount of time, in seconds, to split the buffer by
-# 
-#         Returns:
-#             (int): Index in buffer corresponding to the timetag that is greater\
-#             than or equal to ``buffer.time_in_buffer() - time``
-# 
-#         """
-# 
-#         bins: u64n = self.bins_from_time(time)
-#         index: u64n = _tangy.std_lower_bound(self._ptr, bins)
-# 
-#         return index
-# 
-#     @cython.ccall
-#     def singles(self, read_time: Optional[float] = None,
-#                 start: Optional[int] = None,
-#                 stop: Optional[int] = None) -> Tuple[int, List[int]]:
-#         """Count the occurances of each channel over a region of the buffer
-# 
-#         Args:
-#             buffer (RecordBuffer): Buffer containing timetags
-#             read_time (Optional[float] = None): Length of time to integrate over
-#             start (Optional[int] = None): Buffer position to start counting from
-#             stop (Optional[int] = None): Buffer position to sotp counting to
-# 
-#         Returns:
-#             (int, List[int]): Total counts and list of total counts on each channel
-# 
-#         Examples:
-#             Get all of the singles in a buffer
-#             >>> tangy.singles(buffer, buffer.time_in_buffer())
-# 
-#             Count the singles in the last 1s
-#             >>> tangy.singles(buffer, 1)
-# 
-#             Count the singles in the last 1000 tags
-#             >>> tangy.singles(buffer, buffer.count - 1000, buffer.count)
-#         """
-# 
-#         counters: u64n[:] = zeros(self.n_channels, dtype=u64n)
-#         counters_view: u64[::1] = counters
-# 
-#         if read_time:
-#             time_in_buffer = self.time_in_buffer()
-#             current_time: f64n = self.current_time()
-#             if read_time >= time_in_buffer:
-#                 # TODO: really should have a warning here
-#                 start: u64n = self.begin
-#             else:
-#                 read_time: f64n = current_time - read_time
-#                 # print(f"Read time:\t({read_time})")
-#                 start: u64n = self.lower_bound(read_time)
-#                 # print(f"Start:\t({start})")
-# 
-#         if stop is None:
-#             # stop: u64n = self.count - 1
-#             stop: u64n = self.end
-# 
-#         total: u64n = 0
-# 
-#         total = _tangy.std_singles(self._ptr, start, stop, cython.address(counters_view[0]))
-# 
-#         return (total, counters)
-# 
-#     @cython.boundscheck(False)
-#     @cython.wraparound(False)
-#     @cython.ccall
-#     def coincidence_count(self, read_time: float, window: float,
-#                           channels: List[int], delays: Optional[List[int]] = None):
-#         """ Count coincidences
-# 
-#         Args:
-#             read_time (float): time to integrate over
-#             window (float): maximum distance between timetags allows
-#             channels: (List[int]): channels to find coincidences between
-#             delays: (Optional[List[float]]): delays for each channel
-# 
-#         Returns:
-#             (int): Number of coincidences found
-# 
-#         """
-# 
-#         _n_channels = len(channels)
-# 
-#         assert _n_channels <= self.n_channels, "More channels than available in buffer"
-# 
-#         assert max(channels) <= self.n_channels, \
-#             f"Requested channel {max(channels)} when maximum channel available in {self.n_channels}"
-# 
-#         _channels: ndarray(u8n) = array(channels, dtype=u8n)
-# 
-#         if delays is None:
-#             delays: ndarray(f64n) = zeros(_n_channels, dtype=f64n)
-# 
-#         _channels_view: cython.uchar[::1] = _channels
-#         _delays_view: cython.double[::1] = array(delays, dtype=f64n)
-# 
-#         count = _tangy.std_coincidences_count(self._ptr,
-#                                               _n_channels,
-#                                               cython.address(_channels_view[0]),
-#                                               cython.address(_delays_view[0]),
-#                                               window,
-#                                               read_time)
-#         return count
-# 
-#     @cython.boundscheck(False)
-#     @cython.wraparound(False)
-#     @cython.ccall
-#     def coincidence_collect(self, read_time: float, window: float,
-#                             channels: List[int], delays: Optional[List[int]] = None
-#                             ) -> RecordsStandard:
-#         """ Collect coincident timetags
-# 
-#         Args:
-#             read_time (float): time to integrate over
-#             window (float): maximum distance between timetags allows
-#             channels: (List[int]): channels to find coincidences between
-#             delays: (Optional[List[float]]): delays for each channel
-# 
-#         Returns:
-#             (RecordsClocked): Records found in coincidence
-# 
-#         """
-# 
-#         n_channels = len(channels)
-# 
-#         assert n_channels <= self.n_channels, "More channels than available in buffer"
-# 
-#         assert max(channels) <= self.n_channels, \
-#             f"Requested channel {max(channels)} when maximum channel available in {self.n_channels}"
-# 
-#         _channels: ndarray(u8n) = array(channels, dtype=u8n)
-# 
-#         if delays is None:
-#             delays: ndarray(f64n) = zeros(n_channels, dtype=f64n)
-# 
-#         channels_view: cython.uchar[::1] = _channels
-#         delays_view: cython.double[::1] = array(delays, dtype=f64n)
-# 
-#         if self._have_measurement is False:
-#             self._measurement_cc = _tangy.std_coincidence_measurement_new(
-#                 self._buffer.resolution[0], n_channels, cython.address(channels_view[0]))
-# 
-#         self._measurement_cc.n_channels = n_channels
-#         self._measurement_cc.channels = cython.address(channels_view[0])
-# 
-#         count: u64n = _tangy.std_coincidences_records(self._ptr,
-#                                                       cython.address(delays_view[0]),
-#                                                       window,
-#                                                       read_time,
-#                                                       self._measurement_cc)
-# 
-#         total: u64n = self._measurement.total_records
-# 
-#         assert count == total, f"Count {count} and total {total} aren't equal"
-# 
-#         records: ndarray(u64n) = zeros(total, dtype=u64n)
-#         for i in range(total):
-#             records[i] = self._measurement_cc.records.data[i]
-# 
-#         return RecordsStandard(total, self.resolution, _channels, records)
-# 
-#     @cython.cfunc
-#     def _timetrace(self, read_time: f64n, resolution: f64n, n_channels: u64n,
-#                    channels: cython.pointer(cython.uchar), n_data_points: u64n,
-#                    data: cython.pointer(_tangy.vec_u64)):
-# 
-#         bin_width: u64n = round(resolution / self.resolution)
-# 
-#         total = _tangy.std_timetrace(self._ptr,
-#                                      read_time,
-#                                      bin_width,
-#                                      channels,
-#                                      n_channels,
-#                                      n_data_points,
-#                                      data)
-#         return total
-# 
-# 
-# @cython.cclass
-# class TangyBufferClocked(TangyBuffer):
-#     """Interface to ```clocked``` style buffers
-# 
-#     Buffer implementation for ```clocked``` style buffers with ```channel```
-#         field and a pair of fields for timing information, ```timestamp```. Such
-#         buffers have timetags with the following structure in the c-api:
-#         ```c
-#         typedef struct timestamp_clocked {
-#             u64 clock;
-#             u64 delta;
-#         } timestamp_clocked;
-# 
-#         // Timetag format
-#         typedef struct timetag_clocked {
-#             u8 channel;
-#             timestamp_clocked timestamp;
-#         } timetag_clocked;
-# 
-#         typedef struct resolution_clocked {
-#             f64 coarse;
-#             f64 fine;
-#         } resolution_clocked;
-#         ```
-# 
-#     Args:
-#         name (str): Name of buffer to be created or attached to.
-#         resolution (float): Resolution of timetags in seconds. A pair of floats
-#             for "coarse" and "fine" timing structure. Unused if connecting.
-#             In seconds.
-#         n_channels (int): Number of channels. Unused if connecting.
-#         length (int): Length of buffer to create. Unused if connecting.
-# 
-#     Attributes:
-#         name (str): Name of buffer
-#         file_descriptor (int): File descriptor of underlying ring buffer
-#             capacity (int): Size of buffer
-#         resolution (Tuple[float, float]): Pair of floats in the form
-#             (coarse resolution, fine resolution). Resolutions are in seconds.
-#         count (int): Number of elements that have been written to the buffer
-#         index_of_reference (int): On/off marker
-#         n_channels (int): Number of channels the buffer can contain
-# 
-#     Note:
-#         If connecting to an existing buffer the resolution, n_channels and
-#         length arguments will be ignored even if supplied.
-# 
-#     Note:
-#          The resolution must be specified as a tuple in the form (coarse
-#          resolution, fine resolution). As an example a clock signal from an
-#          80Mhz TiSapphire laser and a fine resolution on-board the time
-#          timetagger would give: ``resolution = (12.5e-9, 1e-12)``
-# 
-#     Examples:
-#         Here we will create a buffer called 'clocked' (imaginitive)
-#             that will only except timetags in the ``Clocked`` format, this is
-#             selected by supplying a pair of values for the resolution
-#         >>> resolution = (12.5e-9, 1e-12) # 80Mhz Clock and 1ps fine resolution
-#         >>> clocked_buffer = tangy.TangyBufferClocked("clocked", resolution, 4, int(1e6))
-# 
-#             A new buffer object can be made by connecting to a buffer with
-#             the correct name
-#         >>> clocked_buffer_connection = tangy.TangyBufferClocked("clocked")
-#         ```
-#     """
-# 
-#     _buffer: _tangy.clk_buffer
-#     _ptr: cython.pointer(_tangy.clk_buffer)
-#     _type: _tangy.BufferType
-#     _have_measurement: bool = False
-#     _measurement_cc: cython.pointer(_tangy.clk_cc_measurement)
-#     # _name = cython.declare(bytes)
-# 
-#     def __init__(self, name: str,
-#                  resolution: Optional[Tuple[float, float]] = None,
-#                  length: Optional[int] = None,
-#                  n_channels: Optional[int] = None):
-# 
-#         buffer_list_update()
-#         self._name = name.encode('utf-8')
-#         c_name: cython.p_char = self._name
-# 
-#         result: _tangy.tbResult = _tangy.clk_buffer_connect(c_name, cython.address(self._buffer))
-#         if result.Ok is True:
-#             self._ptr = cython.address(self._buffer)
-#             return
-# 
-#         if resolution is None:
-#             raise ValueError("Must supply a resolution when creating a new buffer")
-# 
-#         if length is None:
-#             raise ValueError("Must supply a length when creating a new buffer")
-# 
-#         if n_channels is None:
-#             raise ValueError("Must specifiy the number of channels when creating a new buffer")
-# 
-#         _resolution: _tangy.clk_res
-#         _resolution.coarse = resolution[0]
-#         _resolution.fine = resolution[1]
-# 
-#         result = _tangy.clk_buffer_init(length, _resolution, n_channels, c_name,
-#                                         cython.address(self._buffer))
-#         if False is result.Ok:
-#             # raise an error
-#             raise MemoryError
-# 
-#         _tangy.clk_buffer_info_init(self._buffer.map_ptr,
-#                                     cython.address(self._buffer))
-#         self._ptr = cython.address(self._buffer)
-#         self._type = _tangy.BufferType.Clocked
-#         buffer_list_append(self)
-#         return
-# 
-#     def __del__(self):
-#         result: _tangy.tbResult = _tangy.clk_buffer_deinit(self._ptr)
-#         if result.Ok is False:
-#             print("something went wrong")
-#         # TODO: check result...
-#         # TODO: update buffer list
-# 
-#     @cython.ccall
-#     def oldest_index(self) -> int:
-#         return _tangy.clk_oldest_index(self._ptr)
-# 
-#     @cython.ccall
-#     def _get(self, key):
-#         start: int
-#         stop: int
-#         step: int
-# 
-#         (start, stop, step) = self._make_slice(key)
-#         n: u64n = abs(stop - start)
-# 
-#         count: u64n
-#         channels: u8n[:] = zeros(n, dtype=u8n)
-#         channels_view: cython.uchar[:] = channels
-# 
-#         ptrs: _tangy.clk_field_ptrs
-#         ptrs.length = n
-#         ptrs.channels = cython.address(channels_view[0])
-# 
-#         clocks: u64n[:] = zeros(n, dtype=u64n)
-#         clocks_view: u64[:] = clocks
-#         ptrs.clocks = cython.address(clocks_view[0])
-# 
-#         deltas: u64n[:] = zeros(n, dtype=u64n)
-#         deltas_view: u64[:] = deltas
-#         ptrs.deltas = cython.address(deltas_view[0])
-# 
-#         count = _tangy.clk_buffer_slice(self._ptr,
-#                                         cython.address(ptrs),
-#                                         start, stop)
-# 
-#         return (channels[::step], clocks[::step], deltas[::step])
-# 
-#     @cython.ccall
-#     def push(self, channels: ndarray(u8n),
-#              timetags: (ndarray(u64n), ndarray(u64n))):
-# 
-#         count: u64n = 0
-#         n_channels: int = len(channels)
-# 
-#         start: u64n = self.count
-#         stop: u64n = start + n_channels
-# 
-#         (clocks, deltas) = timetags
-#         n_clocks: int = len(clocks)
-#         n_deltas: int = len(deltas)
-#         if (n_channels != n_clocks) or (n_channels != n_deltas):
-#             ValueError
-# 
-#         channels_view: cython.uchar[:] = channels
-#         clocks_view: u64[:] = clocks
-#         deltas_view: u64[:] = deltas
-#         ptrs: _tangy.clk_field_ptrs
-#         ptrs.length = n_channels
-#         ptrs.channels = cython.address(channels_view[0])
-#         ptrs.clocks = cython.address(clocks_view[0])
-#         ptrs.deltas = cython.address(deltas_view[0])
-# 
-#         count = _tangy.clk_buffer_push(self._ptr, ptrs, start, stop)
-#         return
-# 
-#     @property
-#     def name(self):
-#         """ Name of buffer
-# 
-#         Returns:
-#             (str): buffer name
-#         """
-#         return self._buffer.name
-# 
-#     @property
-#     def file_descriptor(self):
-#         """ File descriptor of buffer
-# 
-#         Returns:
-#             (str): buffers file descriptor
-#         """
-#         return self._buffer.file_descriptor
-# 
-#     @property
-#     def capacity(self) -> int:
-#         """ Maximum number of timetags the buffer can hold
-# 
-#         Returns:
-#             (int): maximum number of timetags
-#         """
-#         return self._buffer.capacity[0]
-# 
-#     @property
-#     def resolution(self) -> Tuple[float, float]:
-#         """ Resolution of timetags in buffer
-# 
-#         Returns:
-#             (Tuple[float, float]): Tuple of (coarse, fine) resolutions
-# 
-#         """
-#         return (self._buffer.resolution[0].coarse,
-#                 self._buffer.resolution[0].fine)
-# 
-#     @resolution.setter
-#     def resolution(self, resolution: Tuple[float, float]):
-#         _res: _tangy.clk_res
-#         _res.coarse = resolution[0]
-#         _res.fine = resolution[1]
-#         self._buffer.resolution[0] = _res
-# 
-#     @property
-#     def count(self) -> int:
-#         """ Number of timetags written to the buffer
-#         """
-#         return self._buffer.count[0]
-# 
-#     @property
-#     def index_of_reference(self) -> int:
-#         return self._buffer.index_of_reference[0]
-# 
-#     @property
-#     def reference_count(self) -> int:
-#         """ Number of current connections to the buffer
-# 
-#         Tracks number of connections to buffer, used to determine if it is safe
-#             to delete the backing memory and close the memory mapping.
-# 
-#         Returns:
-#             (int): number of connections
-#         """
-#         return self._buffer.reference_count[0]
-# 
-#     @reference_count.setter
-#     def reference_count(self, int):
-#         self._buffer.reference_count[0] = 0
-# 
-#     @property
-#     def n_channels(self) -> int:
-#         """ Maximum number of channels in the buffer
-# 
-#         Typically set by a device or a file to limit the range of valid channels
-#             available.
-# 
-#         Returns:
-#             (int): number of channels
-#         """
-#         return self._buffer.n_channels[0]
-# 
-#     @cython.ccall
-#     def current_time(self) -> float:
-#         """ Returns the time of the most recent timetag
-#         Returns:
-#             (float): Most recent timetag as time
-#         """
-#         current: f64n = _tangy.clk_current_time(self._ptr)
-#         return current
-# 
-#     @cython.ccall
-#     def time_in_buffer(self) -> float:
-#         """ Amount of time held in the buffer
-#         Returns:
-#             (float): Time between oldest and newest timetags
-#         """
-#         return _tangy.clk_time_in_buffer(self._ptr)
-# 
-#     @cython.ccall
-#     def time_range(self) -> Tuple[float, float]:
-#         # begin: float = time_at_index(self._v_ptr, self._type, self.begin % self.capacity)
-#         # end: float = time_at_index(self._v_ptr, self._type, self.end % self.capacity)
-#         begin: float
-#         end: float
-#         idx: int
-# 
-#         idx = (self.begin + 1) % self.capacity
-#         rec: _tangy.clocked = _tangy.clk_record_at(self._ptr, idx)
-#         begin = _tangy.clk_to_time(rec, self._buffer.resolution[0])
-# 
-#         idx = self.end % self.capacity
-#         rec = _tangy.clk_record_at(self._ptr, idx)
-#         end = _tangy.clk_to_time(rec, self._buffer.resolution[0])
-# 
-#         return (begin, end)
-# 
-#     @cython.ccall
-#     def bins_from_time(self, time: float) -> int:
-#         """ Convert amount of time to a number of time bins
-# 
-#         Args:
-#             time (float): Amount of time in seconds
-# 
-#         Returns:
-#             (int): number of bins
-# 
-#         Note:
-#             For buffers with the clocked timetag format this will be in units\
-#             of the fine resolution.
-# 
-#         """
-#         bins: u64n = _tangy.clk_bins_from_time(self._buffer.resolution[0], time)
-#         return bins
-# 
-#     @cython.ccall
-#     def lower_bound(self, time: float) -> int:
-#         """ Find the position in the buffer that gives the last "time" seconds\
-#         in the buffer
-# 
-#         Performs a binary search on the buffer where the location being \
-#         searched for is ``buffer.time_in_buffer() - time``.
-# 
-#         Args:
-#             time (float): Amount of time, in seconds, to split the buffer by
-# 
-#         Returns:
-#             (int): Index in buffer corresponding to the timetag that is greater\
-#             than or equal to ``buffer.time_in_buffer() - time``
-# 
-#         """
-# 
-#         bins: u64n = self.bins_from_time(time)
-#         index: u64n = _tangy.clk_lower_bound(self._ptr, bins)
-# 
-#         return index
-# 
-#     @cython.ccall
-#     def singles(self, read_time: Optional[float] = None,
-#                 start: Optional[int] = None,
-#                 stop: Optional[int] = None) -> Tuple[int, List[int]]:
-#         """Count the occurances of each channel over a region of the buffer
-# 
-#         Args:
-#             buffer (RecordBuffer): Buffer containing timetags
-#             read_time (Optional[float] = None): Length of time to integrate over
-#             start (Optional[int] = None): Buffer position to start counting from
-#             stop (Optional[int] = None): Buffer position to sotp counting to
-# 
-#         Returns:
-#             (int, List[int]): Total counts and list of total counts on each channel
-# 
-#         Examples:
-#             Get all of the singles in a buffer
-#             >>> tangy.singles(buffer, buffer.time_in_buffer())
-# 
-#             Count the singles in the last 1s
-#             >>> tangy.singles(buffer, 1)
-# 
-#             Count the singles in the last 1000 tags
-#             >>> tangy.singles(buffer, buffer.count - 1000, buffer.count)
-#         """
-# 
-#         counters: u64n[:] = zeros(self.n_channels, dtype=u64n)
-#         counters_view: u64[::1] = counters
-# 
-#         if read_time:
-#             time_in_buffer = self.time_in_buffer()
-#             # current_time: f64n = _tangy.clk_current_time(self._ptr)
-#             current_time: f64n = self.current_time()
-#             if read_time >= time_in_buffer:
-#                 # TODO: really should have a warning here
-#                 start: u64n = self.begin
-#             else:
-#                 read_time: f64n = current_time - read_time
-#                 # print(f"Read time:\t({read_time})")
-#                 start: u64n = self.lower_bound(read_time)
-#                 # print(f"Start:\t({start})")
-# 
-#         if stop is None:
-#             # stop: u64n = self.count - 1
-#             stop: u64n = self.end
-# 
-#         total: u64n = 0
-# 
-#         total = _tangy.clk_singles(self._ptr, start, stop, cython.address(counters_view[0]))
-# 
-#         return (total, counters)
-# 
-#     @cython.boundscheck(False)
-#     @cython.wraparound(False)
-#     @cython.ccall
-#     def coincidence_count(self, read_time: float, window: float,
-#                           channels: List[int], delays: Optional[List[float]] = None):
-#         """ Count coincidences
-# 
-#         Args:
-#             read_time (float): time to integrate over
-#             window (float): maximum distance between timetags allows
-#             channels: (List[int]): channels to find coincidences between
-#             delays: (Optional[List[float]]): delays for each channel
-# 
-#         Returns:
-#             (int): Number of coincidences found
-# 
-#         """
-# 
-#         _n_channels = len(channels)
-# 
-# #         assert _n_channels <= self.n_channels, "More channels than available in buffer"
-# #
-# #         assert max(channels) <= self.n_channels, \
-# #             f"Requested channel {max(channels)} when maximum channel available in {self.n_channels}"
-# #
-#         _channels: ndarray(u8n) = array(channels, dtype=u8n)
-#         _channels_view: cython.uchar[::1] = _channels
-# 
-#         if delays is None:
-#             # delays: ndarray(f64n) = zeros(_n_channels, dtype=f64n)
-#             delays: List[float] = [0 for i in range(_n_channels)]
-# 
-#         _delays_view: cython.double[::1] = array(delays, dtype=f64n)
-# 
-#         count = _tangy.clk_coincidences_count(self._ptr,
-#                                               _n_channels,
-#                                               cython.address(_channels_view[0]),
-#                                               cython.address(_delays_view[0]),
-#                                               window,
-#                                               read_time)
-#         return count
-# 
-#     @cython.boundscheck(False)
-#     @cython.wraparound(False)
-#     @cython.ccall
-#     def coincidence_collect(self, read_time: float, window: float,
-#                             channels: List[int], delays: Optional[List[int]] = None
-#                             ) -> RecordsClocked:
-#         """ Collect coincident timetags
-# 
-#         Args:
-#             read_time (float): time to integrate over
-#             window (float): maximum distance between timetags allows
-#             channels: (List[int]): channels to find coincidences between
-#             delays: (Optional[List[float]]): delays for each channel
-# 
-#         Returns:
-#             (RecordsClocked): Records found in coincidence
-# 
-#         """
-# 
-#         n_channels = len(channels)
-# 
-#         assert n_channels <= self.n_channels, "More channels than available in buffer"
-# 
-#         assert max(channels) <= self.n_channels, \
-#             f"Requested channel {max(channels)} when maximum channel available in {self.n_channels}"
-# 
-#         _channels: ndarray(u8n) = array(channels, dtype=u8n)
-# 
-#         if delays is None:
-#             delays: ndarray(f64n) = zeros(n_channels, dtype=f64n)
-# 
-#         channels_view: cython.uchar[::1] = _channels
-#         delays_view: cython.double[::1] = array(delays, dtype=f64n)
-# 
-#         if self._have_measurement is False:
-#             self._measurement_cc = _tangy.clk_coincidence_measurement_new(
-#                 self._buffer.resolution[0], n_channels, cython.address(channels_view[0]))
-# 
-#         self._measurement_cc.n_channels = n_channels
-#         self._measurement_cc.channels = cython.address(channels_view[0])
-# 
-#         count: u64n = _tangy.clk_coincidences_records(self._ptr,
-#                                                       cython.address(delays_view[0]),
-#                                                       window,
-#                                                       read_time,
-#                                                       self._measurement_cc)
-# 
-#         total: u64n = self._measurement_cc.total_records
-# 
-#         assert count == total, f"Count {count} and total {total} aren't equal"
-# 
-#         clocks: ndarray(u64n) = zeros(total, dtype=u64n)
-#         deltas: ndarray(u64n) = zeros(total, dtype=u64n)
-#         for i in range(total):
-#             clocks[i] = self._measurement_cc.records.data.clock[i]
-#             deltas[i] = self._measurement_cc.records.data.delta[i]
-# 
-#         (coarse, fine) = self.resolution
-# 
-#         return RecordsClocked(total, coarse, fine, _channels, clocks, deltas)
-# 
-#     @cython.cfunc
-#     def _timetrace(self, read_time: f64n, resolution: f64n, n_channels: u64n,
-#                    channels: cython.pointer(cython.uchar), n_data_points: u64n,
-#                    data: cython.pointer(_tangy.vec_u64)):
-# 
-#         bin_width: u64n = round(resolution / self.resolution[1])
-# 
-#         total = _tangy.clk_timetrace(self._ptr,
-#                                      read_time,
-#                                      bin_width,
-#                                      channels,
-#                                      n_channels,
-#                                      n_data_points,
-#                                      data)
-#         return total
-
-
-# TangyBufferT = cython.fused_type(TangyBufferStandard, TangyBufferClocked)
 
 
 @cython.dataclasses.dataclass(frozen=True)
@@ -1752,179 +191,6 @@ def bin_histogram(histogram: ndarray(u64n), x_width: i64, y_width: i64
     return ((n_rows_new, n_cols_new), marginal_signal, marginal_idler, result)
 
 
-# @cython.cclass
-# class JointHistogramMeasurement:
-#     _n_channels: u8n
-#     _window: float
-#     _central_bin: int
-#     _radius: float
-#     _channels: ndarray(u8n)
-#     _delays: ndarray(f64n)
-#     _channels_view: cython.uchar[:]
-#     _delays_view: cython.double[:]
-#     _measurement: _tangy.delay_histogram_measurement
-#     _measurement_ptr: cython.pointer(_tangy.delay_histogram_measurement)
-#     _temporal_window: int
-#     _histogram: ndarray(u64n)
-#     _histogram_view: u64[:, ::1]
-#     _histogram_ptrs: cython.pointer(cython.pointer(u64))
-# 
-#     def __init__(self, buffer: TangyBuffer, radius: cython.double,
-#                  channels: List[int], signal: int,
-#                  idler: int, clock: Optional[int] = 0,
-#                  delays: Optional[List[float]] = None):
-# 
-#         n: u64n = len(channels)
-#         self._n_channels = n
-# 
-#         self._channels = asarray(channels, dtype=u8n)
-#         self._delays = zeros(n, dtype=f64n)
-# 
-#         if delays:
-#             for i in range(n):
-#                 self._delays[i] = delays[i]
-# 
-#         self._channels_view = self._channels
-#         self._delays_view = self._delays
-# 
-#         radius_bins = buffer.bins_from_time(radius)
-#         self._radius = radius
-#         self._temporal_window = radius_bins * 2
-#         self._central_bin = radius_bins
-#         self._histogram = zeros([self._temporal_window, self._temporal_window],
-#                                 dtype=u64n, order='C')
-#         self._histogram_view = self._histogram
-# 
-#         channels_ptr = cython.address(self._channels_view[0])
-# 
-#         resolution = buffer.resolution
-#         if type(resolution) is float:
-#             print("standard")
-#             self._measurement = _tangy.std_dh_measurement_new(n, clock, signal, idler, channels_ptr)
-#             self._measurement_ptr = cython.address(self._measurement)
-# 
-#         elif type(resolution) is tuple:
-#             print("clocked")
-#             self._measurement = _tangy.clk_dh_measurement_new(n, clock, signal, idler, channels_ptr)
-#             self._measurement_ptr = cython.address(self._measurement)
-# 
-#         return
-# 
-#     @cython.ccall
-#     def collect(self, buffer: TangyBufferT, read_time: float):
-#         """ Collect timetags for coincidences
-# 
-#         Returns:
-#             (Union[RecordsStandard, RecordsClocked]):
-#         """
-# 
-#         count: u64n = 0
-#         total: u64n = 0
-# 
-#         self._histogram_ptrs = cython.cast(
-#             cython.pointer(cython.pointer(u64)),
-#             malloc(self._temporal_window * cython.sizeof(u64)))
-# 
-#         i: cython.Py_ssize_t = 0
-#         for i in range(self._temporal_window):
-#             self._histogram_ptrs[i] = cython.address(self._histogram_view[i, 0])
-# 
-#         if TangyBufferT is TangyBufferStandard:
-#             count = _tangy.std_joint_delay_histogram(
-#                 buffer._ptr,
-#                 cython.address(self._delays_view[0]),
-#                 self._radius,
-#                 read_time,
-#                 self._measurement_ptr,
-#                 cython.address(self._histogram_ptrs[0]))
-# 
-#         elif TangyBufferT is TangyBufferClocked:
-#             count = _tangy.clk_joint_delay_histogram(
-#                 buffer._ptr,
-#                 cython.address(self._delays_view[0]),
-#                 self._radius,
-#                 read_time,
-#                 self._measurement_ptr,
-#                 cython.address(self._histogram_ptrs[0]))
-# 
-#         # free(self._measurement_ptr)
-#         return count
-# 
-#     @cython.ccall
-#     def histogram(self, bin_width: int = 1, centre: bool = False) -> JointHistogram:
-#         if bin_width < 1:
-#             raise ValueError("bin_width must be >= 1")
-# 
-#         ((nr, nc), ms, mi, histogram) = bin_histogram(self._histogram, bin_width, bin_width)
-# 
-#         temporal_window = self._temporal_window // bin_width
-#         central_bin = temporal_window // 2
-#         if centre:
-#             (ms, mi, histogram) = centre_histogram(central_bin, temporal_window,
-#                                                    mi, ms, histogram)
-# 
-#         axis = arange(temporal_window) - central_bin  # TODO: convert to time
-#         return JointHistogram(central_bin, temporal_window,
-#                               (bin_width, bin_width), histogram,
-#                               mi, ms, axis, axis)
-# 
-# 
-# @cython.ccall
-# def timetrace(buffer: TangyBufferT, channels: List[int], read_time: float,
-#               resolution: float = 10):
-# 
-#     n_channels: u64n = len(channels)
-#     # channels: u8n[:] = asarray(channels, dtype=u8n)
-#     channels_view: cython.uchar[::1] = asarray(channels, dtype=u8n)
-#     channels_ptr: cython.pointer(cython.uchar) = cython.address(
-#         channels_view[0])
-# 
-#     buffer_resolution: f64n = 0
-#     if TangyBufferT is TangyBufferStandard:
-#         buffer_resolution = buffer.resolution
-#     elif TangyBufferT is TangyBufferClocked:
-#         buffer_resolution = buffer.resolution[1]    # fine resolution
-# 
-#     bin_width: u64n = round(resolution / buffer_resolution)
-# 
-#     n: cython.int = 1
-#     if resolution < read_time:
-#         n = int(read_time // resolution) + 1
-# 
-#     intensity_vec: cython.pointer(_tangy.vec_u64) = _tangy.vector_u64_init(n)
-# 
-#     total: u64n = 0
-#     if TangyBufferT is TangyBufferStandard:
-#         total = _tangy.std_timetrace(buffer._ptr,
-#                                      read_time,
-#                                      bin_width,
-#                                      channels_ptr,
-#                                      n_channels,
-#                                      n,
-#                                      intensity_vec)
-#     if TangyBufferT is TangyBufferClocked:
-#         total = _tangy.clk_timetrace(buffer._ptr,
-#                                      read_time,
-#                                      bin_width,
-#                                      channels_ptr,
-#                                      n_channels,
-#                                      n,
-#                                      intensity_vec)
-# 
-#     intensities: u64n[:] = zeros(intensity_vec.length, dtype=u64n)
-#     intensities_view: u64[::1] = intensities
-#     for i in range(intensity_vec.length):
-#         intensities_view[i] = intensity_vec.data[i]
-# 
-#     intensity_vec = _tangy.vector_u64_deinit(intensity_vec)
-# 
-#     return intensities
-
-
-# TODO: refactor!
-# everything up to the point of curve fitting should be possible to do in the
-# c library backend
-
 def double_decay(time, tau1, tau2, t0, max_intensity):
     tau = where(time < t0, tau1, tau2)
     decay = max_intensity * exp(-nabs(time - t0) / tau)
@@ -1944,108 +210,96 @@ class delay_result:
     max_intensity: cython.double = cython.dataclasses.field()
 
 
-# @cython.ccall
-# def find_delay(buffer: TangyBufferT, channel_a: int, channel_b: int,
-#                read_time: float, resolution: float = 1e-9,
-#                window: Optional[float] = None
-#                ) -> delay_result:
-# 
-#     trace_res: f64n = 5e-2
-#     trace: u64n[:] = timetrace(
-#         buffer, [channel_a, channel_b], read_time, trace_res)
-# 
-#     avrg_intensity = mean(trace) / trace_res
-# 
-#     if window is None:
-#         correlation_window = 2 / avrg_intensity * 2
-# 
-#     correlation_window = f64n(window)
-# 
-#     if resolution is None:
-#         resolution = (2 / avrg_intensity) / 8000
-# 
-#     res: f64n = 0
-#     if TangyBufferT is TangyBufferStandard:
-#         res = buffer.resolution
-#     elif TangyBufferT is TangyBufferClocked:
-#         res = buffer.resolution[1]    # fine resolution
-# 
-#     n_bins: u64n = round(correlation_window / resolution) - 1
-#     correlation_window = correlation_window / res
-# 
-#     measurement_resolution: u64n = u64n(
-#         correlation_window / f64n(n_bins))
-# 
-#     correlation_window = n_bins * measurement_resolution
-#     n_bins = n_bins * 2
-#     intensities: u64n[:] = zeros(int(n_bins), dtype=u64n)
-#     intensities_view: u64[::1] = intensities
-# 
-#     if TangyBufferT is TangyBufferStandard:
-#         _tangy.std_find_zero_delay(buffer._ptr,
-#                                    read_time,
-#                                    u64n(correlation_window),
-#                                    measurement_resolution,
-#                                    channel_a,
-#                                    channel_b,
-#                                    n_bins,
-#                                    cython.address(intensities_view[0]))
-# 
-#     elif TangyBufferT is TangyBufferClocked:
-#         _tangy.clk_find_zero_delay(buffer._ptr,
-#                                    read_time,
-#                                    u64n(correlation_window),
-#                                    measurement_resolution,
-#                                    channel_a,
-#                                    channel_b,
-#                                    n_bins,
-#                                    cython.address(intensities_view[0]))
-# 
-#     times = (arange(n_bins) - (n_bins // 2)) * resolution
-#     max_idx = intensities.argmax()
-#     # intensities[max_idx] = 0
-#     # intensities[n_bins // 2] = intensities[(n_bins // 2) - 1]
-#     t0 = times[intensities.argmax()]
-# 
-#     tau = 2 / avrg_intensity
-#     max_intensity = intensities.max()
-# 
-#     guess = [tau, tau, t0, max_intensity]
-# 
-#     [opt, cov] = curve_fit(double_decay, times, intensities, p0=guess)
-#     hist_fit = double_decay(times, *opt)
-# 
-#     central_delay = t0
-# 
-#     # if buffer._type is _tangy.BufferType.Clocked:
-#     if TangyBufferT is TangyBufferClocked:
-#         index = buffer.lower_bound(buffer.time_in_buffer() - 1)
-#         channels, clocks, deltas = buffer[index:buffer.count - 1]
-#         temporal_window = int(buffer.resolution[0] / buffer.resolution[1])
-#         bins = arange(temporal_window)
-#         hist_a, edges = nphist(deltas[channels == channel_a], bins)
-#         central_delay += mean(bins[:-1][hist_a > (0.5 * max(hist_a))]) * (1e-12)
-# 
-#     result = delay_result(
-#         times=times,
-#         intensities=intensities,
-#         fit=hist_fit,
-#         tau1=opt[0],
-#         tau2=opt[1],
-#         t0=opt[2],
-#         central_delay=central_delay,
-#         max_intensity=opt[3])
-# 
-#     return result
-
-
 class TangyBufferType(Enum):
+    """ Format of timetags to use in instance of TangyBuffer
+    """
     Standard = 0
     Clocked = 1
 
 
 @cython.cclass
 class TangyBuffer:
+    """Interface to underlying ring buffer
+
+    Provides ability to create, connect and modify a buffer of timetags and
+        includes method to analyse the timetags currently held within it.
+
+    Args:
+        name (str): Name of buffer to be created or attached to.
+        resolution (float = 0.1, optional): Resolution of timetags in seconds.
+            Unused if connecting.
+        clock_period (float = 1.0, optional): Length of clock period in seconds for
+            measurements that include clock information in each timetag. Unused
+            if connecting
+        channel_count (Optional[int] = 4, optional): Number of channels. Unused
+            if connecting.
+        length (Optional[int] = 10_000_000, optional): Length of buffer to create.
+            Unused if connecting.
+        format (TangyBufferType = TangyBufferType.Standard, optional): Format of
+            timetags in the buffer, default is the ```standard``` format with a
+            single value for the channel and single value for timeing information.
+            Unused if connecting.
+
+    Attributes:
+        name (str): Name of buffer
+        resolution (float): Resolution of timetags in seconds
+        clock_period (float): Clock period of clock signal used if timetags with
+            clock information are used. Defaults to 1.0 otherwise
+        resolution_bins (int): Resolution in bins
+        clock_period_bins (int): Clock period in units of resolution
+        conversion_factor (int): Factor to convert between time and bins
+        capacity (int): Maximum number of timetags that can be stored
+        count (int): total number of timetags written to the buffer
+        reference_count (int): Number of reference to current open buffer. Other
+            processes can connect to the same buffer
+        channel_count (int): Number of available channels in the buffer
+        begin (int): Index of first timetag. Can be greater than capacity
+        end (int): Index of last timetag. Can be greater than capacity and will
+            always be greater than ```begin```
+
+    Note:
+        If connecting to an existing buffer the resolution, clock_period,
+        n_channels, capacity and format arguments will be ignored even if
+        supplied. The correct values will be made available from the buffer
+        connected to.
+
+    Examples:
+        Creation of a TangyBuffer object for both the ``Standard`` and \
+        ``Clocked`` timetag formats that can hold 1,000,000 timetags for a \
+        device with 4 channels. The method to connect to these buffers is also \
+        shown. This method of creating new buffers and connecting to existing \
+        ones allows the user to hold on to and continously read timetags from \
+        a device in one process and then connect to that buffer in another to \
+        perform analysis on the current data.
+        === "Buffer in ``Standard`` format"
+            ```python
+            # Here we will create a buffer called 'standard' (imaginitive)
+            # that will only except timetags in the ``Standard`` format
+            standard_buffer = tangy.TangyBuffer("standard", 1e-9,
+                                                channel_count=4,
+                                                capacity=int(1e6)
+                                                format=TangyBufferType.Standard)
+
+            # A new buffer object can be made by connecting to a buffer with
+            # the correct name
+            standard_buffer_connection = tangy.TangyBuffer("standard")
+            ```
+
+        === "Buffer in ``Clocked`` format"
+            ```python
+            # Here we will create a buffer called 'clocked' (imaginitive)
+            # that will only except timetags in the ``Clocked`` format
+            clocked_buffer = tangy.TangyBuffer("clocked", 1e-12,
+                                                clock_period=12.5e-9,  # 80MHz Ti-Sapph
+                                                channel_count=4,
+                                                capacity=int(1e6)
+                                                format=TangyBufferType.Clocked)
+
+            # A new buffer object can be made by connecting to a buffer with
+            # the correct name
+            clocked_buffer_connection = tangy.TangyBuffer("clocked")
+            ```
+    """
 
     _name = cython.declare(bytes)
     _buf: _tangy.tangy_buffer
@@ -2054,11 +308,13 @@ class TangyBuffer:
     _format: TangyBufferType
     _ptr_rec_vec: cython.pointer(_tangy.tangy_record_vec)
 
-    def __init__(self, name: str, resolution: float, clock_period: float = 1.0,
-                 channel_count: int = 4, capacity: int = 10_000_000,
+    def __init__(self, name: str, resolution: float = 0.1,
+                 clock_period: float = 1.0,
+                 channel_count: int = 4,
+                 capacity: int = 10_000_000,
                  format: TangyBufferType = TangyBufferType.Standard):
 
-        # buffer_list_update()
+        buffer_list_update()
 
         self._format = format
 
@@ -2093,6 +349,7 @@ class TangyBuffer:
         result: _tangy.tbResult = _tangy.tangy_buffer_deinit(self._ptr_buf)
         if result.Ok is False:
             raise MemoryError("Failed to free memory for buffer and/or records vector")
+        buffer_list_update()
 
     def __len__(self):
         """ Length of buffer
@@ -2339,7 +596,7 @@ class TangyBuffer:
 
     def configuration(self) -> dict:
         config = {
-            "name": self.name,
+            "name": self._buf.buffer.name.decode("utf-8"),
             "format": self._format.name,
             "capacity": self.capacity,
             "count": self.count,
@@ -2389,6 +646,23 @@ class TangyBuffer:
         """
         return _tangy.tangy_time_in_buffer(self._ptr_buf)
 
+#     @cython.ccall
+#     def time_range(self) -> Tuple[float, float]:
+#         # begin: float = time_at_index(self._v_ptr, self._type, self.begin % self.capacity)
+#         # end: float = time_at_index(self._v_ptr, self._type, self.end % self.capacity)
+#         begin: float
+#         end: float
+#         idx: int
+#         idx = (self.begin + 1) % self.capacity
+#         rec: _tangy.standard = _tangy.std_record_at(self._ptr, idx)
+#         begin = _tangy.std_to_time(rec, self._buffer.resolution[0])
+#
+#         idx = self.end % self.capacity
+#         rec = _tangy.std_record_at(self._ptr, idx)
+#         end = _tangy.std_to_time(rec, self._buffer.resolution[0])
+#
+#         return (begin, end)
+
     @property
     def begin(self) -> int:
         """ Index of first record in buffer
@@ -2418,10 +692,21 @@ class TangyBuffer:
                             timestamps: ndarray(u64n) = None, clocks: ndarray(u64n) = None,
                             deltas: ndarray(u64n) = None) -> _tangy.tangy_field_ptrs:
 
+        assert length > 0, "slice length must be non zero"
         slice: _tangy.tangy_field_ptrs
         ch: u8[:] = channels
 
+        if self._buf.format == _tangy.buffer_format.STANDARD:
+            assert timestamps is not None, "Must supply timestamps"
+            slice.standard.length = length
+            slice.standard.channel = cython.address(ch[0])
+            ts: u64[:] = timestamps
+            slice.standard.timestamp = cython.address(ts[0])
+            return slice
+
         if self._buf.format == _tangy.buffer_format.CLOCKED:
+            assert clocks is not None, "Must supply clocks"
+            assert deltas is not None, "Must supply deltas"
             slice.clocked.length = length
             slice.clocked.channels = cython.address(ch[0])
             cl: u64[:] = clocks
@@ -2429,12 +714,6 @@ class TangyBuffer:
             slice.clocked.clocks = cython.address(cl[0])
             slice.clocked.deltas = cython.address(dt[0])
             return slice
-
-        slice.standard.length = length
-        slice.standard.channel = cython.address(ch[0])
-        ts: u64[:] = timestamps
-        slice.standard.timestamp = cython.address(ts[0])
-        return slice
 
     @cython.ccall
     def pull(self, start: u64n, stop: u64n):
@@ -2449,6 +728,9 @@ class TangyBuffer:
                 total, channels, timestamps=timetags, clocks=None, deltas=None)
             count_pull: u64n = _tangy.tangy_buffer_slice(
                 self._ptr_buf, cython.address(slice), start, stop)
+
+            assert total == count_pull, "Did not find correct number of records"
+
             return (channels, timetags)
 
         if self._buf.format == _tangy.buffer_format.CLOCKED:
@@ -2458,6 +740,8 @@ class TangyBuffer:
                 total, channels, timestamps=None, clocks=clocks, deltas=deltas)
             count_pull: u64n = _tangy.tangy_buffer_slice(
                 self._ptr_buf, cython.address(slice), start, stop)
+
+            assert total == count_pull, "Did not find correct number of records"
 
             return (channels, (clocks, deltas))
 
@@ -2471,17 +755,21 @@ class TangyBuffer:
         start: u64n = self.count
         stop: u64n = start + total
 
+        count_pushed: u64n = 0
         slice: _tangy.tangy_field_ptrs
         if self._buf.format == _tangy.buffer_format.STANDARD:
             slice = self.slice_from_pointers(
                 total, channels, timestamps=timetags, clocks=None, deltas=None)
+            assert slice.standard.length > 0, "No timetags to push"
+            count_pushed = _tangy.tangy_buffer_push(
+                self._ptr_buf, cython.address(slice), start, stop)
 
         if self._buf.format == _tangy.buffer_format.CLOCKED:
             slice = self.slice_from_pointers(
                 total, channels, timestamps=None, clocks=timetags[0], deltas=timetags[1])
-
-        count_pushed: u64n = _tangy.tangy_buffer_push(
-            self._ptr_buf, cython.address(slice), start, stop)
+            assert slice.clocked.length > 0, "No timetags to push"
+            count_pushed = _tangy.tangy_buffer_push(
+                self._ptr_buf, cython.address(slice), start, stop)
 
         return count_pushed
 
@@ -2557,14 +845,22 @@ class TangyBuffer:
     @cython.wraparound(False)
     @cython.ccall
     def coincidence_count(self, read_time: float, window: float,
-                          channels: List[int], delays: Optional[List[int]] = None):
+                          channels: List[int],
+                          delays: Optional[List[float]] = None) -> int:
         """ Count coincidences
+
+        Counts the coincidences for the chosen channels over the specified read
+            time provided the timetags have a distance between them less than
+            the window. Optionally delays can be applied to each channel.The
+            read time is taken as time from the most recent timetag in the
+            buffer, e.g. a read time of 1s in a buffer containing 100s will
+            give a result from the 99th second to the 100th.
 
         Args:
             read_time (float): time to integrate over
-            window (float): maximum distance between timetags allows
-            channels: (List[int]): channels to find coincidences between
-            delays: (Optional[List[float]]): delays for each channel
+            window (float): maximum distance between timetags allowed
+            channels (List[int]): channels to find coincidences between
+            delays (Optional[List[float]] = None,): delays for each channel
 
         Returns:
             (int): Number of coincidences found
@@ -2601,17 +897,24 @@ class TangyBuffer:
     @cython.ccall
     def coincidence_collect(self, read_time: float, window: float,
                             channels: List[int],
-                            delays: Optional[List[int]] = None) -> RecordsNew:
+                            delays: Optional[List[float]] = None) -> Records:
         """ Collect coincident timetags
+
+        Collects the timetags in coincdience for the chosen channels over the
+            specified read time provided the timetags have a distance between
+            them less than the window. Optionally delays can be applied to each
+            channel.The read time is taken as time from the most recent timetag
+            in the buffer, e.g. a read time of 1s in a buffer containing 100s
+            will give a result from the 99th second to the 100th.
 
         Args:
             read_time (float): time to integrate over
-            window (float): maximum distance between timetags allows
-            channels: (List[int]): channels to find coincidences between
-            delays: (Optional[List[float]]): delays for each channel
+            window (float): maximum distance between timetags allowed
+            channels (List[int]): channels to find coincidences between
+            delays (Optional[List[float]] = None,): delays for each channel
 
         Returns:
-            (Union[RecordsStandard, RecordsClocked]): Records found in coincidence
+            (Records): Records found in coincidence
 
         """
 
@@ -2660,18 +963,36 @@ class TangyBuffer:
         if self._buf.format == _tangy.buffer_format.STANDARD:
             # return count, (channels, timetags)
             # return RecordsStandard(count, self.resolution, _channels, timetags)
-            return RecordsNew(count, self.resolution, self.clock_period,
-                              _channels, timetags)
+            return Records(count, self.resolution, self.clock_period,
+                           _channels, timetags)
 
         if self._buf.format == _tangy.buffer_format.CLOCKED:
             # return count, (channels, (clocks, deltas))
             # return RecordsClocked(count, self.clock_period, self.resolution,
             #                       _channels, clocks, deltas)
-            return RecordsNew(count, self.resolution, self.clock_period,
-                              _channels, (clocks, deltas))
+            return Records(count, self.resolution, self.clock_period,
+                           _channels, (clocks, deltas))
 
     @cython.ccall
-    def timetrace(self, channels: List[int], read_time: float, resolution: float = 10.0):
+    def timetrace(self, channels: List[int], read_time: float,
+                  resolution: float = 10.0):
+        """ Time trace of buffer for chosen channels and read time
+
+        Produces an array of count rates accumulated for the chosen channels
+            over the read time specified. The read time is taken as time from
+            the most recent timetag in the buffer, e.g. a read time of 1s in a
+            buffer containing 100s will give a result from the 99th second to the
+            100th.
+
+        Args:
+            channels (List[int]): Channels to count timetags of
+            read_time (float): Amount of time to measure over, In seconds
+            resolution (float = 10.0): Size of bins in seconds
+
+        Returns:
+            (ndarray): intensities
+
+        """
         n_channels: u64n = len(channels)
         channels_view: cython.uchar[::1] = asarray(channels, dtype=u8n)
 
@@ -2695,7 +1016,21 @@ class TangyBuffer:
 
     @cython.ccall
     def relative_delay(self, channel_a: int, channel_b: int, read_time: float,
-                       resolution: float = 1e-9, window: Optional[float] = None):
+                       resolution: float = 1e-9,
+                       window: Optional[float] = None) -> delay_result:
+        """ Relative delay between two channels
+
+        Args:
+            channel_a (int): First channel
+            channel_b (int): Second channel
+            read_time (float,): Time to integrate over
+            resolution (float = 1e-9,): Resolution of bins
+            window (Optional[float] = None): Correlation window
+
+        Returns:
+            (delay_result): Dataclass containing histogram data and fitting results
+        """
+
         resolution_trace: f64n = 5e-2
         trace: u64n[:] = self.timetrace([channel_a, channel_b], read_time, resolution_trace)
 
@@ -2757,7 +1092,34 @@ class TangyBuffer:
                               delays: Optional[List[float]] = None,
                               clock: Optional[int] = None,
                               bin_width: int = 1,
-                              centre: bool = True):
+                              centre: bool = True) -> JointHistogram:
+        """ 2-D histogram of delays between channels
+
+        Histograms relative delays of channsl found to be in coincdience for
+            over the specified read time provided the timetags have a distance
+            between them less than the window. Optionally delays can be applied
+            to each channel.The read time is taken as time from the most recent
+            timetag in the buffer, e.g. a read time of 1s in a buffer containing
+            100s will give a result from the 99th second to the 100th. Can be
+            used to produce a joint spectral intensity if the conversion from
+            time to wavelength (frequency) is known.
+
+        Args:
+            signal (int): channel of signal photon
+            idler (int): channel of idler photon
+            channels (List[int],): channels to test for coincidence, must contain
+                signal, idler and optionally a clock channel
+            read_time (float): time to integrate over
+            radius (float,): maximum distance between timetags allowed
+            delays (Optional[List[float]] = None,): delays for each channel
+            clock (Optional[int] = None,): Optional clock channel
+            bin_width (int = 1,): Width of bins in histogram
+            centre (bool = True): Whether or not to centre the histogram
+
+        Returns:
+            (JointHistogram): Joint delay histogram and marginal distributions
+
+        """
 
         _n_channels = len(channels)
 
@@ -2785,7 +1147,7 @@ class TangyBuffer:
         histogram: u64n[:] = zeros(u64n(n_bins), dtype=u64n)
         histogram_view: u64[:] = histogram
 
-        count = 0
+        count: u64n = 0
         count = _tangy.tangy_joint_delay_histogram(self._ptr_buf,
                                                    clock, signal, idler,
                                                    _n_channels,
@@ -2794,6 +1156,9 @@ class TangyBuffer:
                                                    radius,
                                                    read_time,
                                                    cython.address(histogram_view[0]))
+
+        if count == 0:
+            warn("No counts found, results will be empty")
 
         histogram = reshape(histogram, [temporal_window, temporal_window])
 
@@ -2811,6 +1176,7 @@ class TangyBuffer:
         return JointHistogram(radius_bins, temporal_window,
                               (bin_width, bin_width), histogram,
                               mi, ms, axis, axis)
+
 
 _ptu_header_tag_types = {
     "tyEmpty8": 0xFFFF0008,
@@ -2982,12 +1348,12 @@ def _read_header(data):
 #                   status: cython.pointer(_tangy.READER_STATUS),
 #                   n: u64n):
 #     res: u64n = 0
-# 
+#
 #     if TangyBufferT is TangyBufferStandard:
 #         res = _tangy.read_next_HH2_T2(buffer._ptr, file_handle, status, n)
 #     elif TangyBufferT is TangyBufferClocked:
 #         res = _tangy.read_next_HH2_T3(buffer._ptr, file_handle, status, n)
-# 
+#
 #     return res
 
 
@@ -3172,17 +1538,18 @@ def buffer_list_update() -> dict:
     """
     Up-to-date list of available buffers
 
-    Gets the list of available buffers from the Tangy configuration directory
-        [```~/.config/Tangy/buffers``` on linux and
+    Gets the list of available buffers from the Tangy configuration directory,
+        for example, ```~/.config/Tangy/buffers``` on linux and
         ```C:\\Users\\user_name\\AppData\\Local\\PeterBarrow\\Tangy\\buffers```
-        on Windows]. For each buffer configuration file the existence of the
+        on Windows. For each buffer configuration file the existence of the
         associated buffer is checked, buffers that no longer exists have their
         corresponding configuration file removed. Upon completion this returns
         a dictionary containing the buffer name, buffer format and path to the
         configuration file.
 
     Returns:
-        (dict): Dictionary of {"name": {"format": fmt, "path": "/path/to/config"}
+        (dict): Dictionary of
+            ```{"name": {"format": fmt, "path": "/path/to/config"}```
 
     """
     buffer_list_path = join(tangy_config_location(), "buffers")
@@ -3213,24 +1580,24 @@ def buffer_list_update() -> dict:
         c_name: cython.p_char = name_encoded
         result = _tangy.shmem_exists(c_name, cython.address(flag))
         if result.Ok is False:
+            remove(details["path"])
             continue
         if flag == 0:
             # buffer doesn't exist anymore so delete its json file
             remove(details["path"])
-            continue
 
         # if we got here then the buffer exists, but we don't know about its
         # reference count, the reference count can also be higher than it should
         # if the last connection to that buffer crashed (no decrement)
 
-        name_stub_free = ""
+        # name_stub_free = ""
         # if details["format"].lower() == "standard":
-        if details["format"] == 0:
-            name_stub_free = name.replace("std_", "")
+        #     name_stub_free = name.replace("std_", "")
 
         # if details["format"].lower() == "clocked":
-        if details["format"] == 1:
-            name_stub_free = name.replace("clk_", "")
+        #     name_stub_free = name.replace("clk_", "")
+
+        name_stub_free = "_".join(name.split("_")[1::])
 
         buffer_list_available[name_stub_free] = details
 
@@ -3258,19 +1625,7 @@ def buffer_list_delete_all():
     buffer_list = buffer_list_update()
 
     for name in buffer_list.keys():
-        # format = buffer_list[name]["format"]
-        # #if format == 0:
-        # if format == "TangyBufferType.Standard"
-        #     # buffer = TangyBufferStandard(name)
-        #     buffer._buffer.reference_count = 1
-
-        # # if format == 1:
-        # if format == "TangyBufferType.Clocked"
-        #     # buffer = TangyBufferClocked(name)
-        #     buffer.reference_count = 1
-
         buffer = TangyBuffer(name, 1.0)
-
         buffer.__del__()
 
     buffer_list_update()

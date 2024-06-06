@@ -1,4 +1,5 @@
 import cython
+from ._tangy import TangyBuffer
 from _typeshed import Incomplete
 from cython.cimports.numpy import npy_intp as npy_intp
 from numpy import float64, ndarray as ndarray, uint64, uint8
@@ -198,7 +199,7 @@ class UQDLogic16:
     @time_gate_width.setter
     def time_gate_width(self, duration: int): ...
     def check_errors(self) -> dict: ...
-    def buffer(self) -> TangyBufferStandard:
+    def buffer(self) -> TangyBuffer:
         """
         Acquire buffer
         """

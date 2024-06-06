@@ -3,97 +3,97 @@
 
 #include "base.h"
 
-typedef u64 astd_timetag;
+typedef u64 std_timetag;
 
 typedef struct astandard {
     u8 channel;
-    astd_timetag timestamp;
+    std_timetag timestamp;
 } astandard;
 
-typedef f64 astd_res;
+typedef f64 std_res;
 
-typedef struct astd_slice {
+typedef struct std_slice {
     usize length;
     u8* channel;
-    astd_timetag* timestamp;
-} astd_slice;
+    std_timetag* timestamp;
+} std_slice;
 
-#define stub astd
-#define slice astd_slice
-#define field_ptrs astd_slice
+#define stub std
+#define slice std_slice
+#define field_ptrs std_slice
 #define record astandard
-#define timestamp astd_timetag
+#define timestamp std_timetag
 
-#define VEC_T astd_timetag
-#define VEC_NAME astd_vec
+#define VEC_T std_timetag
+#define VEC_NAME std_vec
 #include "vector.h"
 
-#define tt_vector vec_astd_timetag
-#define tt_vector_init(C) astd_vec_init(C)
-#define tt_vector_deinit(C) astd_vec_deinit(C)
-#define tt_vector_push(V_PTR, E) astd_vec_push(V_PTR, E)
-#define tt_vector_reset(V_PTR) astd_vec_reset(V_PTR)
+#define tt_vector vec_std_timetag
+#define tt_vector_init(C) std_vec_init(C)
+#define tt_vector_deinit(C) std_vec_deinit(C)
+#define tt_vector_push(V_PTR, E) std_vec_push(V_PTR, E)
+#define tt_vector_reset(V_PTR) std_vec_reset(V_PTR)
 
 #include "analysis_base.h"
 
 inline u64
-astd_size_of() {
+std_size_of() {
     u64 elem_size = sizeof(uint8_t) + sizeof(uint64_t);
     return elem_size;
 }
 
-inline astd_slice
-astd_init_base_ptrs(ring_buffer* buf) {
-    astd_slice slice = { 0 };
+inline std_slice
+std_init_base_ptrs(ring_buffer* buf) {
+    std_slice slice = { 0 };
     u64 capacity = rb_get_capacity(buf);
 
-    u64 channel_offset = 9 * sizeof(u64); // astd_size_of();
+    u64 channel_offset = 9 * sizeof(u64); // std_size_of();
     slice.length = capacity;
 
     slice.channel = (u8*)buf->map_ptr + channel_offset;
     slice.timestamp =
-      (astd_timetag*)(&(buf->map_ptr[channel_offset + capacity + 1]));
+      (std_timetag*)(&(buf->map_ptr[channel_offset + capacity + 1]));
     return slice;
 }
 
 inline astandard
-astd_record_at(const astd_slice* data, u64 absolute_index) {
+std_record_at(const std_slice* data, u64 absolute_index) {
     astandard record = { .channel = data->channel[absolute_index],
                          .timestamp = data->timestamp[absolute_index] };
     return record;
 }
 
-inline astd_timetag
-astd_timestamp_at(const astd_slice* data, u64 absolute_index) {
+inline std_timetag
+std_timestamp_at(const std_slice* data, u64 absolute_index) {
     return data->timestamp[absolute_index];
 }
 
 inline u8
-astd_channel_at(const astd_slice* data, u64 absolute_index) {
+std_channel_at(const std_slice* data, u64 absolute_index) {
     return data->channel[absolute_index];
 }
 
 inline u64
-astd_arrival_time_at(const astd_slice* data,
+std_arrival_time_at(const std_slice* data,
                      u64 conversion_factor,
                      u64 absolute_index) {
     return data->timestamp[absolute_index];
 }
 
 inline f64
-astd_as_time(astd_timetag rec, u64 conversion_factor, f64 resolution) {
-    return (f64)astd_as_bins(rec, conversion_factor) * resolution;
+std_as_time(std_timetag rec, u64 conversion_factor, f64 resolution) {
+    return (f64)std_as_bins(rec, conversion_factor) * resolution;
 }
 
 inline u64
-astd_as_bins(astd_timetag record, u64 conversion_factor) {
+std_as_bins(std_timetag record, u64 conversion_factor) {
     return (u64)record;
 }
 
 inline u64
-astd_buffer_slice(ring_buffer* const buf,
-                  const astd_slice* const data,
-                  astd_slice* ptrs,
+std_buffer_slice(ring_buffer* const buf,
+                  const std_slice* const data,
+                  std_slice* ptrs,
                   u64 start,
                   u64 stop) {
 
@@ -122,9 +122,9 @@ astd_buffer_slice(ring_buffer* const buf,
 }
 
 inline u64
-astd_buffer_push(ring_buffer* const buf,
-                 const astd_slice* const data,
-                 astd_slice* ptrs,
+std_buffer_push(ring_buffer* const buf,
+                 const std_slice* const data,
+                 std_slice* ptrs,
                  u64 start,
                  u64 stop) {
 
@@ -169,7 +169,7 @@ astd_buffer_push(ring_buffer* const buf,
 }
 
 inline void
-astd_records_copy(vec_astd_timetag* records, astd_slice* data) {
+std_records_copy(vec_std_timetag* records, std_slice* data) {
     if (records->length == 0) {
         return;
     }
@@ -182,11 +182,11 @@ astd_records_copy(vec_astd_timetag* records, astd_slice* data) {
 }
 
 histogram2D_coords
-astd_joint_histogram_position(astd_slice* data,
-                              u8 ch_idx_idler,
-                              u8 ch_idx_signal,
-                              u8 ch_idx_clock,
-                              astd_timetag* timetags) {
+std_joint_histogram_position(const std_slice* data,
+                              const u8 ch_idx_idler,
+                              const u8 ch_idx_signal,
+                              const u8 ch_idx_clock,
+                              const std_timetag* timetags) {
 
     u64 arrival_clock = timetags[ch_idx_clock];
     u64 arrival_signal = timetags[ch_idx_signal];

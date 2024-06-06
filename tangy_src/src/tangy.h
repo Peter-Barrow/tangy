@@ -12,20 +12,20 @@ typedef enum { STANDARD, CLOCKED } buffer_format;
 
 typedef union tangy_slice tangy_slice;
 union tangy_slice {
-    astd_slice standard;
-    aclk_slice clocked;
+    std_slice standard;
+    clk_slice clocked;
 };
 
 typedef union tangy_field_ptrs tangy_field_ptrs;
 union tangy_field_ptrs {
-    astd_slice standard;
-    aclk_field_ptrs clocked;
+    std_slice standard;
+    clk_field_ptrs clocked;
 };
 
 typedef union tangy_record_vec tangy_record_vec;
 union tangy_record_vec {
-    vec_astd_timetag* standard;
-    vec_aclk_timetag* clocked;
+    vec_std_timetag* standard;
+    vec_clk_timetag* clocked;
 };
 
 typedef struct tangy_buffer tangy_buffer;
@@ -52,12 +52,12 @@ tangy_buffer_init(buffer_format format,
     char* name_full;
     switch (format) {
         case STANDARD:
-            num_bytes = astd_buffer_map_size(capacity);
-            name_full = astd_buffer_name_full(name);
+            num_bytes = std_buffer_map_size(capacity);
+            name_full = std_buffer_name_full(name);
             break;
         case CLOCKED:
-            num_bytes = aclk_buffer_map_size(capacity);
-            name_full = aclk_buffer_name_full(name);
+            num_bytes = clk_buffer_map_size(capacity);
+            name_full = clk_buffer_name_full(name);
             break;
     }
 
@@ -73,19 +73,18 @@ tangy_buffer_init(buffer_format format,
                               factor,
                               capacity,
                               0,
-                              1,
                               channel_count,
                               &t_buffer->buffer);
 
     ring_buffer* buf = &t_buffer->buffer;
     switch (format) {
         case STANDARD:
-            t_buffer->slice.standard = astd_init_base_ptrs(buf);
-            t_buffer->records.standard = astd_vec_init(512);
+            t_buffer->slice.standard = std_init_base_ptrs(buf);
+            t_buffer->records.standard = std_vec_init(512);
             break;
         case CLOCKED:
-            t_buffer->slice.clocked = aclk_init_base_ptrs(buf);
-            t_buffer->records.clocked = aclk_vec_init(512);
+            t_buffer->slice.clocked = clk_init_base_ptrs(buf);
+            t_buffer->records.clocked = clk_vec_init(512);
             break;
     }
 
@@ -98,10 +97,10 @@ tangy_buffer_deinit(tangy_buffer* t_buf) {
 
     switch (t_buf->format) {
         case STANDARD:
-            astd_vec_deinit(t_buf->records.standard);
+            std_vec_deinit(t_buf->records.standard);
             break;
         case CLOCKED:
-            aclk_vec_deinit(t_buf->records.clocked);
+            clk_vec_deinit(t_buf->records.clocked);
             break;
     }
 
@@ -114,33 +113,26 @@ tangy_buffer_connect(char* name, tangy_buffer* t_buf) {
     char* name_full;
 
     ring_buffer* buf = &t_buf->buffer;
-    name_full = astd_buffer_name_full(name);
+    name_full = std_buffer_name_full(name);
     result = rb_connect(name_full, &t_buf->buffer, &t_buf->context);
     if (result.Ok == true) {
-        t_buf->slice.standard = astd_init_base_ptrs(buf);
+        t_buf->slice.standard = std_init_base_ptrs(buf);
         t_buf->format = STANDARD;
+        t_buf->records.standard = std_vec_init(512);
         return result;
     }
 
     free(name_full);
-    name_full = aclk_buffer_name_full(name);
+    name_full = clk_buffer_name_full(name);
     result = rb_connect(name_full, &t_buf->buffer, &t_buf->context);
     if (result.Ok == true) {
-        t_buf->slice.clocked = aclk_init_base_ptrs(buf);
+        t_buf->slice.clocked = clk_init_base_ptrs(buf);
         t_buf->format = CLOCKED;
+        t_buf->records.clocked = clk_vec_init(512);
         return result;
     }
 
     result.Ok = false;
-
-    switch (t_buf->format) {
-        case STANDARD:
-            t_buf->records.standard = astd_vec_init(512);
-            break;
-        case CLOCKED:
-            t_buf->records.clocked = aclk_vec_init(512);
-            break;
-    }
 
     return result;
 }
@@ -157,10 +149,10 @@ tangy_bins_from_time(tangy_buffer* t_buf, f64 time) {
 
     switch (t_buf->format) {
         case STANDARD:
-            bins = astd_bins_from_time(resolution, time);
+            bins = std_bins_from_time(resolution, time);
             break;
         case CLOCKED:
-            bins = aclk_bins_from_time(resolution, time);
+            bins = clk_bins_from_time(resolution, time);
             break;
     }
 
@@ -177,18 +169,18 @@ tangy_buffer_slice(tangy_buffer* t_buf,
     u64 count = 0;
     switch (t_buf->format) {
         case STANDARD:
-            count = astd_buffer_slice(&t_buf->buffer,
-                                      &t_buf->slice.standard,
-                                      &ptrs->standard,
-                                      start,
-                                      stop);
+            count = std_buffer_slice(&t_buf->buffer,
+                                     &t_buf->slice.standard,
+                                     &ptrs->standard,
+                                     start,
+                                     stop);
             break;
         case CLOCKED:
-            count = aclk_buffer_slice(&t_buf->buffer,
-                                      &t_buf->slice.clocked,
-                                      &ptrs->clocked,
-                                      start,
-                                      stop);
+            count = clk_buffer_slice(&t_buf->buffer,
+                                     &t_buf->slice.clocked,
+                                     &ptrs->clocked,
+                                     start,
+                                     stop);
             break;
     }
     return count;
@@ -203,18 +195,18 @@ tangy_buffer_push(tangy_buffer* t_buf,
     u64 count = 0;
     switch (t_buf->format) {
         case STANDARD:
-            count = astd_buffer_push(&t_buf->buffer,
-                                     &t_buf->slice.standard,
-                                     &ptrs->standard,
-                                     start,
-                                     stop);
+            count = std_buffer_push(&t_buf->buffer,
+                                    &t_buf->slice.standard,
+                                    &ptrs->standard,
+                                    start,
+                                    stop);
             break;
         case CLOCKED:
-            count = aclk_buffer_push(&t_buf->buffer,
-                                     &t_buf->slice.clocked,
-                                     &ptrs->clocked,
-                                     start,
-                                     stop);
+            count = clk_buffer_push(&t_buf->buffer,
+                                    &t_buf->slice.clocked,
+                                    &ptrs->clocked,
+                                    start,
+                                    stop);
             break;
     }
     return count;
@@ -228,10 +220,10 @@ tangy_oldest_index(tangy_buffer* t_buf) {
 
     switch (t_buf->format) {
         case STANDARD:
-            index = astd_oldest_index(&t_buf->buffer);
+            index = std_oldest_index(&t_buf->buffer);
             break;
         case CLOCKED:
-            index = aclk_oldest_index(&t_buf->buffer);
+            index = clk_oldest_index(&t_buf->buffer);
             break;
     }
     return index;
@@ -244,11 +236,11 @@ tangy_current_time(tangy_buffer* t_buf) {
     switch (t_buf->format) {
         case STANDARD:
             current_time =
-              astd_current_time(&t_buf->buffer, &t_buf->slice.standard);
+              std_current_time(&t_buf->buffer, &t_buf->slice.standard);
             break;
         case CLOCKED:
             current_time =
-              aclk_current_time(&t_buf->buffer, &t_buf->slice.clocked);
+              clk_current_time(&t_buf->buffer, &t_buf->slice.clocked);
             break;
     }
     return current_time;
@@ -261,11 +253,11 @@ tangy_time_in_buffer(tangy_buffer* t_buf) {
     switch (t_buf->format) {
         case STANDARD:
             time_in_buffer =
-              astd_time_in_buffer(&t_buf->buffer, &t_buf->slice.standard);
+              std_time_in_buffer(&t_buf->buffer, &t_buf->slice.standard);
             break;
         case CLOCKED:
             time_in_buffer =
-              aclk_time_in_buffer(&t_buf->buffer, &t_buf->slice.clocked);
+              clk_time_in_buffer(&t_buf->buffer, &t_buf->slice.clocked);
             break;
     }
 
@@ -279,11 +271,11 @@ tangy_lower_bound(tangy_buffer* t_buf, u64 key) {
     switch (t_buf->format) {
         case STANDARD:
             position =
-              astd_lower_bound(&t_buf->buffer, &t_buf->slice.standard, key);
+              std_lower_bound(&t_buf->buffer, &t_buf->slice.standard, key);
             break;
         case CLOCKED:
             position =
-              aclk_lower_bound(&t_buf->buffer, &t_buf->slice.clocked, key);
+              clk_lower_bound(&t_buf->buffer, &t_buf->slice.clocked, key);
             break;
     }
 
@@ -296,11 +288,11 @@ tangy_singles(tangy_buffer* t_buf, u64 start, u64 stop, u64* counters) {
 
     switch (t_buf->format) {
         case STANDARD:
-            count = astd_singles(
+            count = std_singles(
               &t_buf->buffer, &t_buf->slice.standard, start, stop, counters);
             break;
         case CLOCKED:
-            count = aclk_singles(
+            count = clk_singles(
               &t_buf->buffer, &t_buf->slice.clocked, start, stop, counters);
             break;
     }
@@ -318,22 +310,22 @@ tangy_coincidence_count(tangy_buffer* t_buf,
 
     switch (t_buf->format) {
         case STANDARD:
-            count = astd_coincidence_count(&t_buf->buffer,
-                                           &t_buf->slice.standard,
-                                           channel_count,
-                                           channels,
-                                           delays,
-                                           time_coincidence_radius,
-                                           time_read);
+            count = std_coincidence_count(&t_buf->buffer,
+                                          &t_buf->slice.standard,
+                                          channel_count,
+                                          channels,
+                                          delays,
+                                          time_coincidence_radius,
+                                          time_read);
             break;
         case CLOCKED:
-            count = aclk_coincidence_count(&t_buf->buffer,
-                                           &t_buf->slice.clocked,
-                                           channel_count,
-                                           channels,
-                                           delays,
-                                           time_coincidence_radius,
-                                           time_read);
+            count = clk_coincidence_count(&t_buf->buffer,
+                                          &t_buf->slice.clocked,
+                                          channel_count,
+                                          channels,
+                                          delays,
+                                          time_coincidence_radius,
+                                          time_read);
             break;
     }
     return count;
@@ -351,24 +343,24 @@ tangy_coincidence_collect(tangy_buffer* t_buf,
 
     switch (t_buf->format) {
         case STANDARD:
-            count = astd_coincidence_collect(&t_buf->buffer,
-                                             &t_buf->slice.standard,
-                                             channel_count,
-                                             channels,
-                                             delays,
-                                             time_coincidence_radius,
-                                             time_read,
-                                             records->standard);
+            count = std_coincidence_collect(&t_buf->buffer,
+                                            &t_buf->slice.standard,
+                                            channel_count,
+                                            channels,
+                                            delays,
+                                            time_coincidence_radius,
+                                            time_read,
+                                            records->standard);
             break;
         case CLOCKED:
-            count = aclk_coincidence_collect(&t_buf->buffer,
-                                             &t_buf->slice.clocked,
-                                             channel_count,
-                                             channels,
-                                             delays,
-                                             time_coincidence_radius,
-                                             time_read,
-                                             records->clocked);
+            count = clk_coincidence_collect(&t_buf->buffer,
+                                            &t_buf->slice.clocked,
+                                            channel_count,
+                                            channels,
+                                            delays,
+                                            time_coincidence_radius,
+                                            time_read,
+                                            records->clocked);
             break;
     }
     return count;
@@ -381,11 +373,11 @@ tangy_records_copy(buffer_format format,
 
     switch (format) {
         case STANDARD:
-            astd_records_copy(records->standard, &slice->standard);
+            std_records_copy(records->standard, &slice->standard);
             return;
 
         case CLOCKED:
-            aclk_records_copy(records->clocked, &slice->clocked);
+            clk_records_copy(records->clocked, &slice->clocked);
             return;
     }
 }
@@ -404,27 +396,27 @@ tangy_timetrace(tangy_buffer* t_buf,
 
     switch (t_buf->format) {
         case STANDARD:
-            count = astd_timetrace(&t_buf->buffer,
-                                   &t_buf->slice.standard,
-                                   start,
-                                   stop,
-                                   bin_width,
-                                   channels,
-                                   n_channels,
-                                   length,
-                                   intensities);
+            count = std_timetrace(&t_buf->buffer,
+                                  &t_buf->slice.standard,
+                                  start,
+                                  stop,
+                                  bin_width,
+                                  channels,
+                                  n_channels,
+                                  length,
+                                  intensities);
             break;
 
         case CLOCKED:
-            count = aclk_timetrace(&t_buf->buffer,
-                                   &t_buf->slice.clocked,
-                                   start,
-                                   stop,
-                                   bin_width,
-                                   channels,
-                                   n_channels,
-                                   length,
-                                   intensities);
+            count = clk_timetrace(&t_buf->buffer,
+                                  &t_buf->slice.clocked,
+                                  start,
+                                  stop,
+                                  bin_width,
+                                  channels,
+                                  n_channels,
+                                  length,
+                                  intensities);
             break;
     }
 
@@ -444,71 +436,71 @@ tangy_relative_delay(tangy_buffer* t_buf,
 
     switch (t_buf->format) {
         case STANDARD:
-            astd_relative_delay(&t_buf->buffer,
-                                &t_buf->slice.standard,
-                                start,
-                                stop,
-                                correlation_window,
-                                resolution,
-                                channels_a,
-                                channels_b,
-                                length,
-                                intensities);
+            std_relative_delay(&t_buf->buffer,
+                               &t_buf->slice.standard,
+                               start,
+                               stop,
+                               correlation_window,
+                               resolution,
+                               channels_a,
+                               channels_b,
+                               length,
+                               intensities);
             break;
         case CLOCKED:
-            aclk_relative_delay(&t_buf->buffer,
-                                &t_buf->slice.clocked,
-                                start,
-                                stop,
-                                correlation_window,
-                                resolution,
-                                channels_a,
-                                channels_b,
-                                length,
-                                intensities);
+            clk_relative_delay(&t_buf->buffer,
+                               &t_buf->slice.clocked,
+                               start,
+                               stop,
+                               correlation_window,
+                               resolution,
+                               channels_a,
+                               channels_b,
+                               length,
+                               intensities);
             break;
     }
 }
 
 static inline u64
 tangy_joint_delay_histogram(tangy_buffer* t_buf,
-                            u8 clock,
-                            u8 signal,
-                            u8 idler,
-                            u64 n_channels,
-                            u8* channels,
-                            f64* delays,
-                            f64 radius,
-                            f64 read_time,
+                            const u8 clock,
+                            const u8 signal,
+                            const u8 idler,
+                            const u64 n_channels,
+                            const u8* channels,
+                            const f64* delays,
+                            const f64 radius,
+                            const f64 read_time,
                             u64* intensities) {
     u64 count = 0;
 
     switch (t_buf->format) {
         case STANDARD:
-            count = astd_joint_delay_histogram(&t_buf->buffer,
-                                               &t_buf->slice.standard,
-                                               clock,
-                                               signal,
-                                               idler,
-                                               n_channels,
-                                               channels,
-                                               delays,
-                                               radius,
-                                               read_time,
-                                               intensities);
+            count = std_joint_delay_histogram(&t_buf->buffer,
+                                              &t_buf->slice.standard,
+                                              clock,
+                                              signal,
+                                              idler,
+                                              n_channels,
+                                              channels,
+                                              delays,
+                                              radius,
+                                              read_time,
+                                              intensities);
             break;
         case CLOCKED:
-            count = aclk_joint_delay_histogram(&t_buf->buffer,
-                                               &t_buf->slice.clocked,
-                                               clock,
-                                               signal,
-                                               idler,
-                                               n_channels,
-                                               channels,
-                                               delays,
-                                               radius,
-                                               read_time,
-                                               intensities);
+            count = clk_joint_delay_histogram(&t_buf->buffer,
+                                              &t_buf->slice.clocked,
+                                              clock,
+                                              signal,
+                                              idler,
+                                              n_channels,
+                                              channels,
+                                              delays,
+                                              radius,
+                                              read_time,
+                                              intensities);
             break;
     }
 

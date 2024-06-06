@@ -4,50 +4,50 @@
 #include "base.h"
 #include "vector_impls.h"
 
-typedef struct aclk_timetag {
+typedef struct clk_timetag {
     u64 clock;
     u64 delta;
-} aclk_timetag;
+} clk_timetag;
 
 typedef struct aclocked {
     u8 channel;
-    aclk_timetag timestamp;
+    clk_timetag timestamp;
 } aclocked;
 
-typedef struct aclk_res {
+typedef struct clk_res {
     f64 coarse;
     f64 fine;
-} aclk_res;
+} clk_res;
 
-typedef struct aclk_slice {
+typedef struct clk_slice {
     usize length;
     u8* channel;
-    aclk_timetag* timestamp;
-} aclk_slice;
+    clk_timetag* timestamp;
+} clk_slice;
 
-typedef struct aclk_field_ptrs aclk_field_ptrs;
-struct aclk_field_ptrs {
+typedef struct clk_field_ptrs clk_field_ptrs;
+struct clk_field_ptrs {
     usize length;
     u8* channels;
     u64* clocks;
     u64* deltas;
 };
 
-#define VEC_T aclk_timetag
-typedef struct aclk_timetag_ptrs aclk_timetag_ptrs;
-struct aclk_timetag_ptrs {
+#define VEC_T clk_timetag
+typedef struct clk_timetag_ptrs clk_timetag_ptrs;
+struct clk_timetag_ptrs {
     u64* clock;
     u64* delta;
 };
-#define VEC_T_PTRS aclk_timetag_ptrs
-#define VEC_NAME aclk_vec
+#define VEC_T_PTRS clk_timetag_ptrs
+#define VEC_NAME clk_vec
 #include "multi_vector.h"
 
-vec_aclk_timetag*
-aclk_vec_init(size capacity) {
+vec_clk_timetag*
+clk_vec_init(size capacity) {
 
-    vec_aclk_timetag* new_vector =
-      (vec_aclk_timetag*)malloc(sizeof(vec_aclk_timetag));
+    vec_clk_timetag* new_vector =
+      (vec_clk_timetag*)malloc(sizeof(vec_clk_timetag));
     if (new_vector != NULL) {
         new_vector->length = 0;
         new_vector->capacity = 0;
@@ -70,8 +70,8 @@ aclk_vec_init(size capacity) {
     return new_vector;
 }
 
-vec_aclk_timetag*
-aclk_vec_deinit(vec_aclk_timetag* multivec) {
+vec_clk_timetag*
+clk_vec_deinit(vec_clk_timetag* multivec) {
     free(multivec->data.clock);
     free(multivec->data.delta);
     free(multivec);
@@ -80,14 +80,14 @@ aclk_vec_deinit(vec_aclk_timetag* multivec) {
 }
 
 void
-aclk_vec_reset(vec_aclk_timetag* multivec) {
+clk_vec_reset(vec_clk_timetag* multivec) {
     multivec->length = 0;
 }
 
 #define GROWTH_FACTOR 2
 
 bool
-aclk_vec_grow(vec_aclk_timetag* multivec) {
+clk_vec_grow(vec_clk_timetag* multivec) {
     if (multivec->data.clock == NULL) {
         return false;
     }
@@ -117,9 +117,9 @@ aclk_vec_grow(vec_aclk_timetag* multivec) {
 }
 
 void
-aclk_vec_push(vec_aclk_timetag* multivec, aclk_timetag value) {
+clk_vec_push(vec_clk_timetag* multivec, clk_timetag value) {
     if (!((multivec->length) <= (multivec->capacity - 1))) {
-        aclk_vec_grow(multivec);
+        clk_vec_grow(multivec);
     }
     multivec->data.clock[multivec->length] = value.clock;
     multivec->data.delta[multivec->length] = value.delta;
@@ -127,29 +127,29 @@ aclk_vec_push(vec_aclk_timetag* multivec, aclk_timetag value) {
     return;
 }
 
-#define stub aclk
-#define slice aclk_slice
-#define field_ptrs aclk_field_ptrs
+#define stub clk
+#define slice clk_slice
+#define field_ptrs clk_field_ptrs
 #define record aclocked
-#define timestamp aclk_timetag
+#define timestamp clk_timetag
 
-#define tt_vector vec_aclk_timetag
-#define tt_vector_init(C) aclk_vec_init(C)
-#define tt_vector_deinit(C) aclk_vec_deinit(C)
-#define tt_vector_push(V_PTR, E) aclk_vec_push(V_PTR, E)
-#define tt_vector_reset(V_PTR) aclk_vec_reset(V_PTR)
+#define tt_vector vec_clk_timetag
+#define tt_vector_init(C) clk_vec_init(C)
+#define tt_vector_deinit(C) clk_vec_deinit(C)
+#define tt_vector_push(V_PTR, E) clk_vec_push(V_PTR, E)
+#define tt_vector_reset(V_PTR) clk_vec_reset(V_PTR)
 
 #include "analysis_base.h"
 
 inline u64
-aclk_size_of() {
+clk_size_of() {
     u64 elem_size = sizeof(u8) + sizeof(u64) + sizeof(u64);
     return elem_size;
 }
 
-inline aclk_slice
-aclk_init_base_ptrs(ring_buffer* buf) {
-    aclk_slice slice = { 0 };
+inline clk_slice
+clk_init_base_ptrs(ring_buffer* buf) {
+    clk_slice slice = { 0 };
     u64 capacity = rb_get_capacity(buf);
 
     u64 channel_offset = 9 * sizeof(u64); // astd_size_of();
@@ -157,49 +157,49 @@ aclk_init_base_ptrs(ring_buffer* buf) {
 
     slice.channel = (u8*)buf->map_ptr + channel_offset;
     slice.timestamp =
-      (aclk_timetag*)(&(buf->map_ptr[channel_offset + capacity + 1]));
+      (clk_timetag*)(&(buf->map_ptr[channel_offset + capacity + 1]));
     return slice;
 }
 
 inline aclocked
-aclk_record_at(const aclk_slice* data, u64 absolute_index) {
+clk_record_at(const clk_slice* data, u64 absolute_index) {
     aclocked record = { .channel = data->channel[absolute_index],
                         .timestamp = data->timestamp[absolute_index] };
     return record;
 }
 
-inline aclk_timetag
-aclk_timestamp_at(const aclk_slice* data, u64 absolute_index) {
+inline clk_timetag
+clk_timestamp_at(const clk_slice* data, u64 absolute_index) {
     return data->timestamp[absolute_index];
 }
 
 inline u8
-aclk_channel_at(const aclk_slice* data, u64 absolute_index) {
+clk_channel_at(const clk_slice* data, u64 absolute_index) {
     return data->channel[absolute_index];
 }
 
 inline u64
-aclk_arrival_time_at(const aclk_slice* data,
+clk_arrival_time_at(const clk_slice* data,
                      u64 conversion_factor,
                      u64 absolute_index) {
-    aclk_timetag timestamp = data->timestamp[absolute_index];
+    clk_timetag timestamp = data->timestamp[absolute_index];
     return (conversion_factor * timestamp.clock) + timestamp.delta;
 }
 
 inline f64
-aclk_as_time(aclk_timetag rec, u64 conversion_factor, f64 resolution) {
-    return (f64)aclk_as_bins(rec, conversion_factor) * resolution;
+clk_as_time(clk_timetag rec, u64 conversion_factor, f64 resolution) {
+    return (f64)clk_as_bins(rec, conversion_factor) * resolution;
 }
 
 inline u64
-aclk_as_bins(aclk_timetag record, u64 conversion_factor) {
+clk_as_bins(clk_timetag record, u64 conversion_factor) {
     return (record.clock * conversion_factor) + record.delta;
 }
 
 inline u64
-aclk_buffer_slice(ring_buffer* const buf,
-                  const aclk_slice* const data,
-                  aclk_field_ptrs* ptrs,
+clk_buffer_slice(ring_buffer* const buf,
+                  const clk_slice* const data,
+                  clk_field_ptrs* ptrs,
                   u64 start,
                   u64 stop) {
 
@@ -219,7 +219,7 @@ aclk_buffer_slice(ring_buffer* const buf,
 
     usize i = iter.lower.index;
     for (usize j = 0; j < ptrs->length; j++) {
-        aclk_timetag timetag = data->timestamp[i];
+        clk_timetag timetag = data->timestamp[i];
         ptrs->channels[j] = data->channel[i];
         ptrs->clocks[j] = timetag.clock;
         ptrs->deltas[j] = timetag.delta;
@@ -230,9 +230,9 @@ aclk_buffer_slice(ring_buffer* const buf,
 }
 
 inline u64
-aclk_buffer_push(ring_buffer* const buf,
-                 const aclk_slice* const data,
-                 aclk_field_ptrs* ptrs,
+clk_buffer_push(ring_buffer* const buf,
+                 const clk_slice* const data,
+                 clk_field_ptrs* ptrs,
                  u64 start,
                  u64 stop) {
 
@@ -259,7 +259,7 @@ aclk_buffer_push(ring_buffer* const buf,
 
     for (i = 0; (i + start_abs) < mid_stop; i++) {
         data->channel[start_abs + i] = ptrs->channels[i];
-        aclk_timetag timestamp = { .clock = ptrs->clocks[i],
+        clk_timetag timestamp = { .clock = ptrs->clocks[i],
                                    .delta = ptrs->deltas[i] };
         data->timestamp[start_abs + i] = timestamp;
     }
@@ -269,7 +269,7 @@ aclk_buffer_push(ring_buffer* const buf,
         i = 0;
         for (i = 0; i < stop_abs; i++) {
             data->channel[i] = ptrs->channels[count];
-            aclk_timetag timestamp = { .clock = ptrs->clocks[count],
+            clk_timetag timestamp = { .clock = ptrs->clocks[count],
                                        .delta = ptrs->deltas[count] };
             data->timestamp[i] = timestamp;
             count += 1;
@@ -281,7 +281,7 @@ aclk_buffer_push(ring_buffer* const buf,
 }
 
 inline void
-aclk_records_copy(vec_aclk_timetag* records, aclk_field_ptrs* data) {
+clk_records_copy(vec_clk_timetag* records, clk_field_ptrs* data) {
 
     if (records->length == 0) {
         return;
@@ -299,11 +299,11 @@ aclk_records_copy(vec_aclk_timetag* records, aclk_field_ptrs* data) {
 }
 
 histogram2D_coords
-aclk_joint_histogram_position(aclk_slice* data,
-                              u8 ch_idx_idler,
-                              u8 ch_idx_signal,
-                              u8 ch_idx_clock,
-                              aclk_timetag* timetags) {
+clk_joint_histogram_position(const clk_slice* data,
+                              const u8 ch_idx_idler,
+                              const u8 ch_idx_signal,
+                              const u8 ch_idx_clock,
+                              const clk_timetag* timetags) {
 
     histogram2D_coords point = {
         .x = timetags[ch_idx_idler].delta,
