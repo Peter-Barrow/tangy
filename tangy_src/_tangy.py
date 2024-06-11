@@ -70,11 +70,11 @@ class Records:
         timetags (Union[ndarray(u64n), Tuple[ndarray(u64n), ndarray(u64n)]]): Timetags
 
     Examples:
-        records = Records(count=10, resolution=1e-9, clock_period=1.0,
-                          channels=[0, 1], timetags=[0, ..., 10])
+        >>> records = Records(count=10, resolution=1e-9, clock_period=1.0,
+        >>>                   channels=[0, 1], timetags=[0, ..., 10])
 
-        records = Records(count=4, resolution=1e-9, clock_period=1.0,
-                          channels=[0, 1, 1, 0], timetags=[0, 1, 4, 5])
+        >>> records = Records(count=4, resolution=1e-9, clock_period=1.0,
+        >>>                   channels=[0, 1, 1, 0], timetags=[0, 1, 4, 5])
 
     """
     count: u64n = cython.dataclasses.field()
@@ -360,12 +360,14 @@ class TangyBuffer:
         return self.capacity
 
     @cython.cfunc
-    def _make_slice(self, key: slice):
+    def _make_slice(self, key: Union[int, slice]):
         start: int
         stop: int
-        step: int = 1 if key.step is None else key.step
+        step: int = 1
 
         if type(key) is slice:
+            step: int = 1 if key.step is None else key.step
+
             # oldest = self.begin
 
             dist: int = abs(abs(key.stop) - abs(key.start))
@@ -380,11 +382,12 @@ class TangyBuffer:
             # if key.start < self.begin:
             #     start = oldest + self.begin
             if key.start < 0:
-                print("a")
+                # print("a")
                 start = (self.count + key.start - 1) % self.capacity
-                stop = start + dist + 1
+                # stop = start + dist + 1
+                stop = start + dist
             else:
-                print("b")
+                # print("b")
                 start = key.start
                 if start < self.begin:
                     start += self.begin
@@ -393,7 +396,8 @@ class TangyBuffer:
                 stop = key.stop
                 if stop < self.begin:
                     stop += self.begin
-                stop = (stop % self.capacity) + 1
+                # stop = (stop % self.capacity) + 1
+                stop = (stop % self.capacity)
 
             # start = (key.start % self.capacity)
             # # stop = start + key.stop
@@ -429,10 +433,14 @@ class TangyBuffer:
 
         if self._buf.format == _tangy.buffer_format.STANDARD:
             (channels, timestamps) = self.pull(start, stop)
+            if len(channels) == 1:
+                return (channels[0], timestamps[0])
             return (channels[::step], timestamps[::step])
 
         if self._buf.format == _tangy.buffer_format.CLOCKED:
             (channels, (clocks, deltas)) = self.pull(start, stop)
+            if len(channels) == 1:
+                return (channels[0], (clocks[0], deltas[0]))
             return (channels[::step], (clocks[::step], deltas[::step]))
 
     @cython.boundscheck(False)
@@ -631,6 +639,10 @@ class TangyBuffer:
         return bins
 
     @cython.ccall
+    def oldest_time(self) -> float:
+        return _tangy.tangy_oldest_time(self._ptr_buf)
+
+    @cython.ccall
     def current_time(self) -> float:
         """ Returns the time of the most recent timetag
         Returns:
@@ -646,22 +658,13 @@ class TangyBuffer:
         """
         return _tangy.tangy_time_in_buffer(self._ptr_buf)
 
-#     @cython.ccall
-#     def time_range(self) -> Tuple[float, float]:
-#         # begin: float = time_at_index(self._v_ptr, self._type, self.begin % self.capacity)
-#         # end: float = time_at_index(self._v_ptr, self._type, self.end % self.capacity)
-#         begin: float
-#         end: float
-#         idx: int
-#         idx = (self.begin + 1) % self.capacity
-#         rec: _tangy.standard = _tangy.std_record_at(self._ptr, idx)
-#         begin = _tangy.std_to_time(rec, self._buffer.resolution[0])
-#
-#         idx = self.end % self.capacity
-#         rec = _tangy.std_record_at(self._ptr, idx)
-#         end = _tangy.std_to_time(rec, self._buffer.resolution[0])
-#
-#         return (begin, end)
+    @cython.ccall
+    def time_range(self) -> Tuple[float, float]:
+
+        begin: float = self.oldest_time()
+        end: float = self.current_time()
+
+        return (begin, end)
 
     @property
     def begin(self) -> int:
@@ -974,7 +977,7 @@ class TangyBuffer:
                            _channels, (clocks, deltas))
 
     @cython.ccall
-    def timetrace(self, channels: List[int], read_time: float,
+    def timetrace(self, channels: Union[int, List[int]], read_time: float,
                   resolution: float = 10.0):
         """ Time trace of buffer for chosen channels and read time
 
@@ -993,8 +996,22 @@ class TangyBuffer:
             (ndarray): intensities
 
         """
-        n_channels: u64n = len(channels)
-        channels_view: cython.uchar[::1] = asarray(channels, dtype=u8n)
+        n_channels: u64n = 1
+
+        channels_arr: u8n[:]
+
+        if isinstance(channels, (list)):
+            n_channels = len(channels)
+            channels_arr = zeros(n_channels, dtype=u8n)
+            channels_arr = asarray(channels, dtype=u8n)
+        elif isinstance(channels, (int)):
+            channels_arr = zeros(n_channels, dtype=u8n)
+            channels_arr[0] = channels
+
+        print(n_channels, channels_arr)
+
+        # channels_view: cython.uchar[::1] = asarray(channels, dtype=u8n)
+        channels_view: cython.uchar[::1] = channels_arr
 
         bin_width: u64n = round(resolution / self.resolution)
         start: u64 = self.lower_bound(self.current_time() - read_time)
@@ -1031,7 +1048,7 @@ class TangyBuffer:
             (delay_result): Dataclass containing histogram data and fitting results
         """
 
-        resolution_trace: f64n = 5e-2
+        resolution_trace: f64n = 1.0
         trace: u64n[:] = self.timetrace([channel_a, channel_b], read_time, resolution_trace)
 
         intensity_average = mean(trace) / resolution_trace

@@ -229,6 +229,28 @@ tangy_oldest_index(tangy_buffer* t_buf) {
     return index;
 }
 
+static inline f64 tangy_oldest_time(tangy_buffer* t_buf) {
+
+    f64 resolution = rb_get_resolution(&t_buf->buffer);
+    u64 conversion_factor = rb_get_conversion_factor(&t_buf->buffer);
+    u64 index = tangy_oldest_index(t_buf);
+
+    u64 arrival_time = 0;
+    f64 oldest_time = 0.0;
+    switch (t_buf->format) {
+        case STANDARD:
+            arrival_time = std_arrival_time_at(&t_buf->slice.standard, conversion_factor, index);
+            oldest_time = std_time_from_bins(resolution, arrival_time);
+            return oldest_time;
+        case CLOCKED:
+            arrival_time = clk_arrival_time_at(&t_buf->slice.clocked, conversion_factor, index);
+            oldest_time = clk_time_from_bins(resolution, arrival_time);
+            return oldest_time;
+    }
+
+    return oldest_time;
+}
+
 static inline f64
 tangy_current_time(tangy_buffer* t_buf) {
     f64 current_time = 0;

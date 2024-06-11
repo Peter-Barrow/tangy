@@ -15,6 +15,7 @@ Alternatively, if you have a large file of containing timetags you can read a se
     - Singles counting
     - Coincidence counting
     - Delay finding
+    - Joint delay histograms
 
 ## Installation
 ```sh title="pypi"
@@ -28,7 +29,7 @@ Install from git to get the latest version
 python3 -m pip install git+https://gitlab.com/PeterBarrow/tangy.git
 ```
 
-## Examples
+## Quick Examples
 
 Open a file and read some data
 ```python
@@ -53,30 +54,34 @@ for i in range(11):
 buffer = ptu.buffer()
 ```
 
-```python title="Count coincidences in the last second for channels [0, 1] with a 1ns window"
+Count coincidences in the last second for channels [0, 1] with a 1ns window
+```python
 integration_time = 1
 coincidence_window = 1e-9
 channels = [0, 1]
 count = buffer.coincidence_count(integration_time, coincidence_window, channels)
 ```
 
-```python title="Collect coincident timetags"
+Collect coincident timetags
+```python
 records = buffer.coincidence_collect(integration_time, coincidence_window, channels)
 ```
 
-```python title="Find the delays between pairs of channels"
+Find the delays between pairs of channels
+```python
 channel_a = 0
 channel_b = 1
 integration_time = 10
 measurement_resolution = 6.25e-9
-result_delay = tangy.find_delay(buffer,
-                                channel_a channel_b,
-                                integration_time,
-                                resolution=measurement_resolution)
+result_delay = buffer.relative_delay(channel_a, channel_b,
+                                     integration_time,
+                                     resolution=6.25e-9,
+                                     window=250e-7)
 delays = [0, result_delay.t0]
 ```
 
-```python title="Count (or collect) coincidences with delays"
+Count (or collect) coincidences with delays
+```python
 count = buffer.coincidence_count(integration_time,
                                  coincidence_window,
                                  channels,
@@ -87,9 +92,3 @@ records = buffer.coincidence_collect(integration_time,
                                      channels,
                                      delays=delays)
 ```
-
-
-## Tools
-
-![Coincidence Counter](img/gui_coincidence_counter.png)
-

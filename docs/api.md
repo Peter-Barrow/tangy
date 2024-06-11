@@ -1,6 +1,12 @@
 # API Reference
 
-## Buffers
+## Buffer
+
+### :::tangy.Records
+    options:
+        allow_inspection: false
+        show_root_heading: true
+        show_source: false
 
 ### Timetag Formats
 !!! example "Timetag Formats"
@@ -34,18 +40,12 @@
         } resolution_clocked;
         ```
 
-### :::tangy.Records
-    options:
-        allow_inspection: false
-        show_root_heading: true
-        show_source: false
 
 ### :::tangy.TangyBufferType
     options:
         allow_inspection: true
         show_root_heading: true
         show_source: false
-
 
 ### :::tangy.TangyBuffer
     options:

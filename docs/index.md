@@ -6,6 +6,7 @@
 It stores your timetag data in a circular buffer backed by shared memory allowing you to have multiple client connect to the same buffer.
 When streaming data from a device into a tangy buffer this allows you to have multiple connections to the same device facilitating either mulitple lab users or multiple concurrent experiments.
 Alternatively, if you have a large file of containing timetags you can read a section into a tangy buffer in one python interpreter and perform analysis on that section in another speeding up exploratory analysis.
+Please see the [api reference](api.md) for feature details.
 
 
 ## Features
@@ -28,7 +29,7 @@ Install from git to get the latest version
 python3 -m pip install git+https://gitlab.com/PeterBarrow/tangy.git
 ```
 
-## Examples
+## Quick Examples
 
 Open a file and read some data
 ```python
@@ -69,10 +70,10 @@ channel_a = 0
 channel_b = 1
 integration_time = 10
 measurement_resolution = 6.25e-9
-result_delay = tangy.find_delay(buffer,
-                                channel_a channel_b,
-                                integration_time,
-                                resolution=measurement_resolution)
+result_delay = buffer.relative_delay(channel_a, channel_b,
+                                     integration_time,
+                                     resolution=6.25e-9,
+                                     window=250e-7)
 delays = [0, result_delay.t0]
 ```
 
@@ -87,9 +88,3 @@ records = buffer.coincidence_collect(integration_time,
                                      channels,
                                      delays=delays)
 ```
-
-
-## Tools
-
-![Coincidence Counter](img/gui_coincidence_counter.png)
-

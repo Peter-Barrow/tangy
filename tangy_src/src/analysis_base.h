@@ -204,19 +204,20 @@ JOIN(stub, bins_from_time_delays)(ring_buffer* buf,
                                   u64* delays_bins) {
 
     f64 resolution = rb_get_resolution(buf);
-    u64 offset = (u64)round(delays[0] / resolution);
-    u64 temp = 0;
+    i64 offset = (u64)round(delays[0] / resolution);
+    i64 temp = 0;
 
+    // BUG: delays_bins is getting overflowed
     int i = 0;
     for (i = (delays_count - 1); i >= 1; i--) {
-        temp = (u64)round(delays[i] / resolution);
+        temp = (i64)round(delays[i] / resolution);
         if (temp > offset) {
             offset = temp;
         }
     }
 
     for (i = (delays_count - 1); i >= 0; i--) {
-        delays_bins[i] = offset - (u64)round(delays[i] / resolution);
+        delays_bins[i] = (u64)(offset - (i64)round(delays[i] / resolution));
     }
 }
 #define binsFromTimeDelays(buf, n, dt, db)                                     \
@@ -290,6 +291,16 @@ JOIN(stub, pattern_init)(ring_buffer* const buf,
 
     u64* delays = (u64*)malloc(sizeof(u64) * n);
     binsFromTimeDelays(buf, n, time_delays, delays);
+    // printf("Delays:");
+    // for (u32 d = 0; d < n; d++) {
+    //     printf("%.5e\t", time_delays[d]);
+    // }
+    // printf("\n");
+    // printf("Delays:");
+    // for (u32 d = 0; d < n; d++) {
+    //     printf("%.lu\t", delays[d]);
+    // }
+    // printf("\n");
 
     u64 count = rb_get_count(buf);
     u64 capacity = rb_get_capacity(buf);
@@ -396,8 +407,14 @@ JOIN(stub, channels_in_coincidence)(const u8 n_channels,
         if ((oldest - newer) < diameter) {
             in_coincidence++;
         } else {
-            break;
+            //break;
+            return 0;
         }
+        // if (!(oldest + diameter < newer)) {
+        //     return 0;
+        // } else {
+        //     in_coincidence += 1;
+        // }
     }
 
     for (j = min_index + 1; j < n_channels; j++) {
@@ -405,8 +422,14 @@ JOIN(stub, channels_in_coincidence)(const u8 n_channels,
         if ((oldest - newer) < diameter) {
             in_coincidence++;
         } else {
-            break;
+            //break;
+            return 0;
         }
+        // if (!(oldest + diameter < newer)) {
+        //     return 0;
+        // } else {
+        //     in_coincidence += 1;
+        // }
     }
 
     usize coincidence_size = (usize)n_channels - 1;
@@ -645,15 +668,18 @@ JOIN(stub, relative_delay)(ring_buffer* buf,
         if (current_channel == channels_a) {
             time_of_arrival_a_previous = time_of_arrival;
             delta = time_of_arrival - time_of_arrival_b_previous;
+
             if (delta < correlation_window) {
-                hist_index = central_bin - (delta / resolution) - 1;
+                hist_index = (central_bin - delta / resolution) - 1;
                 intensities[hist_index] += 1;
             }
+
         } else if (current_channel == channels_b) {
             time_of_arrival_b_previous = time_of_arrival;
             delta = time_of_arrival - time_of_arrival_a_previous;
+
             if (delta < correlation_window) {
-                hist_index = central_bin + (delta / resolution);
+                hist_index = central_bin + delta / resolution;
                 intensities[hist_index] += 1;
             }
         }

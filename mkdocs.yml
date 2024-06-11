@@ -70,10 +70,12 @@ plugins:
             show_symbol_type_heading: true
             show_category_heading: true
             summary: true
+  - mkdocs-jupyter
 
 nav:
   - "Home": index.md
   - "API Reference": api.md
+  - "Guided Tour": guided_tour.ipynb
   - "License": license.md
 
 extra:

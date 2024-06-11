@@ -271,6 +271,8 @@ cdef extern from "./src/tangy.h":
 
     u64 tangy_oldest_index(tangy_buffer* t_buf)
 
+    f64 tangy_oldest_time(tangy_buffer* t_buf)
+
     f64 tangy_current_time(tangy_buffer* t_buf)
 
     f64 tangy_time_in_buffer(tangy_buffer* t_buf)

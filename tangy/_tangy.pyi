@@ -23,11 +23,11 @@ class Records:
         timetags (Union[ndarray(u64n), Tuple[ndarray(u64n), ndarray(u64n)]]): Timetags
 
     Examples:
-        records = Records(count=10, resolution=1e-9, clock_period=1.0,
-                          channels=[0, 1], timetags=[0, ..., 10])
+        >>> records = Records(count=10, resolution=1e-9, clock_period=1.0,
+        >>>                   channels=[0, 1], timetags=[0, ..., 10])
 
-        records = Records(count=4, resolution=1e-9, clock_period=1.0,
-                          channels=[0, 1, 1, 0], timetags=[0, 1, 4, 5])
+        >>> records = Records(count=4, resolution=1e-9, clock_period=1.0,
+        >>>                   channels=[0, 1, 1, 0], timetags=[0, 1, 4, 5])
 
     """
     count: u64n
@@ -280,6 +280,7 @@ class TangyBuffer:
             (int): number of bins
 
         """
+    def oldest_time(self) -> float: ...
     def current_time(self) -> float:
         """ Returns the time of the most recent timetag
         Returns:
@@ -290,6 +291,7 @@ class TangyBuffer:
         Returns:
             (float): Time between oldest and newest timetags
         """
+    def time_range(self) -> tuple[float, float]: ...
     @property
     def begin(self) -> int:
         """ Index of first record in buffer
@@ -379,7 +381,7 @@ class TangyBuffer:
             (Records): Records found in coincidence
 
         """
-    def timetrace(self, channels: list[int], read_time: float, resolution: float = 10.0):
+    def timetrace(self, channels: int | list[int], read_time: float, resolution: float = 10.0):
         """ Time trace of buffer for chosen channels and read time
 
         Produces an array of count rates accumulated for the chosen channels

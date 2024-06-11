@@ -217,16 +217,18 @@ clk_buffer_slice(ring_buffer* const buf,
         return 0;
     }
 
-    usize i = iter.lower.index;
-    for (usize j = 0; j < ptrs->length; j++) {
+    u64 count = 0;
+    u64 i = iter.lower.index;
+    for (u64 j = 0; j < ptrs->length; j++) {
         clk_timetag timetag = data->timestamp[i];
         ptrs->channels[j] = data->channel[i];
         ptrs->clocks[j] = timetag.clock;
         ptrs->deltas[j] = timetag.delta;
         i = next(&iter);
+        count += 1;
     }
 
-    return i;
+    return count;
 }
 
 inline u64
