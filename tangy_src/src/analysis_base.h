@@ -149,6 +149,7 @@ JOIN(stub, current_time)(ring_buffer* buf, slice* data) {
 
 static inline u64
 JOIN(stub, lower_bound)(ring_buffer* buf, const slice* data, u64 key) {
+    // FIX: add bounds checks, mid should not exceed valid range
     u64 capacity = rb_get_capacity(buf);
     u64 count = rb_get_count(buf) - 1;
     u64 conversion_factor = rb_get_conversion_factor(buf);

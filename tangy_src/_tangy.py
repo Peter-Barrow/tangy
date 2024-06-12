@@ -376,7 +376,7 @@ class TangyBuffer:
                     raise IndexError("out of range")
                 start = key.start
                 stop = key.stop
-                print("here", start, stop, stop)
+                # print("here", start, stop, stop)
                 return (start, stop, step)
 
             # if key.start < self.begin:
@@ -1008,7 +1008,7 @@ class TangyBuffer:
             channels_arr = zeros(n_channels, dtype=u8n)
             channels_arr[0] = channels
 
-        print(n_channels, channels_arr)
+        # print(n_channels, channels_arr)
 
         # channels_view: cython.uchar[::1] = asarray(channels, dtype=u8n)
         channels_view: cython.uchar[::1] = channels_arr
