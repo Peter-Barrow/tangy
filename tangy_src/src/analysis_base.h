@@ -1,3 +1,4 @@
+#include <cstdlib>
 #ifndef stub
 #error "No template supplied for 'stub'"
 #endif
@@ -282,6 +283,8 @@ JOIN(stub, singles)(ring_buffer* const buf,
     return count_current;
 }
 
+// TODO: replace read_time with a length, this way the user can choose to convert
+// a read time to bins or alternatively just pick some number of bins
 static inline pattern_iterator
 JOIN(stub, pattern_init)(ring_buffer* const buf,
                          const slice* data,
@@ -408,7 +411,7 @@ JOIN(stub, channels_in_coincidence)(const u8 n_channels,
         if ((oldest - newer) < diameter) {
             in_coincidence++;
         } else {
-            //break;
+            // break;
             return 0;
         }
         // if (!(oldest + diameter < newer)) {
@@ -423,7 +426,7 @@ JOIN(stub, channels_in_coincidence)(const u8 n_channels,
         if ((oldest - newer) < diameter) {
             in_coincidence++;
         } else {
-            //break;
+            // break;
             return 0;
         }
         // if (!(oldest + diameter < newer)) {
@@ -689,11 +692,12 @@ JOIN(stub, relative_delay)(ring_buffer* buf,
     }
 }
 
-histogram2D_coords JOIN(stub, joint_histogram_position)(const slice* data,
-                                                        const u8 ch_idx_idler,
-                                                        const u8 ch_idx_signal,
-                                                        const u8 ch_idx_clock,
-                                                        const timestamp* timetags);
+histogram2D_coords JOIN(stub,
+                        joint_histogram_position)(const slice* data,
+                                                  const u8 ch_idx_idler,
+                                                  const u8 ch_idx_signal,
+                                                  const u8 ch_idx_clock,
+                                                  const timestamp* timetags);
 
 #define jointHistogramPosition(s, i_i, i_s, i_c, ts)                           \
     JOIN(stub, joint_histogram_position)(s, i_i, i_s, i_c, ts)
@@ -745,7 +749,8 @@ JOIN(stub, joint_delay_histogram)(ring_buffer* const buf,
 
     u64 conversion_factor = rb_get_conversion_factor(buf);
     u64* current_times = (u64*)malloc(n_channels * sizeof(u64));
-    timestamp* current_timetags = (timestamp*)malloc(n_channels * sizeof(timestamp));
+    timestamp* current_timetags =
+      (timestamp*)malloc(n_channels * sizeof(timestamp));
     for (usize i = 0; i < n_channels; i++) {
         current_times[i] =
           arrivalTimeAt(data, conversion_factor, pattern.index[i]);
@@ -779,7 +784,8 @@ JOIN(stub, joint_delay_histogram)(ring_buffer* const buf,
                 // signal -> rows -> x
                 // idler -> columns -> y
                 offset = (point.x * diameter_bins) + (point.y);
-                // printf("POINT:->{%lu,\t%lu} -> %lu | Limit:%lu\n", point.x, point.y, offset, diameter_bins * diameter_bins);
+                // printf("POINT:->{%lu,\t%lu} -> %lu | Limit:%lu\n",
+                // point.x, point.y, offset, diameter_bins * diameter_bins);
                 intensities[offset] += 1;
             }
         }
@@ -803,7 +809,6 @@ JOIN(stub, joint_delay_histogram)(ring_buffer* const buf,
     free(current_timetags);
 
     return count;
-
 }
 
 #undef stub

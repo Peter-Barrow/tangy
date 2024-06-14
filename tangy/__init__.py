@@ -7,14 +7,14 @@ from ._tangy import PTUFile
 from sys import platform
 from ctypes.util import find_library
 
-# uqd_lib = None
-# 
-# if platform.startswith("linux"):
-#     uqd_lib = find_library("timetag64")
-# 
-# if platform.startswith("win32"):
-#     uqd_lib = find_library("CTimeTagLib")
-#     from ._uqd import UQDLogic16
-# 
-# if uqd_lib is not None:
-#     from ._uqd import UQDLogic16
+_uqd_lib = None
+
+if platform.startswith("linux"):
+    _uqd_lib = find_library("timetag64")
+
+if platform.startswith("win32"):
+    _uqd_lib = find_library("CTimeTagLib")
+    from ._uqd import UQDLogic16
+
+if _uqd_lib is not None:
+    from ._uqd import UQDLogic16
