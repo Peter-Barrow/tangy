@@ -147,6 +147,17 @@ clk_size_of() {
     return elem_size;
 }
 
+inline void
+clk_clear_buffer(ring_buffer* buf, clk_slice* data) {
+    u64 capacity = rb_get_capacity(buf);
+    for (u64 i = 0; i < capacity; i++) {
+        data->channel[i] = 0;
+        data->timestamp[i].clock = 0;
+        data->timestamp[i].delta = 0;
+    }
+    rb_set_count(buf, 0);
+}
+
 inline clk_slice
 clk_init_base_ptrs(ring_buffer* buf) {
     clk_slice slice = { 0 };

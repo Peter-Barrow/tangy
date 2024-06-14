@@ -137,6 +137,17 @@ tangy_buffer_connect(char* name, tangy_buffer* t_buf) {
     return result;
 }
 
+static inline void tangy_clear_buffer(tangy_buffer* t_buf) {
+    switch (t_buf->format) {
+        case STANDARD:
+            std_clear_buffer(&t_buf->buffer, &t_buf->slice.standard);
+            break;
+        case CLOCKED:
+            clk_clear_buffer(&t_buf->buffer, &t_buf->slice.clocked);
+            break;
+    }
+}
+
 // buffer access
 
 // conversions

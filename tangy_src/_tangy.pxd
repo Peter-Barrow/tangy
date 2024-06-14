@@ -259,6 +259,8 @@ cdef extern from "./src/tangy.h":
 
     u64 tangy_bins_from_time(tangy_buffer* t_buf, f64 time)
 
+    void tangy_clear_buffer(tangy_buffer* t_buf)
+
     u64 tangy_buffer_slice(tangy_buffer* t_buf,
                            tangy_field_ptrs* ptrs,
                            u64 start,

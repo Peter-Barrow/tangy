@@ -777,6 +777,10 @@ class TangyBuffer:
         return count_pushed
 
     @cython.ccall
+    def clear(self):
+        _tangy.tangy_clear_buffer(self._ptr_buf)
+
+    @cython.ccall
     def lower_bound(self, time: float) -> int:
         """ Find the position in the buffer that gives the last "time" seconds\
         in the buffer

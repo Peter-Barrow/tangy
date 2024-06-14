@@ -42,6 +42,16 @@ std_size_of() {
     return elem_size;
 }
 
+inline void
+std_clear_buffer(ring_buffer* buf, std_slice* data) {
+    u64 capacity = rb_get_capacity(buf);
+    for (u64 i = 0; i < capacity; i++) {
+        data->channel[i] = 0;
+        data->timestamp[i] = 0;
+    }
+    rb_set_count(buf, 0);
+}
+
 inline std_slice
 std_init_base_ptrs(ring_buffer* buf) {
     std_slice slice = { 0 };
@@ -75,8 +85,8 @@ std_channel_at(const std_slice* data, u64 absolute_index) {
 
 inline u64
 std_arrival_time_at(const std_slice* data,
-                     u64 conversion_factor,
-                     u64 absolute_index) {
+                    u64 conversion_factor,
+                    u64 absolute_index) {
     return data->timestamp[absolute_index];
 }
 
@@ -92,10 +102,10 @@ std_as_bins(std_timetag record, u64 conversion_factor) {
 
 inline u64
 std_buffer_slice(ring_buffer* const buf,
-                  const std_slice* const data,
-                  std_slice* ptrs,
-                  u64 start,
-                  u64 stop) {
+                 const std_slice* const data,
+                 std_slice* ptrs,
+                 u64 start,
+                 u64 stop) {
 
     if (ptrs->length == 0) {
         return 0;
@@ -125,10 +135,10 @@ std_buffer_slice(ring_buffer* const buf,
 
 inline u64
 std_buffer_push(ring_buffer* const buf,
-                 const std_slice* const data,
-                 std_slice* ptrs,
-                 u64 start,
-                 u64 stop) {
+                const std_slice* const data,
+                std_slice* ptrs,
+                u64 start,
+                u64 stop) {
 
     if (ptrs->length == 0) {
         return 0;
@@ -185,10 +195,10 @@ std_records_copy(vec_std_timetag* records, std_slice* data) {
 
 histogram2D_coords
 std_joint_histogram_position(const std_slice* data,
-                              const u8 ch_idx_idler,
-                              const u8 ch_idx_signal,
-                              const u8 ch_idx_clock,
-                              const std_timetag* timetags) {
+                             const u8 ch_idx_idler,
+                             const u8 ch_idx_signal,
+                             const u8 ch_idx_clock,
+                             const std_timetag* timetags) {
 
     u64 arrival_clock = timetags[ch_idx_clock];
     u64 arrival_signal = timetags[ch_idx_signal];
@@ -199,8 +209,8 @@ std_joint_histogram_position(const std_slice* data,
                         : arrival_idler - arrival_clock;
 
     u64 delta_signal = (arrival_clock > arrival_signal)
-                        ? arrival_clock - arrival_signal
-                        : arrival_signal - arrival_clock;
+                         ? arrival_clock - arrival_signal
+                         : arrival_signal - arrival_clock;
 
     histogram2D_coords point = { .x = delta_idler, .y = delta_signal };
 

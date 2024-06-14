@@ -69,6 +69,8 @@ JOIN(stub, buffer_map_size)(u64 num_elements) {
     return size_context + (size_elems * num_elements);
 }
 
+void JOIN(stub, clear_buffer)(ring_buffer* buffer, slice* data);
+
 // buffer access methods
 
 slice JOIN(stub, init_base_ptrs)(ring_buffer* buf);
