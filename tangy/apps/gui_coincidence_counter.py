@@ -9,7 +9,6 @@ import customtkinter as ctk
 
 from tangy import buffer_list_update
 from tangy import TangyBuffer
-from tangy import find_delay
 
 
 class FloatSpinbox(ctk.CTkFrame):
