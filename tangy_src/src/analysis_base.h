@@ -1,4 +1,3 @@
-#include <cstdlib>
 #ifndef stub
 #error "No template supplied for 'stub'"
 #endif

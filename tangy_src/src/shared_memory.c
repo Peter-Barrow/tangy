@@ -1,5 +1,4 @@
 #include "shared_memory.h"
-//#include <cstdio>
 #include <stdio.h>
 
 tbResult shmem_create(u64 map_size, shared_mapping *map) {
