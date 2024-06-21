@@ -85,16 +85,19 @@ Parse_HH2_T2(u32 record, Record_HH2_T2* Rec_struct, res* out) {
             };
 
             if ((ch >= 1) & (ch <= 15)) {
+                // marker
                 tt += out->overflow;
                 ++photon;
             };
             if (ch == 0) {
+                // sync
                 tt += out->overflow;
                 ++photon;
             };
         };
 
     } else {
+        // photon
         tt += out->overflow;
         ++photon;
         ch += 1;
