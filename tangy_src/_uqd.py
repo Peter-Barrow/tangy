@@ -543,8 +543,9 @@ class UQDLogic16:
         if count == 0:
             return count
 
-        shape: npy_intp[:] = zeros(1, dtype=uint64)
-        shape[0] = count
+        # shape: npy_intp[:] = zeros(1, dtype=uint64)
+        shape: npy_intp[1] = [count]
+        # shape[0] = count
 
         channels = PyArray_SimpleNewFromData(
             1, cython.address(shape[0]), NPY_UINT8, self._channel_ptr)
