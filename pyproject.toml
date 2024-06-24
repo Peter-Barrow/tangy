@@ -16,7 +16,7 @@ readme = "README.md"
 keywords = []
 license = {text = "GPLv3"}
 dependencies = [
-    "numpy",
+    "numpy>=2.0.0",
     "scipy",
     "platformdirs",
     "customtkinter"
