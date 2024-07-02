@@ -41,7 +41,7 @@
 #define __ANALYSISBASE__
 
 #include "base.h"
-#include "ring_buffer_context.h"
+#include "shared_ring_buffer_context.h"
 #include "vector_impls.h"
 
 #define _str(s) str(s)
@@ -64,16 +64,16 @@ u64 JOIN(stub, size_of)();
 
 static inline u64
 JOIN(stub, buffer_map_size)(u64 num_elements) {
-    u64 size_context = rb_context_size();
+    u64 size_context = srb_context_size();
     u64 size_elems = JOIN(stub, size_of)();
     return size_context + (size_elems * num_elements);
 }
 
-void JOIN(stub, clear_buffer)(ring_buffer* buffer, slice* data);
+void JOIN(stub, clear_buffer)(shared_ring_buffer* buffer, slice* data);
 
 // buffer access methods
 
-slice JOIN(stub, init_base_ptrs)(ring_buffer* buf);
+slice JOIN(stub, init_base_ptrs)(shared_ring_buffer* buf);
 record JOIN(stub, record_at)(const slice* data, u64 absolute_index);
 timestamp JOIN(stub, timestamp_at)(const slice* data, u64 absolute_index);
 u8 JOIN(stub, channel_at)(const slice* data, u64 absolute_index);
@@ -81,7 +81,7 @@ u64 JOIN(stub, arrival_time_at)(const slice* data,
                                 u64 conversion_factor,
                                 u64 absolute_index);
 
-#define absIdx(buf, idx) idx % rb_get_capacity(buf)
+#define absIdx(buf, idx) idx % srb_get_capacity(buf)
 #define recordAt(s, idx) JOIN(stub, record_at)(s, idx)
 #define timestampAt(s, idx) JOIN(stub, timestamp_at)(s, idx)
 #define channelAt(s, idx) JOIN(stub, channel_at)(s, idx)
@@ -110,13 +110,13 @@ f64 JOIN(stub, as_time)(timestamp rec, u64 conversion_factor, f64 resolution);
 
 // slice and push
 
-u64 JOIN(stub, buffer_slice)(ring_buffer* const buf,
+u64 JOIN(stub, buffer_slice)(shared_ring_buffer* const buf,
                              const slice* const data,
                              field_ptrs* ptrs,
                              u64 start,
                              u64 stop);
 
-u64 JOIN(stub, buffer_push)(ring_buffer* const buf,
+u64 JOIN(stub, buffer_push)(shared_ring_buffer* const buf,
                             const slice* const data,
                             field_ptrs* ptrs,
                             u64 start,
@@ -125,20 +125,20 @@ u64 JOIN(stub, buffer_push)(ring_buffer* const buf,
 // analysis
 
 static inline u64
-JOIN(stub, oldest_index)(ring_buffer* buf) {
-    u64 count = rb_get_count(buf);
-    u64 capacity = rb_get_capacity(buf);
+JOIN(stub, oldest_index)(shared_ring_buffer* buf) {
+    u64 count = srb_get_count(buf);
+    u64 capacity = srb_get_capacity(buf);
     return count > capacity ? count - capacity : 0;
 }
 
 static inline f64
-JOIN(stub, current_time)(ring_buffer* buf, slice* data) {
-    u64 count = rb_get_count(buf) - 1;
-    u64 capacity = rb_get_capacity(buf);
-    f64 resolution = rb_get_resolution(buf);
+JOIN(stub, current_time)(shared_ring_buffer* buf, slice* data) {
+    u64 count = srb_get_count(buf) - 1;
+    u64 capacity = srb_get_capacity(buf);
+    f64 resolution = srb_get_resolution(buf);
     u64 index = count > capacity ? count - capacity : count;
 
-    u64 conversion_factor = rb_get_conversion_factor(buf);
+    u64 conversion_factor = srb_get_conversion_factor(buf);
 
     // f64 current_time = timeFromBins(arrivalTimeAt(data, conversion_factor,
     // index % capacity), resolution);
@@ -150,11 +150,11 @@ JOIN(stub, current_time)(ring_buffer* buf, slice* data) {
 }
 
 static inline u64
-JOIN(stub, lower_bound)(ring_buffer* buf, const slice* data, u64 key) {
+JOIN(stub, lower_bound)(shared_ring_buffer* buf, const slice* data, u64 key) {
     // FIX: add bounds checks, mid should not exceed valid range
-    u64 capacity = rb_get_capacity(buf);
-    u64 count = rb_get_count(buf) - 1;
-    u64 conversion_factor = rb_get_conversion_factor(buf);
+    u64 capacity = srb_get_capacity(buf);
+    u64 count = srb_get_count(buf) - 1;
+    u64 conversion_factor = srb_get_conversion_factor(buf);
 
     u64 left = count > capacity ? count - capacity : 0;
     u64 right = count;
@@ -176,11 +176,11 @@ JOIN(stub, lower_bound)(ring_buffer* buf, const slice* data, u64 key) {
 #define lowerBound(buf, data, key) JOIN(stub, lower_bound)(buf, data, key)
 
 static inline f64
-JOIN(stub, time_in_buffer)(ring_buffer* buf, slice* data) {
-    u64 count = rb_get_count(buf);
-    u64 capacity = rb_get_capacity(buf);
-    f64 resolution = rb_get_resolution(buf);
-    u64 conversion_factor = rb_get_conversion_factor(buf);
+JOIN(stub, time_in_buffer)(shared_ring_buffer* buf, slice* data) {
+    u64 count = srb_get_count(buf);
+    u64 capacity = srb_get_capacity(buf);
+    f64 resolution = srb_get_resolution(buf);
+    u64 conversion_factor = srb_get_conversion_factor(buf);
 
     u64 newest_index = count;
     u64 oldest_index = 0;
@@ -201,12 +201,12 @@ JOIN(stub, time_in_buffer)(ring_buffer* buf, slice* data) {
 #define timeInBuffer(buf, sl) JOIN(stub, time_in_buffer)(buf, sl)
 
 static inline void
-JOIN(stub, bins_from_time_delays)(ring_buffer* buf,
+JOIN(stub, bins_from_time_delays)(shared_ring_buffer* buf,
                                   const int delays_count,
                                   const f64* const delays,
                                   u64* delays_bins) {
 
-    f64 resolution = rb_get_resolution(buf);
+    f64 resolution = srb_get_resolution(buf);
     i64 offset = (u64)round(delays[0] / resolution);
     i64 temp = 0;
 
@@ -227,7 +227,7 @@ JOIN(stub, bins_from_time_delays)(ring_buffer* buf,
     JOIN(stub, bins_from_time_delays)(buf, n, dt, db)
 
 static inline size
-JOIN(stub, arg_min)(ring_buffer* const buf,
+JOIN(stub, arg_min)(shared_ring_buffer* const buf,
                     const u64* const channel_max,
                     const u64* const current,
                     const size n_channels) {
@@ -248,14 +248,14 @@ JOIN(stub, arg_min)(ring_buffer* const buf,
 #define argMin(buf, ch_max, cur, n) JOIN(stub, arg_min)(buf, ch_max, cur, n)
 
 static inline u64
-JOIN(stub, singles)(ring_buffer* const buf,
+JOIN(stub, singles)(shared_ring_buffer* const buf,
                     const slice* data,
                     const u64 start,
                     const u64 stop,
                     u64* counters) {
 
-    u64 count = rb_get_count(buf);
-    u64 capacity = rb_get_capacity(buf);
+    u64 count = srb_get_count(buf);
+    u64 capacity = srb_get_capacity(buf);
     u64 start_abs = start % capacity;
     u64 stop_abs = stop % capacity;
 
@@ -284,10 +284,10 @@ JOIN(stub, singles)(ring_buffer* const buf,
     return count_current;
 }
 
-// TODO: replace read_time with a length, this way the user can choose to convert
-// a read time to bins or alternatively just pick some number of bins
+// TODO: replace read_time with a length, this way the user can choose to
+// convert a read time to bins or alternatively just pick some number of bins
 static inline pattern_iterator
-JOIN(stub, pattern_init)(ring_buffer* const buf,
+JOIN(stub, pattern_init)(shared_ring_buffer* const buf,
                          const slice* data,
                          const u32 n,
                          const u8* const channels,
@@ -307,9 +307,9 @@ JOIN(stub, pattern_init)(ring_buffer* const buf,
     // }
     // printf("\n");
 
-    u64 count = rb_get_count(buf);
-    u64 capacity = rb_get_capacity(buf);
-    f64 res = rb_get_resolution(buf);
+    u64 count = srb_get_count(buf);
+    u64 capacity = srb_get_capacity(buf);
+    f64 res = srb_get_resolution(buf);
     u64 read_bins = binsFromTime(res, read_time);
 
     u64* channel_max = (u64*)malloc(sizeof(u64) * n);
@@ -324,7 +324,7 @@ JOIN(stub, pattern_init)(ring_buffer* const buf,
 
     u64 channel_min;
     u64 most_recent = asBins(timestampAt(data, (count - 1) % capacity),
-                             rb_get_conversion_factor(buf));
+                             srb_get_conversion_factor(buf));
 
     for (usize i = 0; i < n; i++) {
         if (most_recent <= delays[i]) {
@@ -444,7 +444,7 @@ JOIN(stub, channels_in_coincidence)(const u8 n_channels,
     JOIN(stub, channels_in_coincidence)(n, cur, ch_max, idx, dia, min)
 
 static inline u64
-JOIN(stub, coincidence_count)(ring_buffer* const buf,
+JOIN(stub, coincidence_count)(shared_ring_buffer* const buf,
                               const slice* data,
                               const u64 n_channels,
                               u8* channels,
@@ -457,14 +457,14 @@ JOIN(stub, coincidence_count)(ring_buffer* const buf,
     pattern_iterator pattern =
       patternIteratorInit(buf, data, n_channels, channels, delays, read_time);
 
-    u64 conversion_factor = rb_get_conversion_factor(buf);
+    u64 conversion_factor = srb_get_conversion_factor(buf);
     u64* current_times = (u64*)malloc(n_channels * sizeof(u64));
     for (usize i = 0; i < n_channels; i++) {
         current_times[i] =
           arrivalTimeAt(data, conversion_factor, pattern.index[i]);
     }
 
-    f64 res = rb_get_resolution(buf);
+    f64 res = srb_get_resolution(buf);
     u64 radius_bins = binsFromTime(res, radius); // TODO: should this be doubled
     u64 diameter_bins = radius_bins + radius_bins;
 
@@ -497,7 +497,7 @@ JOIN(stub, coincidence_count)(ring_buffer* const buf,
 }
 
 static inline u64
-JOIN(stub, coincidence_collect)(ring_buffer* const buf,
+JOIN(stub, coincidence_collect)(shared_ring_buffer* const buf,
                                 const slice* data,
                                 const u64 n_channels,
                                 u8* channels,
@@ -517,14 +517,14 @@ JOIN(stub, coincidence_collect)(ring_buffer* const buf,
     pattern_iterator pattern =
       patternIteratorInit(buf, data, n_channels, channels, delays, read_time);
 
-    u64 conversion_factor = rb_get_conversion_factor(buf);
+    u64 conversion_factor = srb_get_conversion_factor(buf);
     u64* current_times = (u64*)malloc(n_channels * sizeof(u64));
     for (usize i = 0; i < n_channels; i++) {
         current_times[i] =
           arrivalTimeAt(data, conversion_factor, pattern.index[i]);
     }
 
-    f64 res = rb_get_resolution(buf);
+    f64 res = srb_get_resolution(buf);
     u64 radius_bins = binsFromTime(res, radius); // TODO: should this be doubled
     u64 diameter_bins = radius_bins + radius_bins;
 
@@ -568,7 +568,7 @@ static inline void JOIN(stub, records_copy)(tt_vector* records,
                                             field_ptrs* data);
 
 static inline u64
-JOIN(stub, timetrace)(ring_buffer* buf,
+JOIN(stub, timetrace)(shared_ring_buffer* buf,
                       const slice* data,
                       const u64 start,
                       const u64 stop,
@@ -578,8 +578,8 @@ JOIN(stub, timetrace)(ring_buffer* buf,
                       const u64 length,
                       u64* intensities) {
 
-    u64 count = rb_get_count(buf);
-    u64 capacity = rb_get_capacity(buf);
+    u64 count = srb_get_count(buf);
+    u64 capacity = srb_get_capacity(buf);
 
     if (start > count) {
         return 0;
@@ -597,7 +597,7 @@ JOIN(stub, timetrace)(ring_buffer* buf,
     iterator_init(&iter, capacity, start, stop);
 
     u64 index = iter.lower.index;
-    u64 conversion_factor = rb_get_conversion_factor(buf);
+    u64 conversion_factor = srb_get_conversion_factor(buf);
     u64 end_of_bin = arrivalTimeAt(data, conversion_factor, index) + bin_width;
 
     u64 i = 0;
@@ -629,7 +629,7 @@ JOIN(stub, timetrace)(ring_buffer* buf,
 }
 
 static inline void
-JOIN(stub, relative_delay)(ring_buffer* buf,
+JOIN(stub, relative_delay)(shared_ring_buffer* buf,
                            const slice* data,
                            const u64 start,
                            const u64 stop,
@@ -640,8 +640,8 @@ JOIN(stub, relative_delay)(ring_buffer* buf,
                            const u64 length,
                            u64* intensities) {
 
-    u64 count = rb_get_count(buf);
-    u64 capacity = rb_get_capacity(buf);
+    u64 count = srb_get_count(buf);
+    u64 capacity = srb_get_capacity(buf);
 
     if (start > count) {
         return;
@@ -658,7 +658,7 @@ JOIN(stub, relative_delay)(ring_buffer* buf,
     circular_iterator iter = { 0 };
     iterator_init(&iter, capacity, start, stop);
     u64 index = iter.lower.index;
-    u64 conversion_factor = rb_get_conversion_factor(buf);
+    u64 conversion_factor = srb_get_conversion_factor(buf);
 
     u64 central_bin = length / 2;
     u64 time_of_arrival_a_previous = 0;
@@ -704,7 +704,7 @@ histogram2D_coords JOIN(stub,
     JOIN(stub, joint_histogram_position)(s, i_i, i_s, i_c, ts)
 
 static inline u64
-JOIN(stub, joint_delay_histogram)(ring_buffer* const buf,
+JOIN(stub, joint_delay_histogram)(shared_ring_buffer* const buf,
                                   const slice* data,
                                   const u8 clock,
                                   const u8 signal,
@@ -748,7 +748,7 @@ JOIN(stub, joint_delay_histogram)(ring_buffer* const buf,
     pattern_iterator pattern =
       patternIteratorInit(buf, data, n_channels, channels, delays, read_time);
 
-    u64 conversion_factor = rb_get_conversion_factor(buf);
+    u64 conversion_factor = srb_get_conversion_factor(buf);
     u64* current_times = (u64*)malloc(n_channels * sizeof(u64));
     timestamp* current_timetags =
       (timestamp*)malloc(n_channels * sizeof(timestamp));
@@ -757,7 +757,7 @@ JOIN(stub, joint_delay_histogram)(ring_buffer* const buf,
           arrivalTimeAt(data, conversion_factor, pattern.index[i]);
     }
 
-    f64 res = rb_get_resolution(buf);
+    f64 res = srb_get_resolution(buf);
     u64 radius_bins = binsFromTime(res, radius); // TODO: should this be doubled
     u64 diameter_bins = radius_bins + radius_bins;
 
@@ -811,6 +811,54 @@ JOIN(stub, joint_delay_histogram)(ring_buffer* const buf,
 
     return count;
 }
+
+// static inline JOIN(stub, second_order_coherence)(ring_buffer* const buf,
+//                                                  const slice* data,
+//                                                  const u8 signal,
+//                                                  const u8 idler,
+//                                                  const f64* delays,
+//                                                  const f64 correlation_window,
+//                                                  const f64 read_time,
+//                                                  u64* intensities) {
+//     u8[2] channels = [ signal, idler ];
+//     pattern_iterator pattern =
+//       patternIteratorInit(buf, data, 2, channels, delays, read_time);
+// 
+//     // NOTE: would be ideal to hold on to these and reuse them, for now this
+//     // will do NOTE: 4096 is reasonably large and it's unlikely (hopefully) that
+//     // these vecs will resize
+//     const u8 N = 4096;
+//     u64[2] idx = [ 0, 0 ];
+//     vec_u64[2] arrival_time_buffers =
+//       [ vector_u64_init(N), vector_u64_init(N) ];
+// 
+//     f64 res = srb_get_resolution(buf);
+//     u64 radius_bins = binsFromTime(res, radius); // TODO: should this be doubled
+//     u64 diameter_bins = radius_bins + radius_bins;
+// 
+//     bool in_range = true;
+//     while (in_range == true) {
+//         pattern.oldest = argMin(buf,
+//                                 pattern.limit,
+//                                 current_times,
+//                                 2); // NOTE: "should" get const folded
+// 
+//         u8 a = pattern.oldest % 2;
+//         u8 b = (pattern.oldest + 1) % 2;
+//         // if a == 0 then b == 1 and vice versa, we don't care what channel each
+//         // is we just want their indices
+// 
+//         // these modulos will hopefully get const folded out...
+//         arrival_time_buffers[a].data[idx[a] % N] = arrivalTimeAt(data,
+//                                                                  conversion_factor,
+//                                                                  pattern.index[pattern.oldest]));
+//         for (usize i = 0
+//     }
+// 
+//     patternIteratorDeinit(pattern_iterator);
+//     vector_u64_deinit(arrival_time_buffers[0]);
+//     vector_u64_deinit(arrival_time_buffers[1]);
+// }
 
 #undef stub
 #undef slice
