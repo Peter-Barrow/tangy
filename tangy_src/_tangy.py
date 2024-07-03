@@ -81,7 +81,8 @@ class Records:
     resolution: float = cython.dataclasses.field()
     clock_period: float = cython.dataclasses.field()
     channels: ndarray(u8n) = cython.dataclasses.field()
-    timetags: Union[ndarray(u64n), Tuple[ndarray(u64n), ndarray(u64n)]] = cython.dataclasses.field()
+    timetags: Union[ndarray(u64n), Tuple[ndarray(
+        u64n), ndarray(u64n)]] = cython.dataclasses.field()
 
 
 @cython.dataclasses.dataclass(frozen=True)
@@ -304,7 +305,7 @@ class TangyBuffer:
     _name = cython.declare(bytes)
     _buf: _tangy.tangy_buffer
     _ptr_buf: cython.pointer(_tangy.tangy_buffer)
-    _ptr_rb: cython.pointer(_tangy.ring_buffer)
+    _ptr_rb: cython.pointer(_tangy.shared_ring_buffer)
     _format: TangyBufferType
     _ptr_rec_vec: cython.pointer(_tangy.tangy_record_vec)
 
@@ -323,7 +324,8 @@ class TangyBuffer:
 
         self._ptr_buf = cython.address(self._buf)
 
-        result: _tangy.tbResult = _tangy.tangy_buffer_connect(c_name, self._ptr_buf)
+        result: _tangy.tbResult = _tangy.tangy_buffer_connect(
+            c_name, self._ptr_buf)
         if result.Ok is True:
             self._ptr_rb = cython.address(self._buf.buffer)
             return
@@ -348,7 +350,8 @@ class TangyBuffer:
     def __del__(self):
         result: _tangy.tbResult = _tangy.tangy_buffer_deinit(self._ptr_buf)
         if result.Ok is False:
-            raise MemoryError("Failed to free memory for buffer and/or records vector")
+            raise MemoryError(
+                "Failed to free memory for buffer and/or records vector")
         buffer_list_update()
 
     def __len__(self):
@@ -505,13 +508,13 @@ class TangyBuffer:
         Returns:
             (float): resolution of timetags
         """
-        return _tangy.rb_get_resolution(cython.address(self._buf.buffer))
+        return _tangy.srb_get_resolution(cython.address(self._buf.buffer))
 
     @resolution.setter
     def resolution(self, res: float):
-        _tangy.rb_set_resolution(self._ptr_rb, res)
-        cf: u64n = _tangy.rb_conversion_factor(res, self.clock_period)
-        _tangy.rb_set_conversion_factor(self._ptr_rb, cf)
+        _tangy.srb_set_resolution(self._ptr_rb, res)
+        cf: u64n = _tangy.srb_conversion_factor(res, self.clock_period)
+        _tangy.srb_set_conversion_factor(self._ptr_rb, cf)
 
     @property
     def clock_period(self) -> float:
@@ -524,13 +527,13 @@ class TangyBuffer:
         Returns:
             (float): clock period of timetags
         """
-        return _tangy.rb_get_clock_period(self._ptr_rb)
+        return _tangy.srb_get_clock_period(self._ptr_rb)
 
     @clock_period.setter
     def clock_period(self, period: float):
-        _tangy.rb_set_clock_period(self._ptr_rb, period)
-        cf: u64n = _tangy.rb_conversion_factor(self.resolution, period)
-        _tangy.rb_set_conversion_factor(self._ptr_rb, cf)
+        _tangy.srb_set_clock_period(self._ptr_rb, period)
+        cf: u64n = _tangy.srb_conversion_factor(self.resolution, period)
+        _tangy.srb_set_conversion_factor(self._ptr_rb, cf)
 
     @property
     def resolution_bins(self) -> int:
@@ -539,7 +542,7 @@ class TangyBuffer:
         Returns:
             (int): resolution of timetags
         """
-        return _tangy.rb_get_resolution_bins(self._ptr_rb)
+        return _tangy.srb_get_resolution_bins(self._ptr_rb)
 
     @property
     def clock_period_bins(self) -> int:
@@ -548,12 +551,12 @@ class TangyBuffer:
         Returns:
             (int): clock period of timetags
         """
-        return _tangy.rb_get_clock_period_bins(self._ptr_rb)
+        return _tangy.srb_get_clock_period_bins(self._ptr_rb)
 
     @property
     def conversion_factor(self) -> int:
         """doc"""
-        return _tangy.rb_get_conversion_factor(self._ptr_rb)
+        return _tangy.srb_get_conversion_factor(self._ptr_rb)
 
     @property
     def capacity(self) -> int:
@@ -562,13 +565,13 @@ class TangyBuffer:
         Returns:
             (int): maximum number of timetags
         """
-        return _tangy.rb_get_capacity(self._ptr_rb)
+        return _tangy.srb_get_capacity(self._ptr_rb)
 
     @property
     def count(self) -> int:
         """ Number of timetags written to the buffer
         """
-        return _tangy.rb_get_count(self._ptr_rb)
+        return _tangy.srb_get_count(self._ptr_rb)
 
     @property
     def reference_count(self) -> int:
@@ -580,11 +583,11 @@ class TangyBuffer:
         Returns:
             (int): number of connections
         """
-        return _tangy.rb_get_reference_count(self._ptr_rb)
+        return _tangy.srb_get_reference_count(self._ptr_rb)
 
     @reference_count.setter
     def reference_count(self, rc: int):
-        _tangy.rb_set_reference_count(self._ptr_rb, rc)
+        _tangy.srb_set_reference_count(self._ptr_rb, rc)
 
     @property
     def channel_count(self) -> int:
@@ -596,11 +599,11 @@ class TangyBuffer:
         Returns:
             (int): number of channels
         """
-        return _tangy.rb_get_channel_count(self._ptr_rb)
+        return _tangy.srb_get_channel_count(self._ptr_rb)
 
     @channel_count.setter
     def channel_count(self, n_ch: int):
-        _tangy.rb_set_channel_count(self._ptr_rb, n_ch)
+        _tangy.srb_set_channel_count(self._ptr_rb, n_ch)
 
     def configuration(self) -> dict:
         config = {
@@ -892,7 +895,8 @@ class TangyBuffer:
         count = 0
         count = _tangy.tangy_coincidence_count(self._ptr_buf,
                                                _n_channels,
-                                               cython.address(_channels_view[0]),
+                                               cython.address(
+                                                   _channels_view[0]),
                                                cython.address(_delays_view[0]),
                                                window,
                                                read_time)
@@ -943,8 +947,10 @@ class TangyBuffer:
         count = 0
         count = _tangy.tangy_coincidence_collect(self._ptr_buf,
                                                  _n_channels,
-                                                 cython.address(_channels_view[0]),
-                                                 cython.address(_delays_view[0]),
+                                                 cython.address(
+                                                     _channels_view[0]),
+                                                 cython.address(
+                                                     _delays_view[0]),
                                                  window,
                                                  read_time,
                                                  cython.address(self._buf.records))
@@ -1053,7 +1059,8 @@ class TangyBuffer:
         """
 
         resolution_trace: f64n = 1.0
-        trace: u64n[:] = self.timetrace([channel_a, channel_b], read_time, resolution_trace)
+        trace: u64n[:] = self.timetrace(
+            [channel_a, channel_b], read_time, resolution_trace)
 
         intensity_average = mean(trace) / resolution_trace
 
@@ -1172,8 +1179,10 @@ class TangyBuffer:
         count = _tangy.tangy_joint_delay_histogram(self._ptr_buf,
                                                    clock, signal, idler,
                                                    _n_channels,
-                                                   cython.address(_channels_view[0]),
-                                                   cython.address(_delays_view[0]),
+                                                   cython.address(
+                                                       _channels_view[0]),
+                                                   cython.address(
+                                                       _delays_view[0]),
                                                    radius,
                                                    read_time,
                                                    cython.address(histogram_view[0]))
@@ -1188,7 +1197,8 @@ class TangyBuffer:
 
         # TODO: this needs to go behind an if-guard
         # TODO: will need other marginal calculation
-        ((nr, nc), ms, mi, histogram) = bin_histogram(histogram, bin_width, bin_width)
+        ((nr, nc), ms, mi, histogram) = bin_histogram(
+            histogram, bin_width, bin_width)
         if centre:
             (ms, mi, histogram) = centre_histogram(central_bin, temporal_window,
                                                    mi, ms, histogram)
@@ -1458,7 +1468,8 @@ class PTUFile():
             clock_period = glob_res
             fmt = TangyBufferType.Clocked
 
-        self._buffer = TangyBuffer(name, resolution, clock_period, n_ch, length, fmt)
+        self._buffer = TangyBuffer(
+            name, resolution, clock_period, n_ch, length, fmt)
 
         return
 
@@ -1509,20 +1520,20 @@ class PTUFile():
         """
         res: u64n = 0
         if self._buffer._format == TangyBufferType.Standard:
-            res = _tangy.rb_read_next_HH2_T2(self._buffer._ptr_rb,
-                                             cython.address(
-                                                 self._buffer._buf.slice.standard),
-                                             self._c_file_handle,
-                                             self._status,
-                                             n)
+            res = _tangy.srb_read_next_HH2_T2(self._buffer._ptr_rb,
+                                              cython.address(
+                                                  self._buffer._buf.slice.standard),
+                                              self._c_file_handle,
+                                              self._status,
+                                              n)
             return res
         if self._buffer._format == TangyBufferType.Clocked:
-            res = _tangy.rb_read_next_HH2_T3(self._buffer._ptr_rb,
-                                             cython.address(
-                                                 self._buffer._buf.slice.clocked),
-                                             self._c_file_handle,
-                                             self._status,
-                                             n)
+            res = _tangy.srb_read_next_HH2_T3(self._buffer._ptr_rb,
+                                              cython.address(
+                                                  self._buffer._buf.slice.clocked),
+                                              self._c_file_handle,
+                                              self._status,
+                                              n)
             return res
         return res
 

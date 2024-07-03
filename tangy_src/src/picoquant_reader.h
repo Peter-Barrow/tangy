@@ -3,7 +3,7 @@
 
 #include "./analysis_impl_clocked.h"
 #include "./analysis_impl_standard.h"
-#include "./ring_buffer_context.h"
+#include "./shared_ring_buffer_context.h"
 
 #include <stdio.h>
 #ifndef __picoquant__
@@ -501,7 +501,7 @@ file_seek(FILE* filehandle, long int offset) {
 // }
 
 static inline u64
-rb_read_next_HH2_T2(ring_buffer* buf,
+srb_read_next_HH2_T2(shared_ring_buffer* buf,
                     std_slice* data,
                     FILE* filehandle,
                     READER_STATUS* status,
@@ -518,13 +518,13 @@ rb_read_next_HH2_T2(ring_buffer* buf,
     out.photon = 0;
     out.overflow = status->overflow;
 
-    u64 count_buffer = rb_get_count(buf);
+    u64 count_buffer = srb_get_count(buf);
 
     if ((status->total_records - count_buffer) < count_tags) {
         count_tags = status->total_records - count_buffer;
     }
 
-    u64 capacity = rb_get_capacity(buf);
+    u64 capacity = srb_get_capacity(buf);
     u64 index = count_buffer % capacity;
 
     while ((status->current_count <= count_tags) &&
@@ -549,13 +549,13 @@ rb_read_next_HH2_T2(ring_buffer* buf,
     status->photon_count += status->current_count;
     status->overflow = out.overflow;
 
-    rb_set_count(buf, count_buffer + status->current_count);
+    srb_set_count(buf, count_buffer + status->current_count);
 
     return 1;
 }
 
 static inline u64
-rb_read_next_HH2_T3(ring_buffer* buf,
+srb_read_next_HH2_T3(shared_ring_buffer* buf,
                     clk_slice* data,
                     FILE* filehandle,
                     READER_STATUS* status,
@@ -572,13 +572,13 @@ rb_read_next_HH2_T3(ring_buffer* buf,
     out.photon = 0;
     out.overflow = status->overflow;
 
-    u64 count_buffer = rb_get_count(buf);
+    u64 count_buffer = srb_get_count(buf);
 
     if ((status->total_records - count_buffer) < count_tags) {
         count_tags = status->total_records - count_buffer;
     }
 
-    u64 capacity = rb_get_capacity(buf);
+    u64 capacity = srb_get_capacity(buf);
     u64 index = count_buffer % capacity;
 
     while ((status->current_count < count_tags) &&
@@ -604,7 +604,7 @@ rb_read_next_HH2_T3(ring_buffer* buf,
     status->photon_count += status->current_count;
     status->overflow = out.overflow;
 
-    rb_set_count(buf, count_buffer + status->current_count);
+    srb_set_count(buf, count_buffer + status->current_count);
 
     return 1;
 }

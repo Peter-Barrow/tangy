@@ -41,6 +41,7 @@
 #define __ANALYSISBASE__
 
 #include "base.h"
+#include "ringbuffer_impls.h"
 #include "shared_ring_buffer_context.h"
 #include "vector_impls.h"
 
@@ -812,53 +813,177 @@ JOIN(stub, joint_delay_histogram)(shared_ring_buffer* const buf,
     return count;
 }
 
-// static inline JOIN(stub, second_order_coherence)(ring_buffer* const buf,
-//                                                  const slice* data,
-//                                                  const u8 signal,
-//                                                  const u8 idler,
-//                                                  const f64* delays,
-//                                                  const f64 correlation_window,
-//                                                  const f64 read_time,
-//                                                  u64* intensities) {
-//     u8[2] channels = [ signal, idler ];
-//     pattern_iterator pattern =
-//       patternIteratorInit(buf, data, 2, channels, delays, read_time);
-// 
-//     // NOTE: would be ideal to hold on to these and reuse them, for now this
-//     // will do NOTE: 4096 is reasonably large and it's unlikely (hopefully) that
-//     // these vecs will resize
-//     const u8 N = 4096;
-//     u64[2] idx = [ 0, 0 ];
-//     vec_u64[2] arrival_time_buffers =
-//       [ vector_u64_init(N), vector_u64_init(N) ];
-// 
-//     f64 res = srb_get_resolution(buf);
-//     u64 radius_bins = binsFromTime(res, radius); // TODO: should this be doubled
-//     u64 diameter_bins = radius_bins + radius_bins;
-// 
-//     bool in_range = true;
-//     while (in_range == true) {
-//         pattern.oldest = argMin(buf,
-//                                 pattern.limit,
-//                                 current_times,
-//                                 2); // NOTE: "should" get const folded
-// 
-//         u8 a = pattern.oldest % 2;
-//         u8 b = (pattern.oldest + 1) % 2;
-//         // if a == 0 then b == 1 and vice versa, we don't care what channel each
-//         // is we just want their indices
-// 
-//         // these modulos will hopefully get const folded out...
-//         arrival_time_buffers[a].data[idx[a] % N] = arrivalTimeAt(data,
-//                                                                  conversion_factor,
-//                                                                  pattern.index[pattern.oldest]));
-//         for (usize i = 0
-//     }
-// 
-//     patternIteratorDeinit(pattern_iterator);
-//     vector_u64_deinit(arrival_time_buffers[0]);
-//     vector_u64_deinit(arrival_time_buffers[1]);
-// }
+static inline void
+JOIN(stub, second_order_coherence)(shared_ring_buffer* const buf,
+                                   const slice* data,
+                                   const u64 start,
+                                   const u64 stop,
+                                   const f64 correlation_window,
+                                   const f64 resolution,
+                                   const u8 signal,
+                                   const u8 idler,
+                                   const f64* delays,
+                                   const u64 length,
+                                   u64* intensities) {
+
+    // FIX: this currently uses the default circular_iterator, it MUST be
+    // migrated over to them
+    //  pattern_iterator to account for the delays that are present, this will
+    //  also cause a change to the signature of the function in terms of the
+    //  start and stop values, this might mean that this will have to be moved
+    //  to having a read time paramter. Or maybe there is a way to di this that
+    //  allows the use for start stop index instead of just read times...
+
+    // NOTE: the similarity between this and relative_delay is arguably too much
+    //  maybe the compiler could optimise away a buffer of length 1?
+    u64 count = srb_get_count(buf);
+    u64 capacity = srb_get_capacity(buf);
+
+    if (start > count) {
+        return;
+    }
+
+    if (stop > count) {
+        return;
+    }
+
+    if (start > stop) {
+        return;
+    }
+
+    // u8 channels[2] = [ signal, idler ];
+
+    // NOTE: would be ideal to hold on to these and reuse them, for now this
+    // will do NOTE: 4096 is reasonably large and it's unlikely (hopefully) that
+    // these vecs will resize
+    const u32 N = 4096;
+    // u64[2] idx = [ 0, 0 ];
+
+    ringbuffer_u64* buffer_signal = ringbuffer_u64_init(N);
+    ringbuffer_u64* buffer_idler = ringbuffer_u64_init(N);
+
+    // f64 res = srb_get_resolution(buf);
+    // u64 radius_bins = binsFromTime(res, correlation_window); // TODO: should
+    // this be doubled u64 diameter_bins = radius_bins + radius_bins;
+
+    u64 conversion_factor = srb_get_conversion_factor(buf);
+
+    circular_iterator iter = { 0 };
+    iterator_init(&iter, capacity, start, stop);
+    u64 index = iter.lower.index;
+
+    u64 central_bin = length / 2;
+    u64 delta;
+    u64 hist_index = 0;
+
+    while (iter.count != 0) {
+        u8 current_channel = channelAt(data, index);
+        u64 time_of_arrival = arrivalTimeAt(data, conversion_factor, index);
+
+        // PERF: is there a way to flip between the signal and idler buffer
+        // without the need for the if-else statement? The compiler should
+        // optimise anything away here but it would still be interesting to
+        // investigate
+
+        if (current_channel == signal) {
+            ringbuffer_u64_push(buffer_signal, time_of_arrival);
+
+            // FIX: the delta calculations here are incompatible with delays
+
+            for (u64 i = 0; i < N; i++) {
+                delta =
+                  time_of_arrival -
+                  ringbuffer_u64_get(buffer_idler, i + buffer_idler->head);
+                if (delta < correlation_window) {
+                    hist_index = (central_bin - delta / resolution) - 1;
+                    intensities[hist_index] += 1;
+                } else {
+                    break;
+                }
+            }
+
+        } else if (current_channel == idler) {
+            ringbuffer_u64_push(buffer_idler, time_of_arrival);
+
+            for (u64 s = 0; s < N; s++) {
+                delta =
+                  time_of_arrival -
+                  ringbuffer_u64_get(buffer_signal, s + buffer_idler->head);
+                if (delta < correlation_window) {
+                    hist_index = central_bin + delta / resolution;
+                    intensities[hist_index] += 1;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        index = next(&iter);
+    }
+
+    ringbuffer_u64_deinit(buffer_signal);
+    ringbuffer_u64_deinit(buffer_idler);
+}
+
+static inline void
+JOIN(stub, second_order_coherence_delays)(shared_ring_buffer* const buf,
+                                          const slice* data,
+                                          const f64 read_time,
+                                          const f64 correlation_window,
+                                          const f64 resolution,
+                                          const u8 signal,
+                                          const u8 idler,
+                                          const f64* delays,
+                                          const u64 length,
+                                          u64* intensities) {
+
+    u8 channels[2] = { signal, idler };
+    i64 resolution_signed[2] = { resolution, -1 * resolution };
+    u64 offset[2] = { 0, 1 };
+    pattern_iterator pattern =
+      patternIteratorInit(buf, data, 2, channels, delays, read_time);
+
+    u64 conversion_factor = srb_get_conversion_factor(buf);
+    u64 current_times[2] = { 0, 0 };
+    for (usize i = 0; i < 2; i++) {
+        current_times[i] =
+          arrivalTimeAt(data, conversion_factor, pattern.index[i]);
+    }
+
+    const u32 N = 4096;
+    // ring buffer for signal and idler (in that order)
+    ringbuffer_u64* buffers[2] = { ringbuffer_u64_init(N), ringbuffer_u64_init(N) };
+
+    u64 central_bin = length / 2;
+
+    bool in_range = true;
+    while (in_range == true) {
+        pattern.oldest = argMin(buf, pattern.limit, current_times, 2);
+        u8 idx_a = pattern.oldest;
+        u8 idx_b = (pattern.oldest == 0) ? 1 : 0;
+
+        u64 time_of_arrival =
+          arrivalTimeAt(data, conversion_factor, pattern.index[idx_a]) +
+          delays[idx_a];
+        ringbuffer_u64_push(buffers[idx_a], time_of_arrival);
+
+        u64 start = buffers[idx_b]->head;
+        u64 stop = start + N;
+
+        for (u64 i = start; i < stop; i += 1) {
+            u64 delta = time_of_arrival - ringbuffer_u64_get(buffers[idx_b], i);
+            if (delta < correlation_window) {
+                u64 hist_index =
+                  (central_bin + delta / resolution_signed[idx_b]) - offset[idx_b];
+                intensities[hist_index] += 1;
+            }
+        }
+    }
+
+    patternIteratorDeinit(&pattern);
+    ringbuffer_u64_deinit(buffers[0]);
+    ringbuffer_u64_deinit(buffers[1]);
+}
 
 #undef stub
 #undef slice

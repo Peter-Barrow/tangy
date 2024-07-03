@@ -43,19 +43,19 @@ std_size_of() {
 }
 
 inline void
-std_clear_buffer(ring_buffer* buf, std_slice* data) {
-    u64 capacity = rb_get_capacity(buf);
+std_clear_buffer(shared_ring_buffer* buf, std_slice* data) {
+    u64 capacity = srb_get_capacity(buf);
     for (u64 i = 0; i < capacity; i++) {
         data->channel[i] = 0;
         data->timestamp[i] = 0;
     }
-    rb_set_count(buf, 0);
+    srb_set_count(buf, 0);
 }
 
 inline std_slice
-std_init_base_ptrs(ring_buffer* buf) {
+std_init_base_ptrs(shared_ring_buffer* buf) {
     std_slice slice = { 0 };
-    u64 capacity = rb_get_capacity(buf);
+    u64 capacity = srb_get_capacity(buf);
 
     u64 channel_offset = 9 * sizeof(u64); // std_size_of();
     slice.length = capacity;
@@ -101,7 +101,7 @@ std_as_bins(std_timetag record, u64 conversion_factor) {
 }
 
 inline u64
-std_buffer_slice(ring_buffer* const buf,
+std_buffer_slice(shared_ring_buffer* const buf,
                  const std_slice* const data,
                  std_slice* ptrs,
                  u64 start,
@@ -115,7 +115,7 @@ std_buffer_slice(ring_buffer* const buf,
         return 0;
     }
 
-    usize capacity = rb_get_capacity(buf);
+    usize capacity = srb_get_capacity(buf);
     circular_iterator iter = { 0 };
     if (iterator_init(&iter, capacity, start, stop) == -1) {
         return 0;
@@ -134,7 +134,7 @@ std_buffer_slice(ring_buffer* const buf,
 }
 
 inline u64
-std_buffer_push(ring_buffer* const buf,
+std_buffer_push(shared_ring_buffer* const buf,
                 const std_slice* const data,
                 std_slice* ptrs,
                 u64 start,
@@ -148,14 +148,14 @@ std_buffer_push(ring_buffer* const buf,
         return 0;
     }
 
-    u64 capacity = rb_get_capacity(buf);
+    u64 capacity = srb_get_capacity(buf);
     u64 start_abs = start % capacity;
     u64 stop_abs = stop % capacity;
 
     u64 total = stop - start;
     u64 mid_stop = start_abs > stop_abs ? capacity : stop_abs;
 
-    if (rb_get_count(buf) == 0) {
+    if (srb_get_count(buf) == 0) {
         mid_stop = total > capacity ? capacity : total;
     }
 
@@ -176,7 +176,7 @@ std_buffer_push(ring_buffer* const buf,
         }
     }
 
-    rb_set_count(buf, rb_get_count(buf) + count);
+    srb_set_count(buf, srb_get_count(buf) + count);
     return count;
 }
 

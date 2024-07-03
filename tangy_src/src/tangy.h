@@ -2,7 +2,7 @@
 #define __TANGY__
 
 #include "base.h"
-#include "ring_buffer_context.h"
+#include "shared_ring_buffer_context.h"
 
 // include implementations of analysis functions
 #include "analysis_impl_clocked.h"
@@ -30,8 +30,8 @@ union tangy_record_vec {
 
 typedef struct tangy_buffer tangy_buffer;
 struct tangy_buffer {
-    ring_buffer buffer;
-    ring_buffer_context context;
+    shared_ring_buffer buffer;
+    shared_ring_buffer_context context;
     tangy_slice slice;
     tangy_record_vec records;
     buffer_format format;
@@ -63,10 +63,10 @@ tangy_buffer_init(buffer_format format,
 
     u64 factor = 1;
     if (clock_period > 0) {
-        factor = rb_conversion_factor(resolution, clock_period);
+        factor = srb_conversion_factor(resolution, clock_period);
     }
 
-    tbResult result = rb_init(num_bytes,
+    tbResult result = srb_init(num_bytes,
                               name_full,
                               resolution,
                               clock_period,
@@ -76,7 +76,7 @@ tangy_buffer_init(buffer_format format,
                               channel_count,
                               &t_buffer->buffer);
 
-    ring_buffer* buf = &t_buffer->buffer;
+    shared_ring_buffer* buf = &t_buffer->buffer;
     switch (format) {
         case STANDARD:
             t_buffer->slice.standard = std_init_base_ptrs(buf);
@@ -93,7 +93,7 @@ tangy_buffer_init(buffer_format format,
 
 static inline tbResult
 tangy_buffer_deinit(tangy_buffer* t_buf) {
-    tbResult result = rb_deinit(&t_buf->buffer);
+    tbResult result = srb_deinit(&t_buf->buffer);
 
     switch (t_buf->format) {
         case STANDARD:
@@ -112,9 +112,9 @@ tangy_buffer_connect(char* name, tangy_buffer* t_buf) {
     tbResult result;
     char* name_full;
 
-    ring_buffer* buf = &t_buf->buffer;
+    shared_ring_buffer* buf = &t_buf->buffer;
     name_full = std_buffer_name_full(name);
-    result = rb_connect(name_full, &t_buf->buffer, &t_buf->context);
+    result = srb_connect(name_full, &t_buf->buffer, &t_buf->context);
     if (result.Ok == true) {
         t_buf->slice.standard = std_init_base_ptrs(buf);
         t_buf->format = STANDARD;
@@ -124,7 +124,7 @@ tangy_buffer_connect(char* name, tangy_buffer* t_buf) {
 
     free(name_full);
     name_full = clk_buffer_name_full(name);
-    result = rb_connect(name_full, &t_buf->buffer, &t_buf->context);
+    result = srb_connect(name_full, &t_buf->buffer, &t_buf->context);
     if (result.Ok == true) {
         t_buf->slice.clocked = clk_init_base_ptrs(buf);
         t_buf->format = CLOCKED;
@@ -156,7 +156,7 @@ static inline u64
 tangy_bins_from_time(tangy_buffer* t_buf, f64 time) {
     u64 bins = 0;
 
-    f64 resolution = rb_get_resolution(&t_buf->buffer);
+    f64 resolution = srb_get_resolution(&t_buf->buffer);
 
     switch (t_buf->format) {
         case STANDARD:
@@ -242,8 +242,8 @@ tangy_oldest_index(tangy_buffer* t_buf) {
 
 static inline f64 tangy_oldest_time(tangy_buffer* t_buf) {
 
-    f64 resolution = rb_get_resolution(&t_buf->buffer);
-    u64 conversion_factor = rb_get_conversion_factor(&t_buf->buffer);
+    f64 resolution = srb_get_resolution(&t_buf->buffer);
+    u64 conversion_factor = srb_get_conversion_factor(&t_buf->buffer);
     u64 index = tangy_oldest_index(t_buf);
 
     u64 arrival_time = 0;

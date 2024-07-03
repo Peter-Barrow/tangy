@@ -4,7 +4,7 @@ from numpy import get_include
 from Cython.Build import cythonize
 from setuptools import setup, Extension
 
-local = False
+local = True
 cython_dir = os.path.join("tangy_src")
 
 compiler_flags = []
@@ -35,7 +35,8 @@ if "Windows" in platform.platform():
     uqd_link_args = [
         '/d2:-AllowCompatibleILVersions'
     ]
-    uqd_include_dirs = [get_include(), base_path + "\\opt\\CTimeTag\\Include\\"]
+    uqd_include_dirs = [get_include(), base_path +
+                        "\\opt\\CTimeTag\\Include\\"]
     uqd_libraries_dirs = [base_path, base_path + '\\opt\\CTimeTag\\Win64\\']
     uqd_libraries = ["CTimeTagLib"]
 

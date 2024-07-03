@@ -28,14 +28,14 @@ struct RINGBUFFER {
 
 static inline RINGBUFFER* JOIN(RB_STUB, init)(u64 capacity) {
     RINGBUFFER* rb = (RINGBUFFER*)malloc(sizeof(RINGBUFFER));
-    if (rb != null) {
+    if (rb != NULL) {
         rb->head = 0;
         rb->capacity = 0;
         rb->data = NULL;
     }
 
-    RBUF_T* data = (RBUF_T*)malloc(sizeof(RBUF_T*) * capacity);
-    if (data != null) {
+    RBUF_T* data = (RBUF_T*)malloc(sizeof(RBUF_T) * capacity);
+    if (data != NULL) {
         rb->data = data;
         rb->capacity = capacity;
     }
@@ -43,11 +43,9 @@ static inline RINGBUFFER* JOIN(RB_STUB, init)(u64 capacity) {
     return rb;
 }
 
-static inline RINGBUFFER* JOIN(RB_STUB, deinit)(RINGBUFFER* rb){
+static inline void JOIN(RB_STUB, deinit)(RINGBUFFER* rb){
     free(rb->data);
     free(rb);
-    rb = NULL;
-    return rb;
 }
 
 static inline void JOIN(RB_STUB, push)(RINGBUFFER* rb, RBUF_T value) {

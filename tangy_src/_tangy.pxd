@@ -76,28 +76,28 @@ cdef extern from './src/picoquant_reader.h':
 
     void delete_reader_status(const READER_STATUS* const reader_stat)
 
-    u64 rb_read_next_HH2_T2(ring_buffer* buf,
+    u64 srb_read_next_HH2_T2(shared_ring_buffer* buf,
                             std_slice* data,
                             FILE* filehandle,
                             READER_STATUS* status,
                             u64 count_tags)
 
-    u64 rb_read_next_HH2_T3(ring_buffer* buf,
+    u64 srb_read_next_HH2_T3(shared_ring_buffer* buf,
                             clk_slice* data,
                             FILE* filehandle,
                             READER_STATUS* status,
                             u64 count_tags)
 
 
-cdef extern from "./src/ring_buffer_context.h":
+cdef extern from "./src/shared_ring_buffer_context.h":
 
-    ctypedef struct ring_buffer:
+    ctypedef struct shared_ring_buffer:
         char* map_ptr
         u64 length_bytes
         fd_t file_descriptor
         char* name
 
-    ctypedef struct ring_buffer_context:
+    ctypedef struct shared_ring_buffer_context:
         f64 resolution
         f64 clock_period
         u64 resolution_bins
@@ -108,37 +108,37 @@ cdef extern from "./src/ring_buffer_context.h":
         u64 reference_count
         u64 channel_count
 
-    u64 rb_context_size()
-    u64 rb_conversion_factor(f64 resolution, f64 clock_period)
+    u64 srb_context_size()
+    u64 srb_conversion_factor(f64 resolution, f64 clock_period)
 
-    f64 rb_get_resolution(ring_buffer* buffer)
-    void rb_set_resolution(ring_buffer* buffer, f64 resolution)
+    f64 srb_get_resolution(shared_ring_buffer* buffer)
+    void srb_set_resolution(shared_ring_buffer* buffer, f64 resolution)
 
-    f64 rb_get_clock_period(ring_buffer* buffer)
-    void rb_set_clock_period(ring_buffer* buffer, f64 clock_period)
+    f64 srb_get_clock_period(shared_ring_buffer* buffer)
+    void srb_set_clock_period(shared_ring_buffer* buffer, f64 clock_period)
 
-    u64 rb_get_resolution_bins(ring_buffer* buffer)
-    void rb_set_resolution_bins(ring_buffer* buffer, u64 resolution_bins)
+    u64 srb_get_resolution_bins(shared_ring_buffer* buffer)
+    void srb_set_resolution_bins(shared_ring_buffer* buffer, u64 resolution_bins)
 
-    u64 rb_get_clock_period_bins(ring_buffer* buffer)
-    void rb_set_clock_period_bins(ring_buffer* buffer, u64 clock_period_bins)
+    u64 srb_get_clock_period_bins(shared_ring_buffer* buffer)
+    void srb_set_clock_period_bins(shared_ring_buffer* buffer, u64 clock_period_bins)
 
-    u64 rb_get_conversion_factor(ring_buffer* buffer)
-    void rb_set_conversion_factor(ring_buffer* buffer, u64 conversion_factor)
+    u64 srb_get_conversion_factor(shared_ring_buffer* buffer)
+    void srb_set_conversion_factor(shared_ring_buffer* buffer, u64 conversion_factor)
 
-    u64 rb_get_capacity(ring_buffer* buffer)
-    void rb_set_capacity(ring_buffer* buffer, u64 capacity)
+    u64 srb_get_capacity(shared_ring_buffer* buffer)
+    void srb_set_capacity(shared_ring_buffer* buffer, u64 capacity)
 
-    u64 rb_get_count(ring_buffer* buffer)
-    void rb_set_count(ring_buffer* buffer, u64 count)
+    u64 srb_get_count(shared_ring_buffer* buffer)
+    void srb_set_count(shared_ring_buffer* buffer, u64 count)
 
-    u64 rb_get_reference_count(ring_buffer* buffer)
-    void rb_set_reference_count(ring_buffer* buffer, u64 reference_count)
+    u64 srb_get_reference_count(shared_ring_buffer* buffer)
+    void srb_set_reference_count(shared_ring_buffer* buffer, u64 reference_count)
 
-    u64 rb_get_channel_count(ring_buffer* buffer)
-    void rb_set_channel_count(ring_buffer* buffer, u64 channel_count)
+    u64 srb_get_channel_count(shared_ring_buffer* buffer)
+    void srb_set_channel_count(shared_ring_buffer* buffer, u64 channel_count)
 
-    tbResult rb_init(const u64 length_bytes,
+    tbResult srb_init(const u64 length_bytes,
                      char* name,
                      f64 resolution,
                      f64 clock_period,
@@ -147,15 +147,15 @@ cdef extern from "./src/ring_buffer_context.h":
                      u64 count,
                      u64 reference_count,
                      u64 channel_count,
-                     ring_buffer* buffer)
+                     shared_ring_buffer* buffer)
 
-    tbResult rb_deinit(ring_buffer* buffer)
+    tbResult srb_deinit(shared_ring_buffer* buffer)
 
-    tbResult rb_connect(char* name,
-                        ring_buffer* buffer,
-                        ring_buffer_context* context)
+    tbResult srb_connect(char* name,
+                        shared_ring_buffer* buffer,
+                        shared_ring_buffer_context* context)
 
-    void rb_set_context(ring_buffer* buffer,
+    void srb_set_context(shared_ring_buffer* buffer,
                         f64 resolution,
                         f64 clock_period,
                         u64 conversion_factor,
@@ -163,7 +163,7 @@ cdef extern from "./src/ring_buffer_context.h":
                         u64 reference_count,
                         u64 channel_count)
 
-    void rb_get_context(ring_buffer* buffer, ring_buffer_context* context)
+    void srb_get_context(shared_ring_buffer* buffer, shared_ring_buffer_context* context)
 
 cdef extern from "./src/analysis_impl_standard.h":
 
@@ -239,8 +239,8 @@ cdef extern from "./src/tangy.h":
         vec_clk_timetag clocked
 
     ctypedef struct tangy_buffer:
-        ring_buffer buffer
-        ring_buffer_context context
+        shared_ring_buffer buffer
+        shared_ring_buffer_context context
         tangy_slice slice
         tangy_record_vec records
         buffer_format format
