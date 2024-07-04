@@ -67,14 +67,14 @@ tangy_buffer_init(buffer_format format,
     }
 
     tbResult result = srb_init(num_bytes,
-                              name_full,
-                              resolution,
-                              clock_period,
-                              factor,
-                              capacity,
-                              0,
-                              channel_count,
-                              &t_buffer->buffer);
+                               name_full,
+                               resolution,
+                               clock_period,
+                               factor,
+                               capacity,
+                               0,
+                               channel_count,
+                               &t_buffer->buffer);
 
     shared_ring_buffer* buf = &t_buffer->buffer;
     switch (format) {
@@ -137,7 +137,8 @@ tangy_buffer_connect(char* name, tangy_buffer* t_buf) {
     return result;
 }
 
-static inline void tangy_clear_buffer(tangy_buffer* t_buf) {
+static inline void
+tangy_clear_buffer(tangy_buffer* t_buf) {
     switch (t_buf->format) {
         case STANDARD:
             std_clear_buffer(&t_buf->buffer, &t_buf->slice.standard);
@@ -240,7 +241,8 @@ tangy_oldest_index(tangy_buffer* t_buf) {
     return index;
 }
 
-static inline f64 tangy_oldest_time(tangy_buffer* t_buf) {
+static inline f64
+tangy_oldest_time(tangy_buffer* t_buf) {
 
     f64 resolution = srb_get_resolution(&t_buf->buffer);
     u64 conversion_factor = srb_get_conversion_factor(&t_buf->buffer);
@@ -250,11 +252,13 @@ static inline f64 tangy_oldest_time(tangy_buffer* t_buf) {
     f64 oldest_time = 0.0;
     switch (t_buf->format) {
         case STANDARD:
-            arrival_time = std_arrival_time_at(&t_buf->slice.standard, conversion_factor, index);
+            arrival_time = std_arrival_time_at(
+              &t_buf->slice.standard, conversion_factor, index);
             oldest_time = std_time_from_bins(resolution, arrival_time);
             return oldest_time;
         case CLOCKED:
-            arrival_time = clk_arrival_time_at(&t_buf->slice.clocked, conversion_factor, index);
+            arrival_time = clk_arrival_time_at(
+              &t_buf->slice.clocked, conversion_factor, index);
             oldest_time = clk_time_from_bins(resolution, arrival_time);
             return oldest_time;
     }
@@ -538,6 +542,86 @@ tangy_joint_delay_histogram(tangy_buffer* t_buf,
     }
 
     return count;
+}
+
+static inline void
+tangy_second_order_coherence(tangy_buffer* t_buf,
+                             const u64 start,
+                             const u64 stop,
+                             const f64 correlation_window,
+                             const f64 resolution,
+                             const u8 signal,
+                             const u8 idler,
+                             const u64 length,
+                             u64* intensities) {
+
+    switch (t_buf->format) {
+        case STANDARD:
+            std_second_order_coherence(&t_buf->buffer,
+                                       &t_buf->slice.standard,
+                                       start,
+                                       stop,
+                                       correlation_window,
+                                       resolution,
+                                       signal,
+                                       idler,
+                                       length,
+                                       intensities);
+
+            break;
+        case CLOCKED:
+            clk_second_order_coherence(&t_buf->buffer,
+                                       &t_buf->slice.clocked,
+                                       start,
+                                       stop,
+                                       correlation_window,
+                                       resolution,
+                                       signal,
+                                       idler,
+                                       length,
+                                       intensities);
+            break;
+    }
+}
+
+static inline void
+tangy_second_order_coherence_delays(tangy_buffer* t_buf,
+                                    const f64 read_time,
+                                    const f64 correlation_window,
+                                    const f64 resolution,
+                                    const u8 signal,
+                                    const u8 idler,
+                                    const f64* delays,
+                                    const u64 length,
+                                    u64* intensities) {
+
+    switch (t_buf->format) {
+        case STANDARD:
+            std_second_order_coherence_delays(&t_buf->buffer,
+                                              &t_buf->slice.standard,
+                                              read_time,
+                                              correlation_window,
+                                              resolution,
+                                              signal,
+                                              idler,
+                                              delays,
+                                              length,
+                                              intensities);
+
+              break;
+        case CLOCKED:
+            clk_second_order_coherence_delays(&t_buf->buffer,
+                                              &t_buf->slice.clocked,
+                                              read_time,
+                                              correlation_window,
+                                              resolution,
+                                              signal,
+                                              idler,
+                                              delays,
+                                              length,
+                                              intensities);
+            break;
+    }
 }
 
 #endif
