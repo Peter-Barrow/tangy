@@ -813,6 +813,7 @@ JOIN(stub, joint_delay_histogram)(shared_ring_buffer* const buf,
     return count;
 }
 
+// TODO: test this
 static inline void
 JOIN(stub, second_order_coherence)(shared_ring_buffer* const buf,
                                    const slice* data,
@@ -822,7 +823,6 @@ JOIN(stub, second_order_coherence)(shared_ring_buffer* const buf,
                                    const f64 resolution,
                                    const u8 signal,
                                    const u8 idler,
-                                   const f64* delays,
                                    const u64 length,
                                    u64* intensities) {
 
@@ -893,7 +893,7 @@ JOIN(stub, second_order_coherence)(shared_ring_buffer* const buf,
             for (u64 i = 0; i < N; i++) {
                 delta =
                   time_of_arrival -
-                  ringbuffer_u64_get(buffer_idler, i + buffer_idler->head);
+                  ringbuffer_u64_get(buffer_idler, buffer_idler->head - i - 1);
                 if (delta < correlation_window) {
                     hist_index = (central_bin - delta / resolution) - 1;
                     intensities[hist_index] += 1;
@@ -906,9 +906,9 @@ JOIN(stub, second_order_coherence)(shared_ring_buffer* const buf,
             ringbuffer_u64_push(buffer_idler, time_of_arrival);
 
             for (u64 s = 0; s < N; s++) {
-                delta =
-                  time_of_arrival -
-                  ringbuffer_u64_get(buffer_signal, s + buffer_idler->head);
+                delta = time_of_arrival -
+                        ringbuffer_u64_get(buffer_signal,
+                                           buffer_signal->head - s - 1);
                 if (delta < correlation_window) {
                     hist_index = central_bin + delta / resolution;
                     intensities[hist_index] += 1;
@@ -925,6 +925,7 @@ JOIN(stub, second_order_coherence)(shared_ring_buffer* const buf,
     ringbuffer_u64_deinit(buffer_idler);
 }
 
+// TODO: test this
 static inline void
 JOIN(stub, second_order_coherence_delays)(shared_ring_buffer* const buf,
                                           const slice* data,
@@ -938,46 +939,78 @@ JOIN(stub, second_order_coherence_delays)(shared_ring_buffer* const buf,
                                           u64* intensities) {
 
     u8 channels[2] = { signal, idler };
-    i64 resolution_signed[2] = { resolution, -1 * resolution };
-    u64 offset[2] = { 0, 1 };
+    // i64 resolution_signed[2] = { resolution, -1 * resolution };
+    // u64 offset[2] = { 0, 1 };
     pattern_iterator pattern =
       patternIteratorInit(buf, data, 2, channels, delays, read_time);
+
+    u64 delay_bins[2] = { 0, 0 };
+    binsFromTimeDelays(buf, 2, delays, delay_bins);
 
     u64 conversion_factor = srb_get_conversion_factor(buf);
     u64 current_times[2] = { 0, 0 };
     for (usize i = 0; i < 2; i++) {
         current_times[i] =
-          arrivalTimeAt(data, conversion_factor, pattern.index[i]);
+          arrivalTimeAt(data, conversion_factor, pattern.index[i]) +
+          delay_bins[i];
     }
 
     const u32 N = 4096;
     // ring buffer for signal and idler (in that order)
-    ringbuffer_u64* buffers[2] = { ringbuffer_u64_init(N), ringbuffer_u64_init(N) };
+    ringbuffer_u64* buffers[2] = { ringbuffer_u64_init(N),
+                                   ringbuffer_u64_init(N) };
 
     u64 central_bin = length / 2;
+    u64 delta;
+    u64 hist_index = 0;
 
     bool in_range = true;
     while (in_range == true) {
+
         pattern.oldest = argMin(buf, pattern.limit, current_times, 2);
-        u8 idx_a = pattern.oldest;
-        u8 idx_b = (pattern.oldest == 0) ? 1 : 0;
 
-        u64 time_of_arrival =
-          arrivalTimeAt(data, conversion_factor, pattern.index[idx_a]) +
-          delays[idx_a];
-        ringbuffer_u64_push(buffers[idx_a], time_of_arrival);
+        if (channels[pattern.oldest] == signal) {
+            ringbuffer_u64_push(buffers[0], current_times[0]);
 
-        u64 start = buffers[idx_b]->head;
-        u64 stop = start + N;
+            for (u64 i = 0; i < N; i++) {
+                delta =
+                  current_times[0] -
+                  ringbuffer_u64_get(buffers[1], buffers[1]->head - i - 1);
 
-        for (u64 i = start; i < stop; i += 1) {
-            u64 delta = time_of_arrival - ringbuffer_u64_get(buffers[idx_b], i);
-            if (delta < correlation_window) {
-                u64 hist_index =
-                  (central_bin + delta / resolution_signed[idx_b]) - offset[idx_b];
-                intensities[hist_index] += 1;
+                if (delta < correlation_window) {
+                    hist_index = (central_bin - delta / resolution) - 1;
+                    intensities[hist_index] += 1;
+                } else {
+                    break;
+                }
+            }
+
+        } else if (channels[pattern.oldest] == idler) {
+            ringbuffer_u64_push(buffers[1], current_times[1]);
+
+            for (u64 s = 0; s < N; s++) {
+                delta =
+                  current_times[1] -
+                  ringbuffer_u64_get(buffers[0], buffers[0]->head - s - 1);
+
+                if (delta < correlation_window) {
+                    hist_index = central_bin + delta / resolution;
+                    intensities[hist_index] += 1;
+                } else {
+                    break;
+                }
             }
         }
+
+        in_range = nextForChannel(data,
+                                  &pattern.iters[pattern.oldest],
+                                  channels[pattern.oldest],
+                                  &pattern.index[pattern.oldest]);
+
+        current_times[pattern.oldest] =
+          arrivalTimeAt(
+            data, conversion_factor, pattern.index[pattern.oldest]) +
+          delay_bins[pattern.oldest];
     }
 
     patternIteratorDeinit(&pattern);

@@ -331,3 +331,24 @@ cdef extern from "./src/tangy.h":
                                     const f64 radius,
                                     const f64 read_time,
                                     u64* intensities)
+
+    void tangy_second_order_coherence(tangy_buffer* t_buf,
+                                      const u64 start,
+                                      const u64 stop,
+                                      const f64 correlation_window,
+                                      const f64 resolution,
+                                      const u8 signal,
+                                      const u8 idler,
+                                      const u64 length,
+                                      u64* intensities)
+
+
+    void tangy_second_order_coherence_delays(tangy_buffer* t_buf,
+                                             const f64 read_time,
+                                             const f64 correlation_window,
+                                             const f64 resolution,
+                                             const u8 signal,
+                                             const u8 idler,
+                                             const f64* delays,
+                                             const u64 length,
+                                             u64* intensities)

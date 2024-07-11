@@ -1058,6 +1058,9 @@ class TangyBuffer:
             (delay_result): Dataclass containing histogram data and fitting results
         """
 
+        # PERF: replace time trace with singles()
+        # NOTE: decay (tau) is ≈ 1 / singles(channelX), so we have:
+        #   tau_a = 1 / singles(channel_a) and tau_b = 1 / singles(channel_b)
         resolution_trace: f64n = 1.0
         trace: u64n[:] = self.timetrace(
             [channel_a, channel_b], read_time, resolution_trace)
@@ -1066,6 +1069,9 @@ class TangyBuffer:
 
         correlation_window: f64n = window
         if window is None:
+            # NOTE: This should then be...
+            # correlation_window =
+            #   (1 / singles(channel_a)) + (1 / singles(channel_b))
             correlation_window = 2 / intensity_average ** 2
 
         length: u64n = round(correlation_window / resolution) - 1
@@ -1207,6 +1213,40 @@ class TangyBuffer:
         return JointHistogram(radius_bins, temporal_window,
                               (bin_width, bin_width), histogram,
                               mi, ms, axis, axis)
+
+    @cython.ccall
+    def second_order_coherence(self, signal: int, idler: int, read_time: float,
+                               radius: float, resolution: float,
+                               delays: Optional[List[float]] = None):
+
+        length: u64n = u64n(radius / resolution)
+        correlation_window: f64n = radius / self.resolution
+
+        resolution_hist: u64n = u64n(correlation_window / f64n(length))
+        correlation_window = length * resolution_hist
+        length *= 2
+
+        intensities: u64n[:] = zeros(length, dtype=u64n)
+        intensities_view: u64[:] = intensities
+
+        times = (arange(length) - (length // 2)) * resolution
+
+        if delays is None:
+            start: u64 = self.lower_bound(self.current_time() - read_time)
+            stop: u64 = self.count
+
+            _tangy.tangy_second_order_coherence(
+                self._ptr_buf, start, stop, correlation_window,
+                resolution_hist, signal, idler,
+                length, cython.address(intensities_view[0]))
+            return (times, intensities)
+
+        _delays_view: cython.double[::1] = array(delays, dtype=f64n)
+        _tangy.tangy_second_order_coherence_delays(
+            self._ptr_buf, read_time, correlation_window, resolution_hist,
+            signal, idler, cython.address(_delays_view[0]),
+            length, cython.address(intensities_view[0]))
+        return (times, intensities)
 
 
 _ptu_header_tag_types = {
