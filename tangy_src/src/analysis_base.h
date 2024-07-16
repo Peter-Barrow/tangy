@@ -781,6 +781,8 @@ JOIN(stub, joint_delay_histogram)(shared_ring_buffer* const buf,
         if (check == 1) {
             point = jointHistogramPosition(
               data, idx_signal, idx_idler, idx_clock, current_timetags);
+            // TODO: can we centre the spectra here? Have a central bin and then calculate the 
+            // offset from that?
             if ((point.x < diameter_bins) & (point.y < diameter_bins)) {
                 // histogram_2d[point.y][point.x] += 1;
                 // signal -> rows -> x
@@ -813,7 +815,6 @@ JOIN(stub, joint_delay_histogram)(shared_ring_buffer* const buf,
     return count;
 }
 
-// TODO: test this
 static inline void
 JOIN(stub, second_order_coherence)(shared_ring_buffer* const buf,
                                    const slice* data,
@@ -939,8 +940,6 @@ JOIN(stub, second_order_coherence_delays)(shared_ring_buffer* const buf,
                                           u64* intensities) {
 
     u8 channels[2] = { signal, idler };
-    // i64 resolution_signed[2] = { resolution, -1 * resolution };
-    // u64 offset[2] = { 0, 1 };
     pattern_iterator pattern =
       patternIteratorInit(buf, data, 2, channels, delays, read_time);
 
@@ -961,44 +960,33 @@ JOIN(stub, second_order_coherence_delays)(shared_ring_buffer* const buf,
                                    ringbuffer_u64_init(N) };
 
     u64 central_bin = length / 2;
-    u64 delta;
     u64 hist_index = 0;
 
     bool in_range = true;
     while (in_range == true) {
 
         pattern.oldest = argMin(buf, pattern.limit, current_times, 2);
+        u8 idx_a = pattern.oldest;
+        u8 idx_b = (idx_a == 0) ? 1 : 0;
 
-        if (channels[pattern.oldest] == signal) {
-            ringbuffer_u64_push(buffers[0], current_times[0]);
+        ringbuffer_u64_push(buffers[idx_a], current_times[idx_a]);
+        for (u64 i = 0; i < N; i++) {
+            // TODO: investigate makeing delta signed, might eliminate branch below
+            u64 delta =
+              current_times[idx_a] -
+              ringbuffer_u64_get(buffers[idx_b], buffers[idx_b]->head - i - 1);
 
-            for (u64 i = 0; i < N; i++) {
-                delta =
-                  current_times[0] -
-                  ringbuffer_u64_get(buffers[1], buffers[1]->head - i - 1);
+            if (delta < correlation_window) {
 
-                if (delta < correlation_window) {
+                if (idx_a == 0) { // left of centre
                     hist_index = (central_bin - delta / resolution) - 1;
-                    intensities[hist_index] += 1;
-                } else {
-                    break;
-                }
-            }
-
-        } else if (channels[pattern.oldest] == idler) {
-            ringbuffer_u64_push(buffers[1], current_times[1]);
-
-            for (u64 s = 0; s < N; s++) {
-                delta =
-                  current_times[1] -
-                  ringbuffer_u64_get(buffers[0], buffers[0]->head - s - 1);
-
-                if (delta < correlation_window) {
+                } else { // right of centre
                     hist_index = central_bin + delta / resolution;
-                    intensities[hist_index] += 1;
-                } else {
-                    break;
                 }
+                intensities[hist_index] += 1;
+
+            } else {
+                break;
             }
         }
 

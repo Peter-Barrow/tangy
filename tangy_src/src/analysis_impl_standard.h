@@ -193,6 +193,7 @@ std_records_copy(vec_std_timetag* records, std_slice* data) {
     }
 }
 
+// TODO: add delays
 histogram2D_coords
 std_joint_histogram_position(const std_slice* data,
                              const u8 ch_idx_idler,
@@ -212,7 +213,10 @@ std_joint_histogram_position(const std_slice* data,
                          ? arrival_clock - arrival_signal
                          : arrival_signal - arrival_clock;
 
-    histogram2D_coords point = { .x = delta_idler, .y = delta_signal };
+    histogram2D_coords point = {
+        .x = delta_idler,
+        .y = delta_signal
+    };
 
     return point;
 }

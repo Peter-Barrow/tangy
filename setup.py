@@ -4,7 +4,7 @@ from numpy import get_include
 from Cython.Build import cythonize
 from setuptools import setup, Extension
 
-local = False
+local = True
 cython_dir = os.path.join("tangy_src")
 
 compiler_flags = []
