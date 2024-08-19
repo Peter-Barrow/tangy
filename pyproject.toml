@@ -74,20 +74,16 @@ archs = ["auto64"]
 environment = { PATH="$PATH:./opt" }
 
 build = [
-    "cp38-manylinux_x86_64",
     "cp39-manylinux_x86_64",
     "cp310-manylinux_x86_64",
     "cp311-manylinux_x86_64",
     "cp312-manylinux_x86_64",
-    "cp38-macosx_x86_64",
-    "cp38-macosx_arm64",
     "cp39-macosx_x86_64",
     "cp39-macosx_arm64",
     "cp310-macosx_x86_64",
     "cp310-macosx_arm64",
     "cp311-macosx_x86_64",
     "cp311-macosx_arm64",
-    "cp38-win_amd64",
     "cp39-win_amd64",
     "cp310-win_amd64",
     "cp311-win_amd64",
