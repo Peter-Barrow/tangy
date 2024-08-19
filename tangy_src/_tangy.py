@@ -1249,6 +1249,35 @@ class TangyBuffer:
         return (times, intensities)
 
 
+ChannelConfig = Tuple[TangyBuffer, List[int], Optional[List[float]]]
+
+
+@cython.cclass
+class Measurement:
+
+    def __init__(self,
+                 channel_info: Union[ChannelConfig, List[ChannelConfig]]
+                 ):
+
+        if type(channel_info) is ChannelConfig:
+            channel_info = [channel_info]
+
+        buffers_count: int = len(channel_info)
+
+        buffers = []
+        channels = []
+        delays = []
+
+        pattern_count = 0
+
+        for (buf, ch, d) in channel_info:
+            buffers.append(buf)
+            channels.append(ch)
+            delays.append(d)
+            pattern_count += len(channels)
+    # TODO: what do I really want here?
+
+
 _ptu_header_tag_types = {
     "tyEmpty8": 0xFFFF0008,
     "tyBool8": 0x00000008,

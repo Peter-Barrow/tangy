@@ -37,6 +37,19 @@ struct tangy_buffer {
     buffer_format format;
 };
 
+
+///
+/// @brief initialise a buffer
+///
+/// @param[in] format buffer layout to use
+/// @param[in] name user friendly identifier
+/// @param[in] capacity
+/// @param[in] resolution
+/// @param[in] clock_period
+/// @param[in] channel_count number of channels supported for this instance
+/// @param[in/out] t_buffer buffer variable to initialise
+/// @return ok or error
+///
 static inline tbResult
 tangy_buffer_init(buffer_format format,
                   char* name,

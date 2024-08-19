@@ -5,7 +5,7 @@ tbResult shmem_create(u64 map_size, shared_mapping *map) {
 
     tbResult result = {0};
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
 
     fd_t fd = shm_open(map->name, O_RDWR | O_CREAT | O_EXCL, 0777);
 
@@ -27,7 +27,7 @@ tbResult shmem_create(u64 map_size, shared_mapping *map) {
         return result;
     }
 
-#elif _WIN32
+#elif defined(_WIN32)
 
     LARGE_INTEGER win_int64;
     win_int64.QuadPart = map_size;
@@ -67,6 +67,9 @@ tbResult shmem_create(u64 map_size, shared_mapping *map) {
         return result;
     }
 
+#else
+    #error "Unknown platform"
+
 #endif
 
     map->file_descriptor = fd;
@@ -81,7 +84,7 @@ tbResult shmem_connect(shared_mapping *map) {
 
     tbResult result = {0};
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
 
     fd_t fd = shm_open(map->name, O_RDWR, 0777);
 
@@ -106,7 +109,7 @@ tbResult shmem_connect(shared_mapping *map) {
         return result;
     }
 
-#elif _WIN32
+#elif defined(_WIN32)
 
     // fd_t fd = OpenFileMapping(FILE_MAP_WRITE, FALSE, map->name);
 
@@ -135,6 +138,9 @@ tbResult shmem_connect(shared_mapping *map) {
         return result;
     }
 
+#else
+    #error "Unknown platform"
+
 #endif
 
     map->file_descriptor = fd;
@@ -149,7 +155,7 @@ tbResult shmem_close(shared_mapping *map) {
 
     tbResult result = {0};
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
     struct stat file_status;
     if (-1 == fstat(map->file_descriptor, &file_status)) {
         return result;
@@ -166,7 +172,8 @@ tbResult shmem_close(shared_mapping *map) {
     if (-1 == shm_unlink(map->name)) {
         return result;
     }
-#elif _WIN32
+
+#elif defined(_WIN32)
     UnmapViewOfFile(map->data);
     //CloseHandle(map->file_descriptor);
 
@@ -179,6 +186,9 @@ tbResult shmem_close(shared_mapping *map) {
     CloseHandle(handle);
     close(map->file_descriptor);
 
+#else
+    #error "Unknown platform"
+
 #endif
 
     result.Ok = true;
@@ -190,7 +200,7 @@ tbResult shmem_close(shared_mapping *map) {
 tbResult shmem_exists(char *const map_name, u8 *exists) {
     tbResult result = {0};
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
     fd_t shm_descriptor = shm_open(map_name, O_RDONLY, 0777);
 
     if (0 <= shm_descriptor) {
@@ -203,13 +213,16 @@ tbResult shmem_exists(char *const map_name, u8 *exists) {
         return result;
     }
 
-#elif _WIN32
+#elif defined(_WIN32)
 
     //int fd = _open_osfhandle((intptr_t)handle, 0);
     HANDLE shm_descriptor = OpenFileMapping(FILE_MAP_WRITE, FALSE, map_name);
     if (!shm_descriptor) {
         return result;
     }
+
+#else
+    #error "Unknown platform"
 
 #endif
 
