@@ -1527,7 +1527,6 @@ class PTUFile():
         record_type = self._header["TTResultFormat_TTTRRecType"]["value"]
         key = _ptu_record_types_reversed[record_type].upper()
 
-        print("attempting to make buffer")
         if "T2" in key:
             resolution = sync_res
             clock_period = 1
