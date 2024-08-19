@@ -26,7 +26,7 @@ python3 -m pip install tangy[gui] # if you intend on using the guis
 ### Advanced
 Install from git to get the latest version
 ```sh title="git"
-python3 -m pip install git+https://gitlab.com/PeterBarrow/tangy.git
+python3 -m pip install git+https://gitlab.com/Peter-Barrow/tangy.git
 ```
 
 ## Quick Examples
