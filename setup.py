@@ -13,9 +13,9 @@ def building_on_github_actions():
     return True
 
 
-local = True
-if building_on_github_actions():
-    local = False
+local = False
+if building_on_github_actions() is False:
+    local = True
 
 cython_dir = os.path.join("tangy_src")
 
