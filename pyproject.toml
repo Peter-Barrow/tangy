@@ -71,7 +71,7 @@ before-build = [
     ]
 skip = "pp"
 archs = ["auto64"]
-environment = { PATH="$PATH:./opt" }
+environment = { PATH="$PATH:./opt", CI="CI" }
 
 build = [
     "cp39-manylinux_x86_64",
