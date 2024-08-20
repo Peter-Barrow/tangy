@@ -18,6 +18,17 @@
 typedef struct {
     u8 channel;
     u64 time_tag;
+} Record_PH_T2;
+
+typedef struct {
+    u8 channel;
+    u64 delta_t;
+    u64 sync;
+} Record_PH_T3;
+
+typedef struct {
+    u8 channel;
+    u64 time_tag;
 } Record_HH2_T2;
 
 typedef struct {
@@ -60,6 +71,64 @@ Parse_HH1_T2(u32 record, Record_HH2_T2* Rec_struct, res* out) {
 
     Rec_struct->channel = (u8)ch;
     Rec_struct->time_tag = (u64)tt;
+
+    out->photon = photon;
+
+    return photon;
+}
+
+static inline int Parse_PH_T2(u32 record, Record_PH_T2* Rec_struct, res* out) {
+    const u64 T2WRAPAROUND = 210698240;
+
+    u8 ch = (u8)(record >> 28);
+    u64 tt = (u64)(record & 0b00001111111111111111111111111111);
+
+    int photon = 0;
+
+    if (ch == 0xf) {
+        u64 marker = tt & 0xf;
+        if (marker == 0) {
+            out->overflow += T2WRAPAROUND;
+        } else {
+            tt += out->overflow;
+            ++photon;
+        }
+    } else {
+        tt += out->overflow;
+        ++photon;
+    }
+
+    Rec_struct->channel = ch;
+    Rec_struct->time_tag = tt;
+    out->photon = photon;
+
+    return photon;
+}
+
+static inline int Parse_PH_T3(u32 record, Record_PH_T3 *Rec_struct, res *out) {
+    const int T3WRAPAROUND = 65536;
+
+    u8 ch = (u8)((record & 0b11110000000000000000000000000000) >> 28);
+    u64 dt = (u64)((record & 0b00001111111111110000000000000000) >> 16);
+    u64 ns = (u64)(record & 0b00000000000000001111111111111111);
+
+    int photon = 0;
+
+    if (ch == 0xf) {
+        if (dt == 0) {
+            out->overflow += T3WRAPAROUND;
+        } else {
+            ns += out->overflow;
+            ++photon;
+        }
+    } else {
+        ns += out->overflow;
+        ++photon;
+    }
+
+    Rec_struct->channel = ch;
+    Rec_struct->sync = dt;
+    Rec_struct->sync = ns;
 
     out->photon = photon;
 
@@ -173,7 +242,7 @@ Parse_HH2_T3_TAGS(u32 record,
                 *overflow += T3WRAPAROUND_V2;
             } else {
                 *overflow += (T3WRAPAROUND_V2 * ns);
-            }
+}
         }
         if ((ch >= 1) & (ch <= 15)) {
             ns += *overflow;
