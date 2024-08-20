@@ -12,12 +12,13 @@ def building_on_github_actions():
         return False
     return True
 
-local = True
-if "CIBUILDWHEEL" in os.environ or os.environ["CIBUILDWHEEL"]:
-    local = False
+# local = True
+# if "CIBUILDWHEEL" in os.environ or os.environ["CIBUILDWHEEL"]:
+#     local = False
 
 # if building_on_github_actions():
 #     local = False
+local = False
 
 cython_dir = os.path.join("tangy_src")
 
@@ -71,8 +72,7 @@ if "Windows" in platform.platform():
 
     uqd = Extension(
         "tangy._uqd",
-        sources=[
-            os.path.join(cython_dir, "_uqd.py")],
+        sources=[os.path.join(cython_dir, "_uqd.py")],
         define_macros=[('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')],
         include_dirs=[base_path, base_path + '\\opt\\CTimeTag\\Win64\\'],
         libraries=["CTimeTagLib"],
