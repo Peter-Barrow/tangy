@@ -5,20 +5,9 @@ from Cython.Build import cythonize
 from setuptools import setup, Extension
 
 
-def building_on_github_actions():
-    if "CI" not in os.environ \
-            or not os.environ["CI"] \
-            or "GITHUB_RUN_ID" not in os.environ:
-        return False
-    return True
-
-# local = True
-# if "CIBUILDWHEEL" in os.environ or os.environ["CIBUILDWHEEL"]:
-#     local = False
-
-# if building_on_github_actions():
-#     local = False
-local = False
+local = True
+if os.environ.get("CIBUILDWHEEL", '0') == 1:
+    local = False
 
 cython_dir = os.path.join("tangy_src")
 

@@ -76,17 +76,29 @@ cdef extern from './src/picoquant_reader.h':
 
     void delete_reader_status(const READER_STATUS* const reader_stat)
 
-    u64 srb_read_next_HH2_T2(shared_ring_buffer* buf,
+    u64 srb_read_next_PH_T2(shared_ring_buffer* buf,
                             std_slice* data,
                             FILE* filehandle,
                             READER_STATUS* status,
                             u64 count_tags)
 
-    u64 srb_read_next_HH2_T3(shared_ring_buffer* buf,
+    u64 srb_read_next_PH_T3(shared_ring_buffer* buf,
                             clk_slice* data,
                             FILE* filehandle,
                             READER_STATUS* status,
                             u64 count_tags)
+
+    u64 srb_read_next_HH2_T2(shared_ring_buffer* buf,
+                             std_slice* data,
+                             FILE* filehandle,
+                             READER_STATUS* status,
+                             u64 count_tags)
+
+    u64 srb_read_next_HH2_T3(shared_ring_buffer* buf,
+                             clk_slice* data,
+                             FILE* filehandle,
+                             READER_STATUS* status,
+                             u64 count_tags)
 
 
 cdef extern from "./src/shared_ring_buffer_context.h":

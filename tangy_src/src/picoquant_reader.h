@@ -90,9 +90,11 @@ Parse_PH_T2(u32 record, Record_PH_T2* Rec_struct, res* out) {
         u64 marker = tt & 0xf;
         if (marker == 0) {
             out->overflow += T2WRAPAROUND;
+            // ch -= 1;
         } else {
             tt += out->overflow;
-            ++photon;
+            // ++photon;
+            // ch -= 2;
         }
     } else {
         tt += out->overflow;
@@ -121,7 +123,7 @@ Parse_PH_T3(u32 record, Record_PH_T3* Rec_struct, res* out) {
             out->overflow += T3WRAPAROUND;
         } else {
             ns += out->overflow;
-            ++photon;
+            // ++photon;
         }
     } else {
         ns += out->overflow;

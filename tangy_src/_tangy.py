@@ -1586,23 +1586,50 @@ class PTUFile():
 
         :param n: [TODO:description]
         """
+
         res: u64n = 0
+        record_type = self._header["TTResultFormat_TTTRRecType"]["value"]
+
         if self._buffer._format == TangyBufferType.Standard:
-            res = _tangy.srb_read_next_HH2_T2(self._buffer._ptr_rb,
-                                              cython.address(
-                                                  self._buffer._buf.slice.standard),
-                                              self._c_file_handle,
-                                              self._status,
-                                              n)
-            return res
+
+            slice_standard: cython.pointer(_tangy.std_slice) = \
+                cython.address(self._buffer._buf.slice.standard)
+
+            if record_type == _ptu_record_types["PicoHarpT2"]:
+                res = _tangy.srb_read_next_PH_T2(self._buffer._ptr_rb,
+                                                 slice_standard,
+                                                 self._c_file_handle,
+                                                 self._status,
+                                                 n)
+                return res
+
+            if record_type == _ptu_record_types["HydraHarp2T2"]:
+                res = _tangy.srb_read_next_HH2_T2(self._buffer._ptr_rb,
+                                                  slice_standard,
+                                                  self._c_file_handle,
+                                                  self._status,
+                                                  n)
+                return res
+
         if self._buffer._format == TangyBufferType.Clocked:
-            res = _tangy.srb_read_next_HH2_T3(self._buffer._ptr_rb,
-                                              cython.address(
-                                                  self._buffer._buf.slice.clocked),
-                                              self._c_file_handle,
-                                              self._status,
-                                              n)
-            return res
+            slice_clocked: cython.pointer(_tangy.clk_slice) = \
+                cython.address(self._buffer._buf.slice.clocked)
+
+            if record_type == _ptu_record_types["PicoHarpT3"]:
+                res = _tangy.srb_read_next_PH_T3(self._buffer._ptr_rb,
+                                                 slice_clocked,
+                                                 self._c_file_handle,
+                                                 self._status,
+                                                 n)
+                return res
+
+            if record_type == _ptu_record_types["HydraHarp2T3"]:
+                res = _tangy.srb_read_next_HH2_T3(self._buffer._ptr_rb,
+                                                  slice_clocked,
+                                                  self._c_file_handle,
+                                                  self._status,
+                                                  n)
+                return res
         return res
 
     # def read_seconds(self, t: f64n):
