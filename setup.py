@@ -8,6 +8,7 @@ from setuptools import setup, Extension
 local = True
 if os.environ.get("CIBUILDWHEEL", '0') == 1:
     local = False
+local = False
 
 cython_dir = os.path.join("tangy_src")
 
