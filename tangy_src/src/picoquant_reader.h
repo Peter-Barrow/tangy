@@ -77,7 +77,8 @@ Parse_HH1_T2(u32 record, Record_HH2_T2* Rec_struct, res* out) {
     return photon;
 }
 
-static inline int Parse_PH_T2(u32 record, Record_PH_T2* Rec_struct, res* out) {
+static inline int
+Parse_PH_T2(u32 record, Record_PH_T2* Rec_struct, res* out) {
     const u64 T2WRAPAROUND = 210698240;
 
     u8 ch = (u8)(record >> 28);
@@ -105,7 +106,8 @@ static inline int Parse_PH_T2(u32 record, Record_PH_T2* Rec_struct, res* out) {
     return photon;
 }
 
-static inline int Parse_PH_T3(u32 record, Record_PH_T3 *Rec_struct, res *out) {
+static inline int
+Parse_PH_T3(u32 record, Record_PH_T3* Rec_struct, res* out) {
     const int T3WRAPAROUND = 65536;
 
     u8 ch = (u8)((record & 0b11110000000000000000000000000000) >> 28);
@@ -242,7 +244,7 @@ Parse_HH2_T3_TAGS(u32 record,
                 *overflow += T3WRAPAROUND_V2;
             } else {
                 *overflow += (T3WRAPAROUND_V2 * ns);
-}
+            }
         }
         if ((ch >= 1) & (ch <= 15)) {
             ns += *overflow;
@@ -333,39 +335,40 @@ file_seek(FILE* filehandle, long int offset) {
 //                  FILE* filehandle,
 //                  READER_STATUS* status,
 //                  u64 n_tags) {
-// 
+//
 //     unsigned int TTTRRec;
 //     int rec_size = sizeof(u32);
 //     int photon;
 //     int n;
-// 
+//
 //     status->current_count = 0;
-// 
+//
 //     Record_HH2_T2 record = { 0 };
 //     res out = { 0 };
 //     out.photon = 0;
 //     out.overflow = status->overflow;
-// 
+//
 //     u64 count = ((std_buffer_info*)buffer->map_ptr)->count;
 //     if ((status->total_records - count) < n_tags) {
 //         n_tags = status->total_records - count;
 //     };
-// 
+//
 //     u64 capacity = ((std_buffer_info*)buffer->map_ptr)->capacity;
 //     usize index = (count) % capacity;
 //     while ((status->current_count <= n_tags) &&
 //            (status->record_count <= status->total_records)) {
-// 
-//         // found the bottleneck, this should be called as few times as possible
+//
+//         // found the bottleneck, this should be called as few times as
+//         possible
 //         // i.e. just read some number of pages at a time
 //         n = fread(&TTTRRec, 1, rec_size, filehandle);
 //         if (n != rec_size) {
 //             break;
 //         }
-// 
+//
 //         status->record_count += 1;
 //         photon = Parse_HH2_T2(TTTRRec, &record, &out);
-// 
+//
 //         if (photon == 1) {
 //             buffer->ptrs.channel[index] = record.channel;
 //             buffer->ptrs.timestamp[index] = record.time_tag;
@@ -373,15 +376,16 @@ file_seek(FILE* filehandle, long int offset) {
 //             index = (index + 1) % capacity;
 //         };
 //     };
-// 
+//
 //     status->photon_count += status->current_count;
 //     status->overflow = out.overflow;
-// 
-//     ((std_buffer_info*)buffer->map_ptr)->count = count + status->current_count;
-// 
+//
+//     ((std_buffer_info*)buffer->map_ptr)->count = count +
+//     status->current_count;
+//
 //     return 1;
 // }
-// 
+//
 // // TODO: implement this ...
 // // static inline u64 new_read_next_HH2_T3(const clk_buffer * const buffer,
 // //                                        FILE * filehandle, READER_STATUS *
@@ -413,42 +417,42 @@ file_seek(FILE* filehandle, long int offset) {
 // //
 // //     return count + remainder;
 // // }
-// 
+//
 // static inline u64
 // read_next_HH2_T3(const clk_buffer* const buffer,
 //                  FILE* filehandle,
 //                  READER_STATUS* status,
 //                  u64 n_tags) {
-// 
+//
 //     unsigned int TTTRRec;
 //     int rec_size = sizeof(u32);
 //     int photon;
 //     int n;
-// 
+//
 //     status->current_count = 0;
-// 
+//
 //     Record_HH2_T3 record = { 0 };
 //     res out = { 0 };
 //     out.photon = 0;
 //     out.overflow = status->overflow;
-// 
+//
 //     u64 count = ((clk_buffer_info*)buffer->map_ptr)->count;
 //     if ((status->total_records - count) < n_tags) {
 //         n_tags = status->total_records - count;
 //     };
-// 
+//
 //     u64 capacity = ((clk_buffer_info*)buffer->map_ptr)->capacity;
 //     usize index = (count) % capacity;
 //     while ((status->current_count < n_tags) &&
 //            (status->record_count <= status->total_records)) {
-// 
+//
 //         n = fread(&TTTRRec, 1, rec_size, filehandle);
 //         if (n != rec_size) {
 //             break;
 //         }
 //         status->record_count += 1;
 //         photon = Parse_HH2_T3(TTTRRec, &record, &out);
-// 
+//
 //         if (photon == 1) {
 //             buffer->ptrs.channel[index] = record.channel;
 //             buffer->ptrs.timestamp[index] =
@@ -457,101 +461,103 @@ file_seek(FILE* filehandle, long int offset) {
 //             index = (index + 1) % capacity;
 //         };
 //     };
-// 
+//
 //     status->photon_count += status->current_count;
 //     status->overflow = out.overflow;
-// 
-//     ((clk_buffer_info*)buffer->map_ptr)->count = count + status->current_count;
-// 
+//
+//     ((clk_buffer_info*)buffer->map_ptr)->count = count +
+//     status->current_count;
+//
 //     return 1;
 // }
-// 
+//
 // static inline u64
 // read_time_HH2_T2(const std_buffer* const buffer,
 //                  FILE* filehandle,
 //                  READER_STATUS* status,
 //                  u64 max_time) {
-// 
+//
 //     // does cur_sync need to have the reference subtracted?
 //     // while ((cur_sync < max_time) && (count <= rec_num)){
-// 
+//
 //     unsigned int TTTRRec;
 //     int rec_size = sizeof(u32);
 //     int photon;
 //     int n;
-// 
+//
 //     status->current_count = 0;
-// 
+//
 //     Record_HH2_T2 record = { 0 };
 //     res out = { 0 };
 //     out.photon = 0;
 //     out.overflow = status->overflow;
-// 
+//
 //     u64 count = ((std_buffer_info*)buffer->map_ptr)->count;
 //     u64 capacity = ((std_buffer_info*)buffer->map_ptr)->capacity;
 //     usize index = (count) % capacity;
 //     while ((record.time_tag < max_time) &&
 //            (status->record_count <= status->total_records)) {
-// 
+//
 //         n = fread(&TTTRRec, 1, rec_size, filehandle);
 //         if (n != rec_size) {
 //             break;
 //         }
 //         status->record_count += 1;
 //         photon = Parse_HH2_T2(TTTRRec, &record, &out);
-// 
+//
 //         if (photon != 0) {
-// 
+//
 //             ++status->current_count;
 //             buffer->ptrs.channel[index] = record.channel;
 //             buffer->ptrs.timestamp[index] = record.time_tag;
 //             index = (index + 1) % capacity;
 //         };
 //     };
-// 
+//
 //     status->photon_count += status->current_count;
 //     status->overflow = out.overflow;
-//     ((std_buffer_info*)buffer->map_ptr)->count = count + status->current_count;
-// 
+//     ((std_buffer_info*)buffer->map_ptr)->count = count +
+//     status->current_count;
+//
 //     return 1;
 // }
-// 
+//
 // static inline u64
 // read_time_HH2_T3(const clk_buffer* const buffer,
 //                  FILE* filehandle,
 //                  READER_STATUS* status,
 //                  u64 max_time) {
-// 
+//
 //     // does cur_sync need to have the reference subtracted?
 //     // while ((cur_sync < max_time) && (count <= rec_num)){
-// 
+//
 //     unsigned int TTTRRec;
 //     int rec_size = sizeof(u32);
 //     int photon;
 //     int n;
-// 
+//
 //     status->current_count = 0;
-// 
+//
 //     Record_HH2_T3 record = { 0 };
 //     res out = { 0 };
 //     out.photon = 0;
 //     out.overflow = status->overflow;
-// 
+//
 //     u64 count = ((clk_buffer_info*)buffer->map_ptr)->count;
 //     u64 capacity = ((clk_buffer_info*)buffer->map_ptr)->capacity;
 //     usize index = (count) % capacity;
 //     while ((record.sync < max_time) &&
 //            (status->record_count <= status->total_records)) {
-// 
+//
 //         n = fread(&TTTRRec, 1, rec_size, filehandle);
 //         if (n != rec_size) {
 //             break;
 //         }
 //         status->record_count += 1;
 //         photon = Parse_HH2_T3(TTTRRec, &record, &out);
-// 
+//
 //         if (photon == 1) {
-// 
+//
 //             ++status->current_count;
 //             buffer->ptrs.channel[index] = record.channel;
 //             buffer->ptrs.timestamp[index] =
@@ -561,20 +567,130 @@ file_seek(FILE* filehandle, long int offset) {
 //             index = (index + 1) % capacity;
 //         };
 //     };
-// 
+//
 //     status->photon_count += status->current_count;
 //     status->overflow = out.overflow;
-//     ((clk_buffer_info*)buffer->map_ptr)->count = count + status->current_count;
-// 
+//     ((clk_buffer_info*)buffer->map_ptr)->count = count +
+//     status->current_count;
+//
 //     return 1;
 // }
 
 static inline u64
-srb_read_next_HH2_T2(shared_ring_buffer* buf,
+srb_read_next_PH_T2(shared_ring_buffer* buf,
                     std_slice* data,
                     FILE* filehandle,
                     READER_STATUS* status,
                     u64 count_tags) {
+
+    u32 tttr_rec;
+    u64 tttr_rec_size = sizeof(tttr_rec);
+    int photon;
+    u64 n;
+
+    status->current_count = 0;
+    Record_PH_T2 record = { 0 };
+    res out = { 0 };
+    out.photon = 0;
+    out.overflow = status->overflow;
+
+    u64 count_buffer = srb_get_count(buf);
+
+    if ((status->total_records - count_buffer) < count_tags) {
+        count_tags = status->total_records - count_buffer;
+    }
+
+    u64 capacity = srb_get_capacity(buf);
+    u64 index = count_buffer % capacity;
+
+    while ((status->current_count <= count_tags) &&
+           (status->record_count <= status->total_records)) {
+
+        n = fread(&tttr_rec, 1, tttr_rec_size, filehandle);
+        if (n != tttr_rec_size) {
+            break;
+        }
+
+        status->record_count += 1;
+        photon = Parse_PH_T2(tttr_rec, &record, &out);
+
+        if (photon == 1) {
+            data->channel[index] = record.channel;
+            data->timestamp[index] = record.time_tag;
+            ++status->current_count;
+            index = (index + 1) % capacity;
+        }
+    }
+
+    status->photon_count += status->current_count;
+    status->overflow = out.overflow;
+
+    srb_set_count(buf, count_buffer + status->current_count);
+
+    return 1;
+}
+
+static inline u64
+srb_read_next_PH_T3(shared_ring_buffer* buf,
+                    clk_slice* data,
+                    FILE* filehandle,
+                    READER_STATUS* status,
+                    u64 count_tags) {
+
+    u32 tttr_rec;
+    u64 tttr_rec_size = sizeof(tttr_rec);
+    int photon;
+    u64 n;
+
+    status->current_count = 0;
+    Record_PH_T3 record = { 0 };
+    res out = { 0 };
+    out.photon = 0;
+    out.overflow = status->overflow;
+
+    u64 count_buffer = srb_get_count(buf);
+
+    if ((status->total_records - count_buffer) < count_tags) {
+        count_tags = status->total_records - count_buffer;
+    }
+
+    u64 capacity = srb_get_capacity(buf);
+    u64 index = count_buffer % capacity;
+
+    while ((status->current_count <= count_tags) &&
+           (status->record_count <= status->total_records)) {
+
+        n = fread(&tttr_rec, 1, tttr_rec_size, filehandle);
+        if (n != tttr_rec_size) {
+            break;
+        }
+
+        status->record_count += 1;
+        photon = Parse_PH_T3(tttr_rec, &record, &out);
+
+        if (photon == 1) {
+            data->channel[index] = record.channel;
+            data->timestamp[index] =
+              (clk_timetag){ .clock = record.sync, .delta = record.delta_t };
+            ++status->current_count;
+            index = (index + 1) % capacity;
+        }
+    }
+
+    status->photon_count += status->current_count;
+    status->overflow = out.overflow;
+
+    srb_set_count(buf, count_buffer + status->current_count);
+
+    return 1;
+}
+
+static inline u64
+srb_read_next_HH2_T2(shared_ring_buffer* buf,
+                     std_slice* data,
+                     FILE* filehandle,
+                     READER_STATUS* status,
+                     u64 count_tags) {
 
     u32 tttr_rec;
     u64 tttr_rec_size = sizeof(tttr_rec);
@@ -625,10 +741,10 @@ srb_read_next_HH2_T2(shared_ring_buffer* buf,
 
 static inline u64
 srb_read_next_HH2_T3(shared_ring_buffer* buf,
-                    clk_slice* data,
-                    FILE* filehandle,
-                    READER_STATUS* status,
-                    u64 count_tags) {
+                     clk_slice* data,
+                     FILE* filehandle,
+                     READER_STATUS* status,
+                     u64 count_tags) {
 
     u32 tttr_rec;
     u64 tttr_rec_size = sizeof(tttr_rec);
