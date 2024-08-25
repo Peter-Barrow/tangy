@@ -6,9 +6,10 @@ from setuptools import setup, Extension
 
 
 local = True
+print("CIBUILDWHEEL ", os.environ.get("CIBUILDWHEEL", '0'))
 if os.environ.get("CIBUILDWHEEL", '0') == 1:
     local = False
-local = False
+# local = False
 
 cython_dir = os.path.join("tangy_src")
 
@@ -30,7 +31,10 @@ compiler_flags = []
 if "Linux" in platform.platform():
     # compiler_flags = ["-O2", "-march=native"]
     # compiler_flags = ["-march=native"]
-    uqd_include_dirs = [get_include(), "./opt/CTimeTag/Include", "."]
+    uqd_include_dirs = [get_include(),
+                        "./opt/CTimeTag/Include",
+                        ".",
+                        "./tangy_src/src/"]
     libusb = "usb"
     if local is True:
         libusb = "usb-1.0"
@@ -38,13 +42,15 @@ if "Linux" in platform.platform():
     uqd = Extension(
         "tangy._uqd",
         sources=[
-            os.path.join(cython_dir, "_uqd.py")],
+            os.path.join(cython_dir, "_ctimetag.py"),
+            os.path.join(cython_dir, "src/uqd_bindings.cpp"),
+        ],
         define_macros=[('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')],
         include_dirs=uqd_include_dirs,
         libraries=[libusb, 'timetag64'],
         library_dirs=['.', './opt/CTimeTag/Linux'],
         extra_compile_args=compiler_flags,
-        language="c++",
+        # language="c",
         optional=os.environ.get('CIBUILDWHEEL', '0') != '1',
     )
     extensions.append(uqd)
@@ -60,11 +66,20 @@ if "Windows" in platform.platform():
 
     base_path = os.getcwd()
 
+    uqd_include_dirs = [
+        get_include(),
+        base_path + "\\opt\\CTimeTag\\Include\\",
+        base_path + "\\tangy_src\\src\\",
+    ]
+
     uqd = Extension(
         "tangy._uqd",
-        sources=[os.path.join(cython_dir, "_uqd.py")],
+        sources=[
+            os.path.join(cython_dir, "_ctimetag.py"),
+            os.path.join(cython_dir, "src\\uqd_bindings.cpp"),
+        ],
         define_macros=[('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')],
-        include_dirs=[get_include(), base_path + "\\opt\\CTimeTag\\Include\\"],
+        include_dirs=uqd_include_dirs,
         libraries=["CTimeTagLib"],
         library_dirs=[base_path, base_path + '\\opt\\CTimeTag\\Win64\\'],
         extra_link_args=['/d2:-AllowCompatibleILVersions'],

@@ -1,6 +1,6 @@
 import cython
 import time
-from cython.cimports import _uqd as _uqd
+from cython.cimports import _ctimetag as _ctimetag
 from cython.cimports.libcpp import bool as cbool
 from typing import List, Tuple, Optional
 from cython.cimports.libc.stdint import uint8_t as u8
@@ -89,11 +89,11 @@ class UQDLogic16:
 
     """
 
-    _c_timetag: _uqd.CTimeTag
-    _c_logic: cython.pointer(_uqd.CLogic)
+    _c_timetag: _ctimetag.CTimeTag_ptr
+    # _c_logic: cython.pointer(_uqd.CLogic)
 
-    _channel_ptr: cython.pointer(u8)
-    _timetag_ptr: cython.pointer(cython.longlong)
+    _channel_ptr: cython.pointer(_ctimetag.c_ChannelType)
+    _timetag_ptr: cython.pointer(_ctimetag.c_TimeType)
 
     _device_id: cython.int
     _number_of_channels: cython.int
@@ -122,14 +122,14 @@ class UQDLogic16:
         if device_id < 1:
             raise ValueError("device_id must be >= 1")
 
-        _uqd.ctimetag_new(cython.address(self._c_timetag))
-        _uqd.clogic_new(cython.address(self._c_timetag), self._c_logic)
+        self._c_timetag = _ctimetag.CTimeTag_create()
 
         if self.is_open() is True:
             raise ResourceWarning(f"Device with id={device_id} in use")
 
         self._device_id = device_id
-        self._c_timetag.Open(device_id)
+        # self._c_timetag.Open(device_id)
+        _ctimetag.CTimeTag_open(self._c_timetag, device_id)
         self._input_thresholds = zeros(self.number_of_channels, dtype=float64)
         self._inversion = zeros(self.number_of_channels, dtype=uint8)
         self._input_delay = zeros(self.number_of_channels, dtype=float64)
@@ -148,7 +148,7 @@ class UQDLogic16:
         return
 
     def is_open(self) -> bool:
-        res: int = self._c_timetag.IsOpen()
+        res: int = _ctimetag.CTimeTag_isOpen(self._c_timetag)
         if res == 1:
             return True
 
@@ -156,14 +156,14 @@ class UQDLogic16:
 
     def __close__(self):
         print('Gracefully closing connection to device...')
-        self._c_timetag.Close()
+        _ctimetag.CTimeTag_destroy(self._c_timetag)
 
     def __exit__(self):
         print('Gracefully closing connection to device...')
-        self._c_timetag.Close()
+        _ctimetag.CTimeTag_destroy(self._c_timetag)
 
     def calibrate(self):
-        self._c_timetag.Calibrate()
+        _ctimetag.CTimeTag_calibrate(self._c_timetag)
 
     @property
     def led_brightness(self) -> int:
@@ -184,8 +184,10 @@ class UQDLogic16:
             percent (int): brightness in percent
         """
         if (percent < 0) or (percent > 100):
-            raise ValueError("led_brightness must be in an integer between 0 and 100")
-        self._c_timetag.SetLedBrightness(percent)
+            raise ValueError(
+                "led_brightness must be in an integer between 0 and 100")
+
+        _ctimetag.CTimeTag_setLedBrightness(self._c_timetag, percent)
         self._led_brightness = percent
 
     @property
@@ -196,7 +198,7 @@ class UQDLogic16:
         Returns:
             (int): fpga design version
         """
-        return self._c_timetag.GetFpgaVersion()
+        return _ctimetag.CTimeTag_getResolution(self._c_timetag)
 
     @property
     def resolution(self) -> float:
@@ -209,7 +211,7 @@ class UQDLogic16:
         Returns:
             (float): resolution
         """
-        res: cython.double = self._c_timetag.GetResolution()
+        res: cython.double = _ctimetag.CTimeTag_getResolution(self._c_timetag)
         return res
 
     @property
@@ -222,7 +224,7 @@ class UQDLogic16:
         Returns:
             (int): number of useable input channels
         """
-        return self._c_timetag.GetNoInputs()
+        return _ctimetag.CTimeTag_getNoInputs(self._c_timetag)
 
     @property
     def input_threshold(self) -> List[float64]:
@@ -258,7 +260,7 @@ class UQDLogic16:
             raise ValueError("abs(voltage) must be <= 2V")
 
         self._input_thresholds[channel - 1] = voltage
-        self._c_timetag.SetInputThreshold(channel, voltage)
+        _ctimetag.CTimeTag_setInputThreshold(self._c_timetag, channel, voltage)
 
     @property
     def inversion(self) -> List[uint8]:
@@ -295,7 +297,7 @@ class UQDLogic16:
         for b in bits[::-1]:
             bit_string += str(b)
         mask: cython.int = int(bit_string, 2)
-        self._c_timetag.SetInversionMask(mask)
+        _ctimetag.CTimeTag_setInversionMask(self._c_timetag, mask)
 
     @property
     def input_delay(self) -> float64:
@@ -324,9 +326,11 @@ class UQDLogic16:
         max_delay: float = ((2**18) - 1) * self.resolution
         delay: int = value[0] // self.resolution
         if (delay < 0) or (delay > max_delay):
-            raise ValueError(f"Delay is out of range, must be >= 0 or < {max_delay}s")
+            raise ValueError(
+                f"Delay is out of range, must be >= 0 or < {max_delay}s")
 
         self._input_delay[channel] = delay
+        _ctimetag.CTimeTag_setDelay(self._c_timetag, channel, delay)
 
     @property
     def function_generator(self) -> Tuple[int, int]:
@@ -339,7 +343,7 @@ class UQDLogic16:
     def function_generator(self, value: Tuple[int, int]):
         period: int = value[0]
         high: int = value[0]
-        self._c_timetag.SetFG(period, high)
+        _ctimetag.CTimeTag_setFG(self._c_timetag, period, high)
         self._function_generator_period = period
         self._function_generator_high = high
 
@@ -358,7 +362,7 @@ class UQDLogic16:
         else:
             use = False
 
-        self._c_timetag.Use10MHz(use)
+        _ctimetag.CTimeTag_use10MHz(self._c_timetag, use)
         self._external_10MHz_reference = value
 
     def start_timetags(self):
@@ -369,17 +373,20 @@ class UQDLogic16:
         if self._have_buffer is True:
             self._buffer.clear()
 
-        self._c_timetag.StartTimetags()
+        _ctimetag.CTimeTag_startTimetags(self._c_timetag)
 
     def stop_timetags(self):
         """
         Stop transmitting timetags from the device to the host computer
         """
-        self._c_timetag.StopTimetags()
+        _ctimetag.CTimeTag_stopTimetags(self._c_timetag)
 
     @cython.ccall
     def read_tags(self) -> Tuple[int, List[uint8], List[uint64]]:
-        count: int = self._c_timetag.ReadTags(self._channel_ptr, self._timetag_ptr)
+        # count: int = _ctimetag.CTimeTag_readTags(self._c_timetag,
+        #                                          self._channel_ptr,
+        #                                          self._timetag_ptr)
+        count: int = 10
         channel_arr: uint8[:] = zeros(count, dtype=uint8)
         timetag_arr: uint64[:] = zeros(count, dtype=uint64)
 
@@ -414,7 +421,7 @@ class UQDLogic16:
         if (count < 1) and (count > 10):
             raise ValueError("Count filter must be between 1 and 10")
         self._filter_min_count = count
-        self._c_timetag.SetFilterMinCount(count)
+        _ctimetag.CTimeTag_setFilterMinCount(self._c_timetag, count)
 
     @property
     def filter_max_time(self) -> cython.double:
@@ -436,7 +443,7 @@ class UQDLogic16:
         """
         bins: int = max_time // self.resolution
         self._filter_max_time = time
-        self._c_timetag.SetFilterMaxTime(bins)
+        _ctimetag.CTimeTag_setFilterMaxTime(self._c_timetag, bins)
 
     @property
     def exclusion(self) -> List[uint8]:
@@ -451,18 +458,18 @@ class UQDLogic16:
         mask: int = value[1]
         if (channel < 0) or (channel >= n):
             raise ValueError(f"channel must be in range 0 <= channel < {n}")
-        self._c_timetag.SetFilterException(channel)
+        _ctimetag.CTimeTag_setFilterException(self._c_timetag, channel)
         self._exclusion[channel] = mask
 
     @cython.ccall
     def exclusion_apply(self):
         bits = self.exclusion
         if sum(bits) == 0:
-            self._c_timetag.SetInversionMask(0)
+            _ctimetag.CTimeTag_setInversionMask(self._c_timetag, 0)
             return
 
         if sum(bits) == self.number_of_channels:
-            self._c_timetag.SetInversionMask(0)
+            _ctimetag.CTimeTag_setInversionMask(self._c_timetag, 0)
             return
 
         # bits.reverse()
@@ -470,13 +477,13 @@ class UQDLogic16:
         for b in bits[::-1]:
             bit_string += str(b)
         mask: cython.int = int(bit_string, 2)
-        self._c_timetag.SetInversionMask(mask)
+        _ctimetag.CTimeTag_setInversionMask(self._c_timetag, mask)
 
     @property
     def level_gate(self) -> bool:
         """
         """
-        return self._c_timetag.LevelGateActive()
+        return _ctimetag.CTimeTag_levelGateActive(self._c_timetag)
 
     @level_gate.setter
     def level_gate(self, value: bool):
@@ -487,7 +494,7 @@ class UQDLogic16:
         else:
             use = False
 
-        self._c_timetag.UseLevelGate(use)
+        _ctimetag.CTimeTag_useLevelGate(self._c_timetag, use)
 
     @property
     def time_gating(self) -> bool:
@@ -502,7 +509,7 @@ class UQDLogic16:
             use = True
         else:
             use = False
-        self._c_timetag.UseTimetagGate(use)
+        _ctimetag.CTimeTag_useTimetagGate(self._c_timetag, use)
         self._time_gating = value
 
     @property
@@ -513,13 +520,14 @@ class UQDLogic16:
 
     @time_gate_width.setter
     def time_gate_width(self, duration: int):
-        self._c_timetag.SetGateWidth(duration)
+        _ctimetag.CTimeTag_setGateWidth(self._c_timetag, duration)
         self._time_gate_width = duration
 
     @cython.ccall
     def check_errors(self) -> dict:
         active_errors: dict = {}
-        error_bits = error_from_bit_set(self._c_timetag.ReadErrorFlags())
+        error_bits = error_from_bit_set(
+            _ctimetag.CTimeTag_readErrorFlags(self._c_timetag))
         for e in error_bits:
             if e == 0:
                 continue
@@ -538,7 +546,10 @@ class UQDLogic16:
         """
         Write tags directly into buffer
         """
-        count: int = self._c_timetag.ReadTags(self._channel_ptr, self._timetag_ptr)
+        # count: int = _ctimetag.CTimeTag_readTags(self._c_timetag,
+        #                                          self._channel_ptr,
+        #                                          self._timetag_ptr)
+        count = 0
 
         if count == 0:
             return count

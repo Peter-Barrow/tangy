@@ -87,14 +87,19 @@ Parse_PH_T2(u32 record, Record_PH_T2* Rec_struct, res* out) {
     int photon = 0;
 
     if (ch == 0xf) {
-        u64 marker = tt & 0xf;
-        if (marker == 0) {
+        // marker detected, handle overflow
+        // Maximum number of channels on the PicoHarp is 4 so send:
+        //      overflow -> channel 5
+        //      marker -> channel 6
+        if ((tt & 0xF) == 0) {
             out->overflow += T2WRAPAROUND;
-            // ch -= 1;
+            ch = 5;
+            ++photon;
         } else {
+            // marker
             tt += out->overflow;
-            // ++photon;
-            // ch -= 2;
+            ++photon;
+            ch = 6;
         }
     } else {
         tt += out->overflow;
@@ -121,9 +126,12 @@ Parse_PH_T3(u32 record, Record_PH_T3* Rec_struct, res* out) {
     if (ch == 0xf) {
         if (dt == 0) {
             out->overflow += T3WRAPAROUND;
+            ch = 5;
+            ++photon;
         } else {
             ns += out->overflow;
-            // ++photon;
+            ++photon;
+            ch = 6;
         }
     } else {
         ns += out->overflow;
