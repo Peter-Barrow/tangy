@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tangy"
-version = "0.8.1"
+version = "0.8.2"
 description = "Timetag analysing library"
 authors = [
     {name = "Peter Thomas Barrow", email = "peter.barrow.93@gmail.com"}

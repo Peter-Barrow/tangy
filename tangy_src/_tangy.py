@@ -348,11 +348,22 @@ class TangyBuffer:
         return
 
     def __del__(self):
-        result: _tangy.tbResult = _tangy.tangy_buffer_deinit(self._ptr_buf)
+        c_name: cython.p_char = self._name
+        flag: u8 = 0
+        result: _tangy.tbResult = _tangy.shmem_exists(c_name,
+                                                      cython.address(flag))
+        if exists == 0:
+            buffer_list_update()
+            return
+
+        result = _tangy.tangy_buffer_deinit(self._ptr_buf)
         if result.Ok is False:
             raise MemoryError(
                 "Failed to free memory for buffer and/or records vector")
         buffer_list_update()
+
+    def close(self):
+        self.__del__()
 
     def __len__(self):
         """ Length of buffer
@@ -1752,8 +1763,13 @@ def buffer_list_delete_all():
     buffer_list = buffer_list_update()
 
     for name in buffer_list.keys():
-        buffer = TangyBuffer(name, 1.0)
-        buffer.__del__()
+
+        format = TangyBufferType.Standard
+        if buffer_list[name]["format"] == "Clocked":
+            format = TangyBufferType.Clocked
+
+        buffer = TangyBuffer(name, format=format)
+        buffer.reference_count = 0
 
     buffer_list_update()
 
