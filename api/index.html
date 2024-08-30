@@ -383,28 +383,28 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#buffers" class="md-nav__link">
+  <a href="#buffer" class="md-nav__link">
     <span class="md-ellipsis">
-      Buffers
+      Buffer
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Buffers">
+    <nav class="md-nav" aria-label="Buffer">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#timetag-formats" class="md-nav__link">
+  <a href="#tangy.Records" class="md-nav__link">
     <span class="md-ellipsis">
-      Timetag Formats
+      Records
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#tangy.Records" class="md-nav__link">
+  <a href="#timetag-formats" class="md-nav__link">
     <span class="md-ellipsis">
-      Records
+      Timetag Formats
     </span>
   </a>
   
@@ -1112,28 +1112,28 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#buffers" class="md-nav__link">
+  <a href="#buffer" class="md-nav__link">
     <span class="md-ellipsis">
-      Buffers
+      Buffer
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Buffers">
+    <nav class="md-nav" aria-label="Buffer">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#timetag-formats" class="md-nav__link">
+  <a href="#tangy.Records" class="md-nav__link">
     <span class="md-ellipsis">
-      Timetag Formats
+      Records
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#tangy.Records" class="md-nav__link">
+  <a href="#timetag-formats" class="md-nav__link">
     <span class="md-ellipsis">
-      Records
+      Timetag Formats
     </span>
   </a>
   
@@ -1805,43 +1805,7 @@
 
 
 <h1 id="api-reference">API Reference</h1>
-<h2 id="buffers">Buffers</h2>
-<h3 id="timetag-formats">Timetag Formats</h3>
-<div class="admonition example">
-<p class="admonition-title">Timetag Formats</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="standard" name="__tabbed_1" type="radio" /><input id="clocked" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="standard">Standard</label><label for="clocked">Clocked</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="c1">// Timetag format</span>
-<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">std</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">u8</span><span class="w"> </span><span class="n">channel</span><span class="p">;</span>
-<span class="w">    </span><span class="n">u64</span><span class="w"> </span><span class="n">timestamp</span><span class="p">;</span>
-<span class="p">}</span><span class="w"> </span><span class="n">timetag_standard</span><span class="p">;</span>
-
-<span class="k">typedef</span><span class="w"> </span><span class="n">f64</span><span class="w"> </span><span class="n">resolution_standard</span><span class="p">;</span>
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">timestamp_clocked</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">u64</span><span class="w"> </span><span class="n">clock</span><span class="p">;</span>
-<span class="w">    </span><span class="n">u64</span><span class="w"> </span><span class="n">delta</span><span class="p">;</span>
-<span class="p">}</span><span class="w"> </span><span class="n">timestamp_clocked</span><span class="p">;</span>
-
-<span class="c1">// Timetag format</span>
-<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">timetag_clocked</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">u8</span><span class="w"> </span><span class="n">channel</span><span class="p">;</span>
-<span class="w">    </span><span class="n">timestamp_clocked</span><span class="w"> </span><span class="n">timestamp</span><span class="p">;</span>
-<span class="p">}</span><span class="w"> </span><span class="n">timetag_clocked</span><span class="p">;</span>
-
-<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">resolution_clocked</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">f64</span><span class="w"> </span><span class="n">coarse</span><span class="p">;</span>
-<span class="w">    </span><span class="n">f64</span><span class="w"> </span><span class="n">fine</span><span class="p">;</span>
-<span class="p">}</span><span class="w"> </span><span class="n">resolution_clocked</span><span class="p">;</span>
-</code></pre></div>
-</div>
-</div>
-</div>
-</div>
+<h2 id="buffer">Buffer</h2>
 
 
 <div class="doc doc-object doc-class">
@@ -1849,7 +1813,7 @@
 
 
 <h3 id="tangy.Records" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <code>tangy.Records</code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">tangy.Records</span>
 
 
 </h3>
@@ -1950,10 +1914,12 @@
 
 
 <p><span class="doc-section-title">Examples:</span></p>
-    <p>records = Records(count=10, resolution=1e-9, clock_period=1.0,
-                  channels=[0, 1], timetags=[0, ..., 10])</p>
-<p>records = Records(count=4, resolution=1e-9, clock_period=1.0,
-                  channels=[0, 1, 1, 0], timetags=[0, 1, 4, 5])</p>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">records</span> <span class="o">=</span> <span class="n">Records</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">clock_period</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                  <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">timetags</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+</code></pre></div>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">records</span> <span class="o">=</span> <span class="n">Records</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">clock_period</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                  <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">timetags</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+</code></pre></div>
 
 
 
@@ -1974,14 +1940,50 @@
 
     </div>
 
+</div><h3 id="timetag-formats">Timetag Formats</h3>
+<div class="admonition example">
+<p class="admonition-title">Timetag Formats</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="standard" name="__tabbed_1" type="radio" /><input id="clocked" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="standard">Standard</label><label for="clocked">Clocked</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="c1">// Timetag format</span>
+<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">std</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">u8</span><span class="w"> </span><span class="n">channel</span><span class="p">;</span>
+<span class="w">    </span><span class="n">u64</span><span class="w"> </span><span class="n">timestamp</span><span class="p">;</span>
+<span class="p">}</span><span class="w"> </span><span class="n">timetag_standard</span><span class="p">;</span>
+
+<span class="k">typedef</span><span class="w"> </span><span class="n">f64</span><span class="w"> </span><span class="n">resolution_standard</span><span class="p">;</span>
+</code></pre></div>
 </div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">timestamp_clocked</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">u64</span><span class="w"> </span><span class="n">clock</span><span class="p">;</span>
+<span class="w">    </span><span class="n">u64</span><span class="w"> </span><span class="n">delta</span><span class="p">;</span>
+<span class="p">}</span><span class="w"> </span><span class="n">timestamp_clocked</span><span class="p">;</span>
+
+<span class="c1">// Timetag format</span>
+<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">timetag_clocked</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">u8</span><span class="w"> </span><span class="n">channel</span><span class="p">;</span>
+<span class="w">    </span><span class="n">timestamp_clocked</span><span class="w"> </span><span class="n">timestamp</span><span class="p">;</span>
+<span class="p">}</span><span class="w"> </span><span class="n">timetag_clocked</span><span class="p">;</span>
+
+<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">resolution_clocked</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">f64</span><span class="w"> </span><span class="n">coarse</span><span class="p">;</span>
+<span class="w">    </span><span class="n">f64</span><span class="w"> </span><span class="n">fine</span><span class="p">;</span>
+<span class="p">}</span><span class="w"> </span><span class="n">resolution_clocked</span><span class="p">;</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+</div>
+
 
 <div class="doc doc-object doc-class">
 
 
 
 <h3 id="tangy.TangyBufferType" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <code>tangy.TangyBufferType</code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">tangy.TangyBufferType</span>
 
 
 </h3>
@@ -2020,10 +2022,19 @@
 
 
 <h3 id="tangy.TangyBuffer" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>              <code class="highlight language-python"><span class="n">tangy</span><span class="o">.</span><span class="n">TangyBuffer</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">resolution</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">clock_period</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">channel_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">capacity</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000000</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="n">TangyBufferType</span> <span class="o">=</span> <span class="o">...</span><span class="p">)</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">tangy.TangyBuffer</span>
+
 
 </h3>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">TangyBuffer</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">resolution</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">clock_period</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">channel_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="n">capacity</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000000</span><span class="p">,</span>
+    <span class="nb">format</span><span class="p">:</span> <span class="n">TangyBufferType</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
 
     <div class="doc doc-contents first">
 
@@ -2347,14 +2358,16 @@ connected to.</p>
 
 
 <h5 id="tangy.TangyBuffer.begin" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">begin</span><span class="p">:</span> <span class="nb">int</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">begin</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">begin</span><span class="p">:</span> <span class="nb">int</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -2370,14 +2383,16 @@ Returns:
 
 
 <h5 id="tangy.TangyBuffer.capacity" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">capacity</span><span class="p">:</span> <span class="nb">int</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">capacity</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">capacity</span><span class="p">:</span> <span class="nb">int</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -2414,7 +2429,8 @@ Returns:
 
 
 <h5 id="tangy.TangyBuffer.channel_count" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">channel_count</span><span class="p">:</span> <span class="nb">int</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">channel_count</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -2422,7 +2438,8 @@ Returns:
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">channel_count</span><span class="p">:</span> <span class="nb">int</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -2461,7 +2478,8 @@ Returns:
 
 
 <h5 id="tangy.TangyBuffer.clock_period" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">clock_period</span><span class="p">:</span> <span class="nb">float</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">clock_period</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -2469,7 +2487,8 @@ Returns:
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">clock_period</span><span class="p">:</span> <span class="nb">float</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -2509,14 +2528,16 @@ Returns:
 
 
 <h5 id="tangy.TangyBuffer.clock_period_bins" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">clock_period_bins</span><span class="p">:</span> <span class="nb">int</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">clock_period_bins</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">clock_period_bins</span><span class="p">:</span> <span class="nb">int</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -2553,14 +2574,16 @@ Returns:
 
 
 <h5 id="tangy.TangyBuffer.conversion_factor" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">conversion_factor</span><span class="p">:</span> <span class="nb">int</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">conversion_factor</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">conversion_factor</span><span class="p">:</span> <span class="nb">int</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -2574,14 +2597,16 @@ Returns:
 
 
 <h5 id="tangy.TangyBuffer.count" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">count</span><span class="p">:</span> <span class="nb">int</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">count</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">count</span><span class="p">:</span> <span class="nb">int</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -2595,14 +2620,16 @@ Returns:
 
 
 <h5 id="tangy.TangyBuffer.end" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">end</span><span class="p">:</span> <span class="nb">int</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">end</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">end</span><span class="p">:</span> <span class="nb">int</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -2618,14 +2645,16 @@ Returns:
 
 
 <h5 id="tangy.TangyBuffer.name" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">name</span><span class="p">:</span> <span class="nb">str</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">name</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -2662,7 +2691,8 @@ Returns:
 
 
 <h5 id="tangy.TangyBuffer.reference_count" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">reference_count</span><span class="p">:</span> <span class="nb">int</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">reference_count</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -2670,7 +2700,8 @@ Returns:
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">reference_count</span><span class="p">:</span> <span class="nb">int</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -2709,7 +2740,8 @@ Returns:
 
 
 <h5 id="tangy.TangyBuffer.resolution" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">resolution</span><span class="p">:</span> <span class="nb">float</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">resolution</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -2717,7 +2749,8 @@ Returns:
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">resolution</span><span class="p">:</span> <span class="nb">float</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -2754,14 +2787,16 @@ Returns:
 
 
 <h5 id="tangy.TangyBuffer.resolution_bins" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">resolution_bins</span><span class="p">:</span> <span class="nb">int</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">resolution_bins</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">resolution_bins</span><span class="p">:</span> <span class="nb">int</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -2799,10 +2834,12 @@ Returns:
 
 
 <h5 id="tangy.TangyBuffer.__call__" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="fm">__call__</span><span class="p">(</span><span class="n">time</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">__call__</span>
+
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="fm">__call__</span><span class="p">(</span><span class="nf">time</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -2851,10 +2888,12 @@ Returns:
 
 
 <h5 id="tangy.TangyBuffer.__getitem__" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="fm">__getitem__</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">__getitem__</span>
+
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="fm">__getitem__</span><span class="p">(</span><span class="nf">key</span><span class="p">)</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -2868,10 +2907,12 @@ Returns:
 
 
 <h5 id="tangy.TangyBuffer.__len__" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="fm">__len__</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">__len__</span>
+
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="fm">__len__</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -2908,10 +2949,12 @@ Returns:
 
 
 <h5 id="tangy.TangyBuffer.bins_from_time" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">bins_from_time</span><span class="p">(</span><span class="n">time</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">bins_from_time</span>
+
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">bins_from_time</span><span class="p">(</span><span class="n">time</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -2977,10 +3020,17 @@ Returns:
 
 
 <h5 id="tangy.TangyBuffer.coincidence_collect" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">coincidence_collect</span><span class="p">(</span><span class="n">read_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">channels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">delays</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Records</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">coincidence_collect</span>
+
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">coincidence_collect</span><span class="p">(</span>
+    <span class="n">read_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">window</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">channels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">delays</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Records</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -3094,10 +3144,17 @@ Returns:
 
 
 <h5 id="tangy.TangyBuffer.coincidence_count" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">coincidence_count</span><span class="p">(</span><span class="n">read_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">channels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">delays</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">coincidence_count</span>
+
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">coincidence_count</span><span class="p">(</span>
+    <span class="n">read_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">window</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">channels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">delays</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -3211,10 +3268,12 @@ Returns:
 
 
 <h5 id="tangy.TangyBuffer.current_time" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">current_time</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">float</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">current_time</span>
+
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">current_time</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">float</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -3230,10 +3289,22 @@ Returns:
 
 
 <h5 id="tangy.TangyBuffer.joint_delay_histogram" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">joint_delay_histogram</span><span class="p">(</span><span class="n">signal</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">idler</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">channels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">read_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">delays</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">clock</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">bin_width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">centre</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JointHistogram</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">joint_delay_histogram</span>
+
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">joint_delay_histogram</span><span class="p">(</span>
+    <span class="n">signal</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">idler</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">channels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">read_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">delays</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">clock</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">bin_width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">centre</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JointHistogram</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -3420,10 +3491,12 @@ signal, idler and optionally a clock channel</p>
 
 
 <h5 id="tangy.TangyBuffer.lower_bound" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">lower_bound</span><span class="p">(</span><span class="n">time</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">lower_bound</span>
+
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">lower_bound</span><span class="p">(</span><span class="n">time</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -3490,10 +3563,18 @@ signal, idler and optionally a clock channel</p>
 
 
 <h5 id="tangy.TangyBuffer.relative_delay" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">relative_delay</span><span class="p">(</span><span class="n">channel_a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">channel_b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">read_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">resolution</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-09</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">delay_result</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">relative_delay</span>
+
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">relative_delay</span><span class="p">(</span>
+    <span class="n">channel_a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">channel_b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">read_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">resolution</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-09</span><span class="p">,</span>
+    <span class="n">window</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">delay_result</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -3615,10 +3696,16 @@ signal, idler and optionally a clock channel</p>
 
 
 <h5 id="tangy.TangyBuffer.singles" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">singles</span><span class="p">(</span><span class="n">read_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">stop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">singles</span>
+
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">singles</span><span class="p">(</span>
+    <span class="n">read_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">stop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -3738,10 +3825,12 @@ signal, idler and optionally a clock channel</p>
 
 
 <h5 id="tangy.TangyBuffer.time_in_buffer" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">time_in_buffer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">float</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">time_in_buffer</span>
+
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">time_in_buffer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">float</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -3757,10 +3846,16 @@ Returns:
 
 
 <h5 id="tangy.TangyBuffer.timetrace" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">timetrace</span><span class="p">(</span><span class="n">channels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">read_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">resolution</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">)</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">timetrace</span>
+
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">timetrace</span><span class="p">(</span>
+    <span class="n">channels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">read_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">resolution</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -3868,10 +3963,12 @@ Returns:
 
 
 <h3 id="tangy.buffer_list_update" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <code class="highlight language-python"><span class="n">tangy</span><span class="o">.</span><span class="n">buffer_list_update</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">tangy.buffer_list_update</span>
+
 
 </h3>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">buffer_list_update</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span>
+</code></pre></div>
 
     <div class="doc doc-contents first">
 
@@ -3896,10 +3993,12 @@ Returns:
 
 
 <h3 id="tangy.buffer_list_append" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <code class="highlight language-python"><span class="n">tangy</span><span class="o">.</span><span class="n">buffer_list_append</span><span class="p">(</span><span class="n">buffer</span><span class="p">:</span> <span class="n">TangyBuffer</span><span class="p">)</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">tangy.buffer_list_append</span>
+
 
 </h3>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">buffer_list_append</span><span class="p">(</span><span class="n">buffer</span><span class="p">:</span> <span class="n">TangyBuffer</span><span class="p">)</span>
+</code></pre></div>
 
     <div class="doc doc-contents first">
 
@@ -3942,10 +4041,12 @@ Returns:
 
 
 <h3 id="tangy.buffer_list_delete_all" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <code class="highlight language-python"><span class="n">tangy</span><span class="o">.</span><span class="n">buffer_list_delete_all</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">tangy.buffer_list_delete_all</span>
+
 
 </h3>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">buffer_list_delete_all</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
 
     <div class="doc doc-contents first">
 
@@ -3957,10 +4058,12 @@ Returns:
 
 
 <h3 id="tangy.buffer_list_show" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <code class="highlight language-python"><span class="n">tangy</span><span class="o">.</span><span class="n">buffer_list_show</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">tangy.buffer_list_show</span>
+
 
 </h3>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">buffer_list_show</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
 
     <div class="doc doc-contents first">
 
@@ -3974,10 +4077,12 @@ Returns:
 
 
 <h3 id="tangy.PTUFile" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>              <code class="highlight language-python"><span class="n">tangy</span><span class="o">.</span><span class="n">PTUFile</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">)</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">tangy.PTUFile</span>
+
 
 </h3>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">PTUFile</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">)</span>
+</code></pre></div>
 
     <div class="doc doc-contents first">
 
@@ -4125,10 +4230,12 @@ Returns:
 
 
 <h5 id="tangy.PTUFile.read" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">read</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="n">u64n</span><span class="p">)</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">read</span>
+
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">read</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="n">u64n</span><span class="p">)</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4153,10 +4260,17 @@ Returns:
 
 
 <h3 id="tangy._uqd.UQDLogic16" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>              <code class="highlight language-python"><span class="n">tangy</span><span class="o">.</span><span class="n">_uqd</span><span class="o">.</span><span class="n">UQDLogic16</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">calibrate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">add_buffer</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">buffer_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">10000000</span><span class="p">)</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">tangy._uqd.UQDLogic16</span>
+
 
 </h3>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">UQDLogic16</span><span class="p">(</span>
+    <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">calibrate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">add_buffer</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">buffer_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">10000000</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
 
     <div class="doc doc-contents first">
 
@@ -4183,7 +4297,8 @@ Returns:
 
 
 <h5 id="tangy._uqd.UQDLogic16.led_brightness" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">led_brightness</span><span class="p">:</span> <span class="nb">int</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">led_brightness</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -4191,7 +4306,8 @@ Returns:
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">led_brightness</span><span class="p">:</span> <span class="nb">int</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4234,14 +4350,16 @@ Returns:
 
 
 <h5 id="tangy._uqd.UQDLogic16.fpga_version" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">fpga_version</span><span class="p">:</span> <span class="n">cython</span><span class="o">.</span><span class="n">int</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">fpga_version</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">fpga_version</span><span class="p">:</span> <span class="nb">int</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4278,14 +4396,16 @@ Returns:
 
 
 <h5 id="tangy._uqd.UQDLogic16.resolution" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">resolution</span><span class="p">:</span> <span class="nb">float</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">resolution</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">resolution</span><span class="p">:</span> <span class="nb">float</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4324,14 +4444,16 @@ Returns:
 
 
 <h5 id="tangy._uqd.UQDLogic16.number_of_channels" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">number_of_channels</span><span class="p">:</span> <span class="nb">int</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">number_of_channels</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">number_of_channels</span><span class="p">:</span> <span class="nb">int</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4369,7 +4491,8 @@ Returns:
 
 
 <h5 id="tangy._uqd.UQDLogic16.input_threshold" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">input_threshold</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">float64</span><span class="p">]</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">input_threshold</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -4377,7 +4500,8 @@ Returns:
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">input_threshold</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">float64</span><span class="p">]</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4414,7 +4538,8 @@ Returns:
 
 
 <h5 id="tangy._uqd.UQDLogic16.inversion" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">inversion</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">uint8</span><span class="p">]</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">inversion</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -4422,7 +4547,8 @@ Returns:
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">inversion</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">uint8</span><span class="p">]</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4459,7 +4585,8 @@ Returns:
 
 
 <h5 id="tangy._uqd.UQDLogic16.input_delay" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">input_delay</span><span class="p">:</span> <span class="n">float64</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">input_delay</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -4467,7 +4594,8 @@ Returns:
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">input_delay</span><span class="p">:</span> <span class="n">float64</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4504,7 +4632,8 @@ Returns:
 
 
 <h5 id="tangy._uqd.UQDLogic16.function_generator" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">function_generator</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">function_generator</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -4512,7 +4641,8 @@ Returns:
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">function_generator</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4526,7 +4656,8 @@ Returns:
 
 
 <h5 id="tangy._uqd.UQDLogic16.external_10MHz_reference" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">external_10MHz_reference</span><span class="p">:</span> <span class="nb">bool</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">external_10MHz_reference</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -4534,7 +4665,8 @@ Returns:
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">external_10MHz_reference</span><span class="p">:</span> <span class="nb">bool</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4548,7 +4680,8 @@ Returns:
 
 
 <h5 id="tangy._uqd.UQDLogic16.filter_min_count" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">filter_min_count</span><span class="p">:</span> <span class="nb">int</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">filter_min_count</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -4556,7 +4689,8 @@ Returns:
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">filter_min_count</span><span class="p">:</span> <span class="nb">int</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4593,7 +4727,8 @@ Returns:
 
 
 <h5 id="tangy._uqd.UQDLogic16.filter_max_time" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">filter_max_time</span><span class="p">:</span> <span class="n">cython</span><span class="o">.</span><span class="n">double</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">filter_max_time</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -4601,7 +4736,8 @@ Returns:
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">filter_max_time</span><span class="p">:</span> <span class="n">double</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4638,7 +4774,8 @@ Returns:
 
 
 <h5 id="tangy._uqd.UQDLogic16.exclusion" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">exclusion</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">uint8</span><span class="p">]</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">exclusion</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -4646,7 +4783,8 @@ Returns:
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">exclusion</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">uint8</span><span class="p">]</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4660,7 +4798,8 @@ Returns:
 
 
 <h5 id="tangy._uqd.UQDLogic16.level_gate" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">level_gate</span><span class="p">:</span> <span class="nb">bool</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">level_gate</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -4668,7 +4807,8 @@ Returns:
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">level_gate</span><span class="p">:</span> <span class="nb">bool</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4682,7 +4822,8 @@ Returns:
 
 
 <h5 id="tangy._uqd.UQDLogic16.time_gating" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">time_gating</span><span class="p">:</span> <span class="nb">bool</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">time_gating</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -4690,7 +4831,8 @@ Returns:
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">time_gating</span><span class="p">:</span> <span class="nb">bool</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4704,7 +4846,8 @@ Returns:
 
 
 <h5 id="tangy._uqd.UQDLogic16.time_gate_width" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <code class="highlight language-python"><span class="n">time_gate_width</span><span class="p">:</span> <span class="nb">int</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">time_gate_width</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -4712,7 +4855,8 @@ Returns:
   </span>
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">time_gate_width</span><span class="p">:</span> <span class="nb">int</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4727,10 +4871,12 @@ Returns:
 
 
 <h5 id="tangy._uqd.UQDLogic16.is_open" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">is_open</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">is_open</span>
+
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">is_open</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4742,10 +4888,12 @@ Returns:
 
 
 <h5 id="tangy._uqd.UQDLogic16.calibrate" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">calibrate</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">calibrate</span>
+
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">calibrate</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4757,10 +4905,12 @@ Returns:
 
 
 <h5 id="tangy._uqd.UQDLogic16.start_timetags" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">start_timetags</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">start_timetags</span>
+
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">start_timetags</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4774,10 +4924,12 @@ Returns:
 
 
 <h5 id="tangy._uqd.UQDLogic16.stop_timetags" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">stop_timetags</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">stop_timetags</span>
+
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">stop_timetags</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4791,10 +4943,12 @@ Returns:
 
 
 <h5 id="tangy._uqd.UQDLogic16.read_tags" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">read_tags</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">uint8</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">uint64</span><span class="p">]]</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">read_tags</span>
+
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">read_tags</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">uint8</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">uint64</span><span class="p">]]</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4806,10 +4960,12 @@ Returns:
 
 
 <h5 id="tangy._uqd.UQDLogic16.buffer" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">buffer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">TangyBuffer</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">buffer</span>
+
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">buffer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">TangyBuffer</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4823,10 +4979,12 @@ Returns:
 
 
 <h5 id="tangy._uqd.UQDLogic16.write_to_buffer" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">write_to_buffer</span><span class="p">()</span></code>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">write_to_buffer</span>
+
 
 </h5>
-
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">write_to_buffer</span><span class="p">()</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 

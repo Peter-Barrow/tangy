@@ -403,18 +403,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
+  <a href="#quick-examples" class="md-nav__link">
     <span class="md-ellipsis">
-      Examples
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#tools" class="md-nav__link">
-    <span class="md-ellipsis">
-      Tools
+      Quick Examples
     </span>
   </a>
   
@@ -537,18 +528,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
+  <a href="#quick-examples" class="md-nav__link">
     <span class="md-ellipsis">
-      Examples
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#tools" class="md-nav__link">
-    <span class="md-ellipsis">
-      Tools
+      Quick Examples
     </span>
   </a>
   
@@ -577,7 +559,8 @@
 <h2 id="about">About</h2>
 <p>It stores your timetag data in a circular buffer backed by shared memory allowing you to have multiple client connect to the same buffer.
 When streaming data from a device into a tangy buffer this allows you to have multiple connections to the same device facilitating either mulitple lab users or multiple concurrent experiments.
-Alternatively, if you have a large file of containing timetags you can read a section into a tangy buffer in one python interpreter and perform analysis on that section in another speeding up exploratory analysis.</p>
+Alternatively, if you have a large file of containing timetags you can read a section into a tangy buffer in one python interpreter and perform analysis on that section in another speeding up exploratory analysis.
+Please see the <a href="api/">api reference</a> for feature details.</p>
 <h2 id="features">Features</h2>
 <ul>
 <li>Support for different timetag formats</li>
@@ -597,7 +580,7 @@ python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </s
 <p>Install from git to get the latest version
 <div class="highlight"><span class="filename">git</span><pre><span></span><code>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>git+https://gitlab.com/PeterBarrow/tangy.git
 </code></pre></div></p>
-<h2 id="examples">Examples</h2>
+<h2 id="quick-examples">Quick Examples</h2>
 <p>Open a file and read some data
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">tangy</span>
 
@@ -630,10 +613,10 @@ python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </s
 <span class="n">channel_b</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">integration_time</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="n">measurement_resolution</span> <span class="o">=</span> <span class="mf">6.25e-9</span>
-<span class="n">result_delay</span> <span class="o">=</span> <span class="n">tangy</span><span class="o">.</span><span class="n">find_delay</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span>
-                                <span class="n">channel_a</span> <span class="n">channel_b</span><span class="p">,</span>
-                                <span class="n">integration_time</span><span class="p">,</span>
-                                <span class="n">resolution</span><span class="o">=</span><span class="n">measurement_resolution</span><span class="p">)</span>
+<span class="n">result_delay</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">relative_delay</span><span class="p">(</span><span class="n">channel_a</span><span class="p">,</span> <span class="n">channel_b</span><span class="p">,</span>
+                                     <span class="n">integration_time</span><span class="p">,</span>
+                                     <span class="n">resolution</span><span class="o">=</span><span class="mf">6.25e-9</span><span class="p">,</span>
+                                     <span class="n">window</span><span class="o">=</span><span class="mf">250e-7</span><span class="p">)</span>
 <span class="n">delays</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">result_delay</span><span class="o">.</span><span class="n">t0</span><span class="p">]</span>
 </code></pre></div>
 <div class="highlight"><span class="filename">Count (or collect) coincidences with delays</span><pre><span></span><code><span class="n">count</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">coincidence_count</span><span class="p">(</span><span class="n">integration_time</span><span class="p">,</span>
@@ -646,8 +629,6 @@ python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </s
                                      <span class="n">channels</span><span class="p">,</span>
                                      <span class="n">delays</span><span class="o">=</span><span class="n">delays</span><span class="p">)</span>
 </code></pre></div>
-<h2 id="tools">Tools</h2>
-<p><img alt="Coincidence Counter" src="img/gui_coincidence_counter.png" /></p>
 
 
 
