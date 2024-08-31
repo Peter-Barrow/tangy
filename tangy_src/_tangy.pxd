@@ -49,7 +49,27 @@ cdef extern from "./src/vector_impls.h":
 
 cdef extern from "./src/shared_memory.c":
     ctypedef int fd_t
-    tbResult shmem_exists(char *const map_name, u8 *exists)
+
+    ctypedef enum shmem_error:
+        OK,
+        MAP_CREATE,
+        HANDLE_TO_FD,
+        FD_TO_HANDLE,
+        MEMORY_MAPPING,
+        FTRUNCATE,
+        MAP,
+        STAT,
+        FSTAT,
+        UNMAP,
+        FD_CLOSE,
+        UNLINK,
+
+    ctypedef struct shmem_result:
+        bint Ok
+        shmem_error Error
+        int Std_Error
+
+    shmem_result shmem_exists(char *const map_name, u8 *exists)
 
 cdef extern from './src/picoquant_reader.h':
 
@@ -150,7 +170,7 @@ cdef extern from "./src/shared_ring_buffer_context.h":
     u64 srb_get_channel_count(shared_ring_buffer* buffer)
     void srb_set_channel_count(shared_ring_buffer* buffer, u64 channel_count)
 
-    tbResult srb_init(const u64 length_bytes,
+    shmem_result srb_init(const u64 length_bytes,
                      char* name,
                      f64 resolution,
                      f64 clock_period,
@@ -161,9 +181,9 @@ cdef extern from "./src/shared_ring_buffer_context.h":
                      u64 channel_count,
                      shared_ring_buffer* buffer)
 
-    tbResult srb_deinit(shared_ring_buffer* buffer)
+    shmem_result srb_deinit(shared_ring_buffer* buffer)
 
-    tbResult srb_connect(char* name,
+    shmem_result srb_connect(char* name,
                         shared_ring_buffer* buffer,
                         shared_ring_buffer_context* context)
 
@@ -257,7 +277,7 @@ cdef extern from "./src/tangy.h":
         tangy_record_vec records
         buffer_format format
 
-    tbResult tangy_buffer_init(buffer_format format,
+    shmem_result tangy_buffer_init(buffer_format format,
                       char* name,
                       const u64 capacity,
                       f64 resolution,
@@ -265,9 +285,9 @@ cdef extern from "./src/tangy.h":
                       u64 channel_count,
                       tangy_buffer* t_buffer)
 
-    tbResult tangy_buffer_deinit(tangy_buffer* t_buf)
+    shmem_result tangy_buffer_deinit(tangy_buffer* t_buf)
 
-    tbResult tangy_buffer_connect(char* name, tangy_buffer* t_buf)
+    shmem_result tangy_buffer_connect(char* name, tangy_buffer* t_buf)
 
     u64 tangy_bins_from_time(tangy_buffer* t_buf, f64 time)
 

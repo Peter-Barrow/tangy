@@ -99,6 +99,8 @@ class JointHistogram:
     axis_idler: ndarray(f64n) = cython.dataclasses.field()
     axis_signal: ndarray(f64n) = cython.dataclasses.field()
 
+    # TODO: add rebin function "def rebin(self, x, y) -> JointHistogram"
+
 
 @cython.wraparound(False)
 @cython.boundscheck(False)
@@ -191,6 +193,8 @@ def bin_histogram(histogram: ndarray(u64n), x_width: i64, y_width: i64
 
     return ((n_rows_new, n_cols_new), marginal_signal, marginal_idler, result)
 
+# TODO: def extract_marginals
+
 
 def double_decay(time, tau1, tau2, t0, max_intensity):
     tau = where(time < t0, tau1, tau2)
@@ -200,7 +204,6 @@ def double_decay(time, tau1, tau2, t0, max_intensity):
 
 @cython.dataclasses.dataclass(frozen=True)
 class delay_result:
-    # TODO: add a "central_delay" field
     times: ndarray(f64n) = cython.dataclasses.field()
     intensities: ndarray(u64n) = cython.dataclasses.field()
     fit: ndarray(f64n) = cython.dataclasses.field()
@@ -209,6 +212,53 @@ class delay_result:
     t0: cython.double = cython.dataclasses.field()
     central_delay: cython.double = cython.dataclasses.field()
     max_intensity: cython.double = cython.dataclasses.field()
+
+
+@cython.cfunc
+def raise_shmem_error(result: _tangy.shmem_result):
+    if result.Error == _tangy.shmem_error.MAP_CREATE:
+        if result.Std_Error != 0:
+            raise OSError(result.Std_Error)
+        raise RuntimeError("Failed to create map")
+
+    if result.Error == _tangy.shmem_error.HANDLE_TO_FD:
+        raise RuntimeError("Could not convert handle to file descriptor")
+
+    if result.Error == _tangy.shmem_error.FD_TO_HANDLE:
+        raise RuntimeError("Could not convert file descriptor to handle")
+
+    if result.Error == _tangy.shmem_error.MEMORY_MAPPING:
+        if result.Std_Error != 0:
+            raise OSError(result.Std_Error)
+        raise RuntimeError("Memory failed failed")
+
+    if result.Error == _tangy.shmem_error.FTRUNCATE:
+        if result.Std_Error != 0:
+            raise OSError(result.Std_Error)
+
+    if result.Error == _tangy.shmem_error.MAP:
+        if result.Std_Error != 0:
+            raise OSError(result.Std_Error)
+
+    if result.Error == _tangy.shmem_error.STAT:
+        if result.Std_Error != 0:
+            raise OSError(result.Std_Error)
+
+    if result.Error == _tangy.shmem_error.FSTAT:
+        if result.Std_Error != 0:
+            raise OSError(result.Std_Error)
+
+    if result.Error == _tangy.shmem_error.UNMAP:
+        if result.Std_Error != 0:
+            raise OSError(result.Std_Error)
+
+    if result.Error == _tangy.shmem_error.FD_CLOSE:
+        if result.Std_Error != 0:
+            raise OSError(result.Std_Error)
+
+    if result.Error == _tangy.shmem_error.UNLINK:
+        if result.Std_Error != 0:
+            raise OSError(result.Std_Error)
 
 
 class TangyBufferType(Enum):
@@ -317,6 +367,9 @@ class TangyBuffer:
 
         buffer_list_update()
 
+        # TODO: connect to buffers without need to specify format
+        # See buffer_list_delete_all for for details
+
         self._format = format
 
         self._name = name.encode('utf-8')
@@ -324,7 +377,7 @@ class TangyBuffer:
 
         self._ptr_buf = cython.address(self._buf)
 
-        result: _tangy.tbResult = _tangy.tangy_buffer_connect(
+        result: _tangy.shmem_result = _tangy.tangy_buffer_connect(
             c_name, self._ptr_buf)
         if result.Ok is True:
             self._ptr_rb = cython.address(self._buf.buffer)
@@ -334,13 +387,16 @@ class TangyBuffer:
         if format == TangyBufferType.Clocked:
             buffer_format = _tangy.buffer_format.CLOCKED
 
-        result: _tangy.tbResult = _tangy.tangy_buffer_init(buffer_format,
-                                                           c_name,
-                                                           capacity,
-                                                           resolution,
-                                                           clock_period,
-                                                           channel_count,
-                                                           self._ptr_buf)
+        result: _tangy.shmem_result = _tangy.tangy_buffer_init(buffer_format,
+                                                               c_name,
+                                                               capacity,
+                                                               resolution,
+                                                               clock_period,
+                                                               channel_count,
+                                                               self._ptr_buf)
+
+        if result.Ok is False:
+            raise_shmem_error(result)
 
         self._ptr_rb = cython.address(self._buf.buffer)
         buffer_list_append(self)
@@ -350,16 +406,15 @@ class TangyBuffer:
     def __del__(self):
         c_name: cython.p_char = self._name
         flag: u8 = 0
-        result: _tangy.tbResult = _tangy.shmem_exists(c_name,
-                                                      cython.address(flag))
+        result: _tangy.shmem_result = _tangy.shmem_exists(c_name,
+                                                          cython.address(flag))
         if exists == 0:
             buffer_list_update()
             return
 
         result = _tangy.tangy_buffer_deinit(self._ptr_buf)
         if result.Ok is False:
-            raise MemoryError(
-                "Failed to free memory for buffer and/or records vector")
+            raise_shmem_error(result)
         buffer_list_update()
 
     def close(self):
@@ -1213,7 +1268,7 @@ class TangyBuffer:
         central_bin = temporal_window // 2
 
         # TODO: this needs to go behind an if-guard
-        # TODO: will need other marginal calculation
+        # TODO: will need other marginal calculation, see "def extract_marginals"
         ((nr, nc), ms, mi, histogram) = bin_histogram(
             histogram, bin_width, bin_width)
         if centre:
@@ -1393,7 +1448,7 @@ _read_conf = {
 }
 
 
-@ cython.cfunc
+@cython.cfunc
 def _read_header(data):
     tags: dict = {}
     inc: cython.Py_ssize_t = 8
@@ -1574,28 +1629,33 @@ class PTUFile():
 
         return self._buffer
 
-    @ property
+    @property
     def record_count(self):
         return self._status.record_count
 
-    @ property
+    @property
     def header(self):
         return self._header
 
     def __len__(self):
         return len(self._buffer)
 
-    @ property
+    @property
     def count(self):
         x: u64n = self._buffer.count
         return x
 
     @cython.ccall
-    def read(self, n: u64n):
+    def read(self, n: u64n) -> int:
         """
         Read an amount of tags from the target file
 
-        :param n: [TODO:description]
+        Args:
+            n (int): Number of tags to read from the file
+
+        Returns:
+            (u64n): NUmber of records read
+
         """
 
         res: u64n = 0
@@ -1643,33 +1703,6 @@ class PTUFile():
                 return res
         return res
 
-    # def read_seconds(self, t: f64n):
-    #     if _tangy.BufferType.Standard == self._buffer_type:
-    #         ch_last: u8n
-    #         tt_last: u64n
-    #         (ch_last, tt_last) = self._std_buffer[-1]
-
-    #         bins: u64n = _tangy.std_as_bins(
-    #             new_standard_record(ch_last, tt_last),
-    #             self._std_buffer._resolution())
-
-    #         res: u64n = _tangy.read_next_HH2_T2(
-    #             cython.address(self._std_buffer._buffer), self._c_file_handle,
-    #             self._status, bins)
-
-    #     if _tangy.BufferType.Clocked == self._buffer_type:
-    #         (ch_last, cl_last, d_last) = self._clk_buffer[-1]
-
-    #         bins: u64n = _tangy.clk_as_bins(
-    #             new_clocked_record(ch_last, cl_last, d_last),
-    #             self._clk_buffer._resolution())
-
-    #         res: u64n = _tangy.read_next_HH2_T3(
-    #             cython.address(self._clk_buffer._buffer), self._c_file_handle,
-    #             self._status, bins)
-
-    #     return res
-
 
 @cython.ccall
 def buffer_list_update() -> dict:
@@ -1711,7 +1744,7 @@ def buffer_list_update() -> dict:
                 }
 
     buffer_list_available = {}
-    result: _tangy.tbResult
+    result: _tangy.shmem_result
     flag: u8 = 0
     for name, details in buffer_list.items():
         name_encoded = name.encode('utf-8')

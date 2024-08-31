@@ -152,7 +152,6 @@ JOIN(stub, current_time)(shared_ring_buffer* buf, slice* data) {
 
 static inline u64
 JOIN(stub, lower_bound)(shared_ring_buffer* buf, const slice* data, u64 key) {
-    // FIX: add bounds checks, mid should not exceed valid range
     u64 capacity = srb_get_capacity(buf);
     u64 count = srb_get_count(buf) - 1;
     u64 conversion_factor = srb_get_conversion_factor(buf);
@@ -211,7 +210,6 @@ JOIN(stub, bins_from_time_delays)(shared_ring_buffer* buf,
     i64 offset = (u64)round(delays[0] / resolution);
     i64 temp = 0;
 
-    // BUG: delays_bins is getting overflowed
     int i = 0;
     for (i = (delays_count - 1); i >= 1; i--) {
         temp = (i64)round(delays[i] / resolution);

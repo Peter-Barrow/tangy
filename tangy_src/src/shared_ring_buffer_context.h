@@ -25,11 +25,13 @@ struct shared_ring_buffer_context {
     u64 channel_count;
 };
 
-static inline u64 srb_context_size() {
+static inline u64
+srb_context_size() {
     return 9 * sizeof(u64);
 }
 
-static inline u64 srb_conversion_factor(f64 resolution, f64 clock_period) {
+static inline u64
+srb_conversion_factor(f64 resolution, f64 clock_period) {
     u64 factor = (u64)round(clock_period / resolution);
     return factor;
 }
@@ -124,35 +126,42 @@ srb_set_channel_count(shared_ring_buffer* buffer, u64 channel_count) {
     ((u64*)buffer->map_ptr)[8] = channel_count;
 }
 
-static inline void srb_reference_count_increment(shared_ring_buffer* buffer) {
+static inline void
+srb_reference_count_increment(shared_ring_buffer* buffer) {
     u64 rc = srb_get_reference_count(buffer);
     srb_set_reference_count(buffer, rc + 1);
 }
 
-static inline void srb_reference_count_decrement(shared_ring_buffer* buffer) {
+static inline void
+srb_reference_count_decrement(shared_ring_buffer* buffer) {
     u64 rc = srb_get_reference_count(buffer);
     if (rc > 0) {
         srb_set_reference_count(buffer, rc - 1);
     }
 }
 
-static inline tbResult
+static inline shmem_result
 srb_init(const u64 length_bytes,
-        char* name,
-        f64 resolution,
-        f64 clock_period,
-        u64 conversion_factor,
-        u64 capacity,
-        u64 count,
-        u64 channel_count,
-        shared_ring_buffer* buffer) {
+         char* name,
+         f64 resolution,
+         f64 clock_period,
+         u64 conversion_factor,
+         u64 capacity,
+         u64 count,
+         u64 channel_count,
+         shared_ring_buffer* buffer) {
 
-    shared_mapping map = { 0 };
-    map.name = name;
-    tbResult result = shmem_create(length_bytes, &map);
-    if (false == result.Ok) {
+    shmem_result result = { 0 };
+    shmem_map_result map_result = shmem_create(length_bytes, name);
+
+    if (false == map_result.Ok) {
+        result.Ok = map_result.Ok;
+        result.Error = map_result.Error;
+        result.Std_Error = map_result.Std_Error;
         return result;
     }
+
+    shared_mapping map = map_result.map;
 
     buffer->map_ptr = map.data;
     buffer->length_bytes = length_bytes;
@@ -169,16 +178,20 @@ srb_init(const u64 length_bytes,
     srb_set_reference_count(buffer, 1);
     srb_set_channel_count(buffer, channel_count);
 
+    result.Ok = true;
+
     return result;
 }
 
-static inline tbResult
+static inline shmem_result
 srb_deinit(shared_ring_buffer* buffer) {
     shared_mapping map = { .file_descriptor = buffer->file_descriptor,
                            .name = buffer->name,
                            .data = buffer->map_ptr };
     u8 exists = 0;
-    tbResult result = shmem_exists(buffer->name, &exists);
+    shmem_result result = { 0 };
+    result = shmem_exists(buffer->name, &exists);
+
     if (result.Ok == false) {
         return result;
     }
@@ -197,20 +210,29 @@ srb_deinit(shared_ring_buffer* buffer) {
     return result;
 }
 
-static inline tbResult
-srb_connect(char* name, shared_ring_buffer* buffer, shared_ring_buffer_context* context) {
+static inline shmem_result
+srb_connect(char* name,
+            shared_ring_buffer* buffer,
+            shared_ring_buffer_context* context) {
     u8 exists = 0;
-    tbResult result = shmem_exists(name, &exists);
+    shmem_result result = { 0 };
+
+    result = shmem_exists(name, &exists);
     if (result.Ok == false) {
         return result;
     }
 
-    shared_mapping map = {0};
-    map.name = name;
-    result = shmem_connect(&map);
-    if (result.Ok == false) {
+    shmem_map_result map_result = shmem_connect(name);
+    if (map_result.Ok == false) {
+
+        result.Ok = map_result.Ok;
+        result.Error = map_result.Error;
+        result.Std_Error = map_result.Std_Error;
+
         return result;
     }
+
+    shared_mapping map = map_result.map;
 
     buffer->map_ptr = map.data;
     buffer->file_descriptor = map.file_descriptor;
@@ -223,12 +245,12 @@ srb_connect(char* name, shared_ring_buffer* buffer, shared_ring_buffer_context* 
 
 static inline void
 srb_set_context(shared_ring_buffer* buffer,
-               f64 resolution,
-               f64 clock_period,
-               u64 conversion_factor,
-               u64 count,
-               u64 reference_count,
-               u64 channel_count) {
+                f64 resolution,
+                f64 clock_period,
+                u64 conversion_factor,
+                u64 count,
+                u64 reference_count,
+                u64 channel_count) {
 
     srb_set_resolution(buffer, resolution);
     srb_set_resolution_bins(buffer, (u64)roundl(1 / resolution));
@@ -241,7 +263,8 @@ srb_set_context(shared_ring_buffer* buffer,
 }
 
 static inline void
-srb_get_context(shared_ring_buffer* buffer, shared_ring_buffer_context* context) {
+srb_get_context(shared_ring_buffer* buffer,
+                shared_ring_buffer_context* context) {
     context->resolution = srb_get_resolution(buffer);
     context->resolution_bins = srb_get_resolution_bins(buffer);
     context->clock_period = srb_get_clock_period(buffer);

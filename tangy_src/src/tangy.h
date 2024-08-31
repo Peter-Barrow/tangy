@@ -2,6 +2,7 @@
 #define __TANGY__
 
 #include "base.h"
+#include "shared_memory.h"
 #include "shared_ring_buffer_context.h"
 
 // include implementations of analysis functions
@@ -37,7 +38,6 @@ struct tangy_buffer {
     buffer_format format;
 };
 
-
 ///
 /// @brief initialise a buffer
 ///
@@ -50,7 +50,7 @@ struct tangy_buffer {
 /// @param[in/out] t_buffer buffer variable to initialise
 /// @return ok or error
 ///
-static inline tbResult
+static inline shmem_result
 tangy_buffer_init(buffer_format format,
                   char* name,
                   const u64 capacity,
@@ -79,15 +79,18 @@ tangy_buffer_init(buffer_format format,
         factor = srb_conversion_factor(resolution, clock_period);
     }
 
-    tbResult result = srb_init(num_bytes,
-                               name_full,
-                               resolution,
-                               clock_period,
-                               factor,
-                               capacity,
-                               0,
-                               channel_count,
-                               &t_buffer->buffer);
+    shmem_result result = srb_init(num_bytes,
+                                   name_full,
+                                   resolution,
+                                   clock_period,
+                                   factor,
+                                   capacity,
+                                   0,
+                                   channel_count,
+                                   &t_buffer->buffer);
+    if (result.Ok == false) {
+        return result;
+    }
 
     shared_ring_buffer* buf = &t_buffer->buffer;
     switch (format) {
@@ -104,9 +107,9 @@ tangy_buffer_init(buffer_format format,
     return result;
 }
 
-static inline tbResult
+static inline shmem_result
 tangy_buffer_deinit(tangy_buffer* t_buf) {
-    tbResult result = srb_deinit(&t_buf->buffer);
+    shmem_result result = srb_deinit(&t_buf->buffer);
 
     switch (t_buf->format) {
         case STANDARD:
@@ -120,9 +123,9 @@ tangy_buffer_deinit(tangy_buffer* t_buf) {
     return result;
 }
 
-static inline tbResult
+static inline shmem_result
 tangy_buffer_connect(char* name, tangy_buffer* t_buf) {
-    tbResult result;
+    shmem_result result;
     char* name_full;
 
     shared_ring_buffer* buf = &t_buf->buffer;
@@ -621,7 +624,7 @@ tangy_second_order_coherence_delays(tangy_buffer* t_buf,
                                               length,
                                               intensities);
 
-              break;
+            break;
         case CLOCKED:
             clk_second_order_coherence_delays(&t_buf->buffer,
                                               &t_buf->slice.clocked,
