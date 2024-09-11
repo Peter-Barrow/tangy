@@ -27,18 +27,18 @@ struct shared_mapping {
 
 
 typedef enum {
-    OK,
-    MAP_CREATE,
-    HANDLE_TO_FD,
-    FD_TO_HANDLE,
-    MEMORY_MAPPING,
-    FTRUNCATE,
-    MAP,
-    STAT,
-    FSTAT,
-    UNMAP,
-    FD_CLOSE,
-    UNLINK,
+    SM_OK,
+    SM_MAP_CREATE,
+    SM_HANDLE_TO_FD,
+    SM_FD_TO_HANDLE,
+    SM_MEMORY_MAPPING,
+    SM_FTRUNCATE,
+    SM_MAP,
+    SM_STAT,
+    SM_FSTAT,
+    SM_UNMAP,
+    SM_FD_CLOSE,
+    SM_UNLINK,
 } shmem_error;
 
 

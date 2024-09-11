@@ -216,47 +216,47 @@ class delay_result:
 
 @cython.cfunc
 def raise_shmem_error(result: _tangy.shmem_result):
-    if result.Error == _tangy.shmem_error.MAP_CREATE:
+    if result.Error == _tangy.shmem_error.SM_MAP_CREATE:
         if result.Std_Error != 0:
             raise OSError(result.Std_Error)
         raise RuntimeError("Failed to create map")
 
-    if result.Error == _tangy.shmem_error.HANDLE_TO_FD:
+    if result.Error == _tangy.shmem_error.SM_HANDLE_TO_FD:
         raise RuntimeError("Could not convert handle to file descriptor")
 
-    if result.Error == _tangy.shmem_error.FD_TO_HANDLE:
+    if result.Error == _tangy.shmem_error.SM_FD_TO_HANDLE:
         raise RuntimeError("Could not convert file descriptor to handle")
 
-    if result.Error == _tangy.shmem_error.MEMORY_MAPPING:
+    if result.Error == _tangy.shmem_error.SM_MEMORY_MAPPING:
         if result.Std_Error != 0:
             raise OSError(result.Std_Error)
         raise RuntimeError("Memory failed failed")
 
-    if result.Error == _tangy.shmem_error.FTRUNCATE:
+    if result.Error == _tangy.shmem_error.SM_FTRUNCATE:
         if result.Std_Error != 0:
             raise OSError(result.Std_Error)
 
-    if result.Error == _tangy.shmem_error.MAP:
+    if result.Error == _tangy.shmem_error.SM_MAP:
         if result.Std_Error != 0:
             raise OSError(result.Std_Error)
 
-    if result.Error == _tangy.shmem_error.STAT:
+    if result.Error == _tangy.shmem_error.SM_STAT:
         if result.Std_Error != 0:
             raise OSError(result.Std_Error)
 
-    if result.Error == _tangy.shmem_error.FSTAT:
+    if result.Error == _tangy.shmem_error.SM_FSTAT:
         if result.Std_Error != 0:
             raise OSError(result.Std_Error)
 
-    if result.Error == _tangy.shmem_error.UNMAP:
+    if result.Error == _tangy.shmem_error.SM_UNMAP:
         if result.Std_Error != 0:
             raise OSError(result.Std_Error)
 
-    if result.Error == _tangy.shmem_error.FD_CLOSE:
+    if result.Error == _tangy.shmem_error.SM_FD_CLOSE:
         if result.Std_Error != 0:
             raise OSError(result.Std_Error)
 
-    if result.Error == _tangy.shmem_error.UNLINK:
+    if result.Error == _tangy.shmem_error.SM_UNLINK:
         if result.Std_Error != 0:
             raise OSError(result.Std_Error)
 

@@ -12,14 +12,14 @@ shmem_create(u64 map_size, char* name) {
     fd_t fd = shm_open(name, O_RDWR | O_CREAT | O_EXCL, 0777);
 
     if (-1 == fd) {
-        result.Error = MAP_CREATE;
+        result.Error = SM_MAP_CREATE;
         result.Std_Error = errno;
         return result;
     }
 
     int ft = ftruncate(fd, map_size);
     if (-1 == ft) {
-        result.Error = FTRUNCATE;
+        result.Error = SM_FTRUNCATE;
         result.Std_Error = errno;
         return result;
     }
@@ -27,7 +27,7 @@ shmem_create(u64 map_size, char* name) {
     char* ptr = mmap(NULL, map_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 
     if (-1 == *ptr) {
-        result.Error = MAP;
+        result.Error = SM_MAP;
         result.Std_Error = errno;
         return result;
     }
@@ -45,13 +45,13 @@ shmem_create(u64 map_size, char* name) {
                                       name);
 
     if (INVALID_HANDLE_VALUE == handle) {
-        result.Error = MAP_CREATE;
+        result.Error = SM_MAP_CREATE;
         return result;
     }
 
     int fd = _open_osfhandle((intptr_t)handle, 0);
     if (-1 == fd) {
-        result.Error = HANDLE_TO_FD;
+        result.Error = SM_HANDLE_TO_FD;
         return result;
     }
 
@@ -59,7 +59,7 @@ shmem_create(u64 map_size, char* name) {
       MapViewOfFile(handle, FILE_MAP_ALL_ACCESS, 0, 0, win_int64.QuadPart);
 
     if (-1 == *ptr) {
-        result.Error = MEMORY_MAPPING;
+        result.Error = SM_MEMORY_MAPPING;
         return result;
     }
 
@@ -87,7 +87,7 @@ shmem_connect(char* name) {
     fd_t fd = shm_open(name, O_RDWR, 0777);
 
     if (-1 == fd) {
-        result.Error = MAP_CREATE;
+        result.Error = SM_MAP_CREATE;
         result.Std_Error = errno;
         return result;
     }
@@ -95,7 +95,7 @@ shmem_connect(char* name) {
     struct stat file_status;
 
     if (-1 == fstat(fd, &file_status)) {
-        result.Error = STAT;
+        result.Error = SM_STAT;
         result.Std_Error = errno;
         return result;
     }
@@ -104,7 +104,7 @@ shmem_connect(char* name) {
       NULL, file_status.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 
     if (-1 == *ptr) {
-        result.Error = MAP;
+        result.Error = SM_MAP;
         result.Std_Error = errno;
         return result;
     }
@@ -114,20 +114,20 @@ shmem_connect(char* name) {
     HANDLE handle = OpenFileMapping(FILE_MAP_WRITE, FALSE, name);
 
     if (INVALID_HANDLE_VALUE == handle) {
-        result.Error = MAP_CREATE;
+        result.Error = SM_MAP_CREATE;
         return result;
     }
 
     int fd = _open_osfhandle((intptr_t)handle, 0);
     if (-1 == fd) {
-        result.Error = HANDLE_TO_FD;
+        result.Error = SM_HANDLE_TO_FD;
         return result;
     }
 
     char* ptr = MapViewOfFile(handle, FILE_MAP_WRITE, 0, 0, 0);
 
     if (-1 == *ptr) {
-        result.Error = MEMORY_MAPPING;
+        result.Error = SM_MEMORY_MAPPING;
         return result;
     }
 
@@ -153,25 +153,25 @@ shmem_close(shared_mapping* map) {
 #if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
     struct stat file_status;
     if (-1 == fstat(map->file_descriptor, &file_status)) {
-        result.Error = FSTAT;
+        result.Error = SM_FSTAT;
         result.Std_Error = errno;
         return result;
     }
 
     if (-1 == munmap(map->data, file_status.st_size)) {
-        result.Error = UNMAP;
+        result.Error = SM_UNMAP;
         result.Std_Error = errno;
         return result;
     }
 
     if (-1 == close(map->file_descriptor)) {
-        result.Error = FD_CLOSE;
+        result.Error = SM_FD_CLOSE;
         result.Std_Error = errno;
         return result;
     }
 
     if (-1 == shm_unlink(map->name)) {
-        result.Error = UNLINK;
+        result.Error = SM_UNLINK;
         result.Std_Error = errno;
         return result;
     }
@@ -182,7 +182,7 @@ shmem_close(shared_mapping* map) {
 
     HANDLE handle = (HANDLE)_get_osfhandle(map->file_descriptor);
     if (INVALID_HANDLE_VALUE == handle) {
-        result.Error = FD_TO_HANDLE;
+        result.Error = SM_FD_TO_HANDLE;
         return result;
     }
 
@@ -213,7 +213,7 @@ shmem_exists(char* const map_name, u8* exists) {
     }
 
     if (-1 == close(shm_descriptor)) {
-        result.Error = FD_CLOSE;
+        result.Error = SM_FD_CLOSE;
         result.Std_Error = errno;
         result.Ok = false;
         // TODO: need to set an error here, could raise errno
