@@ -316,7 +316,7 @@ JOIN(stub, pattern_init)(shared_ring_buffer* const buf,
     circular_iterator* iters =
       (circular_iterator*)malloc(sizeof(circular_iterator) * n);
 
-    // potentially index could be unatialised, doubt it but the compiler says so
+    // potentially index could be unitialised, doubt it but the compiler says so
     for (usize j = 0; j < n; j++) {
         index[j] = 0;
     }
@@ -326,15 +326,14 @@ JOIN(stub, pattern_init)(shared_ring_buffer* const buf,
                              srb_get_conversion_factor(buf));
 
     for (usize i = 0; i < n; i++) {
-        if (most_recent <= delays[i]) {
-            channel_max[i] = most_recent;
-        } else {
+
+        channel_max[i] = most_recent;
+        if (!(most_recent <= delays[i])) {
             channel_max[i] = most_recent - delays[i];
         }
 
-        if (channel_max[i] <= read_bins) {
-            channel_min = 0;
-        } else {
+        channel_min = 0;
+        if (!(channel_max[i] <= read_bins)) {
             channel_min = channel_max[i] - read_bins;
         }
 

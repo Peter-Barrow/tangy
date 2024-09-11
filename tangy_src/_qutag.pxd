@@ -1,14 +1,74 @@
-from numpy cimport uint8_t, int8_t, int32_t, int64_t
+#from numpy cimport uint8_t, int8_t, int32_t, int64_t
 
-ctypedef int8_t  Int8      # 8  bit integer for GCC
-ctypedef int32_t Int32     # 32 bit integer for GCC
-ctypedef int64_t Int64     # 64 bit integer for GCC
-ctypedef uint8_t Uint8     #  8 bit unsigned int f GCC
-ctypedef int32_t Bln32     # integer used as boolean
-DEF LLXFORMAT = "PRIx64"   # 64 bit hex printf format
-DEF LLDFORMAT = "PPRId64"  # 64 bit dec printf format
+from libc.stdint cimport uint8_t as u8
+from libc.stdint cimport int8_t as Int8
+from libc.stdint cimport int32_t as Int32
+from libc.stdint cimport int64_t as Int64
+from libc.stdint cimport uint8_t as Uint8
 
-cdef extern from "../opt/QUTAG/userlib/inc/tdcbase.h":
+ctypedef Int32 Bln32
+
+cdef extern from *:
+    """
+    #if defined _MSC_VER && _MSC_VER < 1800
+    typedef __int32 _Int32;
+    #else
+    #undef __STDC_FORMAT_MACROS
+    #define __STDC_FORMAT_MACROS
+    #include <inttypes.h>
+    typedef int32_t _Int32;
+    #endif
+
+    #define B _Int32
+    #define BSET _Int32
+    #include "bitflags_tmpl.h"
+    """
+
+    # ctypedef struct bfield__Int32_Result:
+    #     bint Ok
+    #     Int32 bit_field
+
+
+    # bfield__Int32_Result bfield__Int32_set_field(Int32 bit_field, Int32 target, Int32 max_field)
+    # bfield__Int32_Result bfield__Int32_unset_field(Int32 bit_field, Int32 target, Int32 max_field)
+    # bint bfield__Int32_contains_field(Int32 bit_field, Int32 target, Int32 max_field)
+
+    ctypedef struct bf__Int32_Result:
+        bint Ok
+        Int32 bit_flag
+    
+     
+    bf__Int32_Result bf__Int32_flag_from_position(u8 position, int max_flag)
+    
+    bf__Int32_Result bf__Int32_set(Int32 bit_flag, Int32 target, Int32 max_flag)
+    
+    bf__Int32_Result bf__Int32_set_position(Int32 bit_flag, u8 position, Int32 max_flag)
+    
+    bf__Int32_Result bf__Int32_unset(Int32 bit_flag, Int32 target, Int32 max_flag)
+    
+    bf__Int32_Result bf__Int32_unset_position(Int32 bit_flag,
+                                              u8 position,
+                                              Int32 max_flag)
+    
+    bint bf__Int32_contains(Int32 bit_flag, Int32 target, Int32 max_flag)
+    
+    bf__Int32_Result bf__Int32_extract(Int32 bit_flag, Int32 num_flags, Int32* collection)
+    
+    bf__Int32_Result bf__Int32_extract_positions(Int32 bit_flag,
+                                                 Int32 max_flag,
+                                                 u8* collection)
+    
+    bf__Int32_Result bf__Int32_collect(const Int32* const targets,
+                                       const Int32 n_targets,
+                                       Int32 max_flag)
+    
+    bf__Int32_Result bf__Int32_collect_positions(const u8* const targets,
+                                                 const Int32 n_targets,
+                                                 Int32 max_flag)
+     
+
+
+cdef extern from "../opt/QUTAG-HR/userlib/inc/tdcbase.h":
 
     # Type of the TDC device
     ctypedef enum TDC_DevType:
@@ -176,123 +236,88 @@ cdef extern from "../opt/QUTAG/userlib/inc/tdcbase.h":
             Int32       count )
 
 
-cdef extern from "../opt/QUTAG/userlib/inc/tdcdecl.h":
-    IF UNAME_SYSNAME == "Windows":
-        ctypedef __int8  Int8              # 8  bit integer for MSVC
-        ctypedef __int32 Int32             # 32 bit integer for MSVC
-        ctypedef __int64 Int64             # 64 bit integer for MSVC
-        ctypedef unsigned __int8 Uint8     #  8-Bit unsigned int for MSVC
-        ctypedef __int32 Bln32             # integer used as boolean
-        DEF LLXFORMAT =  "I64x"            # 64 bit hex printf format
-        DEF LLDFORMAT =  "I64d"            # 64 bit dec printf format
-        #undef  __STDC_FORMAT_MACROS
-        #define __STDC_FORMAT_MACROS
-    ELSE:
-        #include <inttypes.h>
-        cdef extern from 'inttypes.h':
-            ctypedef int8_t  Int8      # 8  bit integer for GCC
-            ctypedef int32_t Int32     # 32 bit integer for GCC
-            ctypedef int64_t Int64     # 64 bit integer for GCC
-            ctypedef uint8_t Uint8     #  8 bit unsigned int f GCC
-            ctypedef int32_t Bln32     # integer used as boolean
-        DEF LLXFORMAT = PRIx64         # 64 bit hex printf format
-        DEF LLDFORMAT = PRId64         # 64 bit dec printf format
 
-    DEF TDC_Ok =              0     # Success
-    DEF TDC_Error =         (-1)    # Unspecified error
-    DEF TDC_Timeout =         1     # Receive timed out
-    DEF TDC_NotConnected =    2     # No connection was established
-    DEF TDC_DriverError =     3     # Error accessing the USB driver
-    DEF TDC_DeviceLocked =    7     # Can't connect device because already in use
-    DEF TDC_Unknown =         8     # Unknown error
-    DEF TDC_NoDevice =        9     # Invalid device number used in call
-    DEF TDC_OutOfRange =     10     # Parameter in function call is out of range
-    DEF TDC_CantOpen =       11     # Failed to open specified file
-    DEF TDC_NotInitialized = 12     # Library has not been initialized
-    DEF TDC_NotEnabled =     13     # Requested feature is not enabled
-    DEF TDC_NotAvailable =   14     # Requested feature is not available
-
-
-cdef extern from '../opt/QUTAG/userlib/inc/tdchg2.h':
-    cdef int TDC_enableHg2( Bln32 enable )
-
-    cdef int TDC_setHg2Params(Int32 binWidth,
-                              Int32 binCount )
-
-    cdef int TDC_getHg2Params(Int32* binWidth,
-                              Int32* binCount )
-
-    cdef int TDC_setHg2Input(Int32 idler,
-                             Int32 channel1,
-                             Int32 channel2 )
-
-    cdef int TDC_getHg2Input(Int32* idler,
-                             Int32* channel1,
-                             Int32* channel2 )
-
-    cdef int TDC_resetHg2Correlations()
-
-    cdef int TDC_calcHg2G2(double* buffer,
-                           Int32 * bufSize,
-                           Bln32 reset )
-
-    cdef int TDC_calcHg2Tcp(Int64** buffers,
-                            Bln32 reset )
-
-    cdef int TDC_calcHg2Tcp1D(Int64* buffer,
-                              Int32* bufSize,
-                              Bln32 reset )
-
-    cdef int TDC_getHg2Raw(Int64* evtIdler,
-                           Int64* evtCoinc,
-                           Int64* bufSsi,
-                           Int64* bufS2i,
-                           Int32* bufSize )
-
-cdef extern from '../opt/QUTAG/userlib/inc/tdcmultidev.h':
-    cdef int TDC_discover(unsigned int* devCount)
-    cdef int TDC_getDeviceInfo(unsigned int  devNo,
-                               TDC_DevType* type,
-                               int* id,
-                               char* serialNo,
-                               Bln32* connected)
-    cdef int TDC_connect(unsigned int devNo)
-    cdef int TDC_disconnect(unsigned int devNo)
-    cdef int TDC_addressDevice(unsigned int devNo)
-    cdef int TDC_getCurrentAddress(unsigned int* devNo)
-
-cdef class StartStop():
-
-    cdef Bln32 is_enabled(self)
-    cdef Bln32 _bool32_to_bool(self, value)
-    cdef Bln32 _bool_to_bool32(self, value)
-    cdef void enable(self, enable)
-    cdef void add_histogram(self, start, stop, add)
-
-
-cdef extern from "../opt/QUTAG/userlib/inc/tdcstartstop.h":
-
-    cdef int TDC_enableStartStop(Bln32 enable)
-
-    cdef int TDC_addHistogram(Int32 startCh,
-                              Int32 stopCh,
-                              Bln32 add)
-
-    cdef int TDC_setHistogramParams(Int32 binWidth,
-                                    Int32 binCount)
-
-    cdef int TDC_getHistogramParams(Int32* binWidth,
-                                    Int32* binCount)
-
-    cdef int TDC_clearAllHistograms()
-
-    cdef int TDC_getHistogram(Int32 chStart,
-                              Int32 chStop,
-                              Bln32 reset,
-                              Int32* data,
-                              Int32* count,
-                              Int32* tooSmall,
-                              Int32* tooLarge,
-                              Int32* starts,
-                              Int32* stops,
-                              Int64* expTime)
+# cdef extern from '../opt/QUTAG-HR/userlib/inc/tdchg2.h':
+#     cdef int TDC_enableHg2( Bln32 enable )
+# 
+#     cdef int TDC_setHg2Params(Int32 binWidth,
+#                               Int32 binCount )
+# 
+#     cdef int TDC_getHg2Params(Int32* binWidth,
+#                               Int32* binCount )
+# 
+#     cdef int TDC_setHg2Input(Int32 idler,
+#                              Int32 channel1,
+#                              Int32 channel2 )
+# 
+#     cdef int TDC_getHg2Input(Int32* idler,
+#                              Int32* channel1,
+#                              Int32* channel2 )
+# 
+#     cdef int TDC_resetHg2Correlations()
+# 
+#     cdef int TDC_calcHg2G2(double* buffer,
+#                            Int32 * bufSize,
+#                            Bln32 reset )
+# 
+#     cdef int TDC_calcHg2Tcp(Int64** buffers,
+#                             Bln32 reset )
+# 
+#     cdef int TDC_calcHg2Tcp1D(Int64* buffer,
+#                               Int32* bufSize,
+#                               Bln32 reset )
+# 
+#     cdef int TDC_getHg2Raw(Int64* evtIdler,
+#                            Int64* evtCoinc,
+#                            Int64* bufSsi,
+#                            Int64* bufS2i,
+#                            Int32* bufSize )
+# 
+# cdef extern from '../opt/QUTAG-HR/userlib/inc/tdcmultidev.h':
+#     cdef int TDC_discover(unsigned int* devCount)
+#     cdef int TDC_getDeviceInfo(unsigned int  devNo,
+#                                TDC_DevType* type,
+#                                int* id,
+#                                char* serialNo,
+#                                Bln32* connected)
+#     cdef int TDC_connect(unsigned int devNo)
+#     cdef int TDC_disconnect(unsigned int devNo)
+#     cdef int TDC_addressDevice(unsigned int devNo)
+#     cdef int TDC_getCurrentAddress(unsigned int* devNo)
+# 
+# cdef class StartStop():
+# 
+#     cdef Bln32 is_enabled(self)
+#     cdef Bln32 _bool32_to_bool(self, value)
+#     cdef Bln32 _bool_to_bool32(self, value)
+#     cdef void enable(self, enable)
+#     cdef void add_histogram(self, start, stop, add)
+# 
+# 
+# cdef extern from "../opt/QUTAG-HR/userlib/inc/tdcstartstop.h":
+# 
+#     cdef int TDC_enableStartStop(Bln32 enable)
+# 
+#     cdef int TDC_addHistogram(Int32 startCh,
+#                               Int32 stopCh,
+#                               Bln32 add)
+# 
+#     cdef int TDC_setHistogramParams(Int32 binWidth,
+#                                     Int32 binCount)
+# 
+#     cdef int TDC_getHistogramParams(Int32* binWidth,
+#                                     Int32* binCount)
+# 
+#     cdef int TDC_clearAllHistograms()
+# 
+#     cdef int TDC_getHistogram(Int32 chStart,
+#                               Int32 chStop,
+#                               Bln32 reset,
+#                               Int32* data,
+#                               Int32* count,
+#                               Int32* tooSmall,
+#                               Int32* tooLarge,
+#                               Int32* starts,
+#                               Int32* stops,
+#                               Int64* expTime)
+# 

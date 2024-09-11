@@ -384,3 +384,14 @@ cdef extern from "./src/tangy.h":
                                              const f64* delays,
                                              const u64 length,
                                              u64* intensities)
+
+    cdef extern from "./src/qutools_reader.h":
+
+        u64 srb_read_header_qutools(shared_ring_buffer* buf,
+                                    FILE* filehandle)
+
+        u64 srb_read_next_qutools(shared_ring_buffer* buf,
+                                  std_slice* data,
+                                  FILE* filehandle,
+                                  u64 timetag_offset,
+                                  u64 count_tags)

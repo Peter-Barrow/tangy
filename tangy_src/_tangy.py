@@ -1540,7 +1540,7 @@ class PTUFile():
 
     Examples:
         Open a .ptu file and create a new buffer with a name
-        >>> ptu = tangy.PTUFile("my_measurement.ptu", "measurement", int(1e8))
+>>> ptu = tangy.PTUFile("my_measurement.ptu", "measurement", int(1e8))
 
         Get the underlying buffer and count the singles from it
         >>> (total, singles) = tangy.singles(ptu.buffer, 1)
@@ -1701,6 +1701,73 @@ class PTUFile():
                                                   self._status,
                                                   n)
                 return res
+        return res
+
+
+@cython.cclass
+class QuToolsFile():
+    """
+    """
+
+    _file_path: str
+    _file_handle: object
+    _c_file_handle = cython.declare(cython.pointer(FILE))
+
+    _buffer: TangyBuffer
+    _timetag_offset: u64
+
+    def __init__(self, file_path: str, name: str, length: int = 1000):
+
+        elems = file_path.split(".")
+        if elems[-1] != "bin":
+            raise NameError("File must have .bin extension")
+
+        self._file_path = file_path
+        self._file_handle = open(self._file_path, "rb")
+        _file_no = self._file_handle.fileno()
+        self._c_file_handle = fdopen(dup(_file_no), "rb".encode("ascii"))
+
+        self._buffer = TangyBuffer(
+            name, 1e-12, 1, 8, length, TangyBufferType.Standard)
+
+        self._timetag_offset = _tangy.srb_read_header_qutools(
+                self._buffer._ptr_rb, self._c_file_handle)
+        return
+
+    def __del__(self):
+        fclose(self._c_file_handle)
+        self._file_handle.close()
+
+    def buffer(self) -> TangyBuffer:
+        """
+        Acquire the buffer being written to
+
+        Returns:
+            TangyBuffer: Instance of buffer for the openend file. Where the \
+                buffer is an instance of TangyBuffer.
+        """
+
+        return self._buffer
+
+    def __len__(self):
+        return len(self._buffer)
+
+    @property
+    def count(self):
+        x: u64n = self._buffer.count
+        return x
+
+    @cython.ccall
+    def read(self, n: u64n) -> int:
+
+        res: int = _tangy.srb_read_next_qutools(
+            self._buffer._ptr_rb,
+            cython.address(
+                self._buffer._buf.slice.standard),
+            self._c_file_handle,
+            self._timetag_offset,
+            n)
+
         return res
 
 

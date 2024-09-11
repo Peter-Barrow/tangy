@@ -55,6 +55,26 @@ if "Linux" in platform.platform():
     )
     extensions.append(uqd)
 
+    # qutag = Extension(
+    #     "tangy._qutag",
+    #     sources=[
+    #         os.path.join(cython_dir, "_qutag.py"),
+    #     ],
+    #     include_dirs=[
+    #         get_include(),
+    #         "./opt/QUTAG-HR/userlib/inc",
+    #         ".",
+    #         "./tangy_src",
+    #         "./tangy_src/src/",
+    #     ],
+    #     libraries=[libusb, 'tdcbase'],
+    #     library_dirs=['.', './opt/QUTAG-HR/userlib/lib'],
+    #     extra_compile_args=compiler_flags,
+    #     define_macros=[('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')],
+    #     optional=os.environ.get('CIBUILDWHEEL', '0') != '1',
+    # )
+    # extensions.append(qutag)
+
 if "Windows" in platform.platform():
     # these are needed for local development
     # os.environ["CC"] = "x86_64-w64-mingw32-gcc"
@@ -95,4 +115,5 @@ ext_modules = cythonize(
     compiler_directives={'language_level': '3'},
     annotate=True)
 
-setup(ext_modules=ext_modules, include_package_data=True)
+# setup(ext_modules=ext_modules, include_package_data=True)
+setup(ext_modules=ext_modules)
