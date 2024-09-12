@@ -671,6 +671,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#tangy.TangyBuffer.timetags" class="md-nav__link">
+    <span class="md-ellipsis">
+      timetags
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#tangy.TangyBuffer.timetrace" class="md-nav__link">
     <span class="md-ellipsis">
       timetrace
@@ -1400,6 +1409,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#tangy.TangyBuffer.timetags" class="md-nav__link">
+    <span class="md-ellipsis">
+      timetags
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#tangy.TangyBuffer.timetrace" class="md-nav__link">
     <span class="md-ellipsis">
       timetrace
@@ -1829,88 +1847,48 @@
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td><code>count</code></td>
-            <td>
-                  <code><span title="numpy.uint64">uint64</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Number of events</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>resolution</code></td>
-            <td>
-                  <code>float</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Resolution of timetags</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>clock_period</code></td>
-            <td>
-                  <code>float</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Clock period (if required)</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>channels</code></td>
-            <td>
-                  <code>ndarray(u8n</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Channels</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>timetags</code></td>
-            <td>
-                  <code>Union[ndarray(<span title="numpy.uint64">uint64</span>), Tuple[ndarray(<span title="numpy.uint64">uint64</span>), ndarray(<span title="numpy.uint64">uint64</span>)]]</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Timetags</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code>count</code></b>
+              (<code><span title="numpy.uint64">uint64</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Number of events</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>resolution</code></b>
+              (<code>float</code>)
+          –
+          <div class="doc-md-description">
+            <p>Resolution of timetags</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>clock_period</code></b>
+              (<code>float</code>)
+          –
+          <div class="doc-md-description">
+            <p>Clock period (if required)</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>channels</code></b>
+              (<code>ndarray(u8n</code>)
+          –
+          <div class="doc-md-description">
+            <p>Channels</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>timetags</code></b>
+              (<code>Union[ndarray(<span title="numpy.uint64">uint64</span>), Tuple[ndarray(<span title="numpy.uint64">uint64</span>), ndarray(<span title="numpy.uint64">uint64</span>)]]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Timetags</p>
+          </div>
+        </li>
+    </ul>
 
 
 <p><span class="doc-section-title">Examples:</span></p>
@@ -2045,259 +2023,176 @@
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td><code>name</code></td>
-            <td>
-                  <code>str</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Name of buffer to be created or attached to.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>resolution</code></td>
-            <td>
-                  <code>float = 0.1</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Resolution of timetags in seconds.
-Unused if connecting.</p>
-              </div>
-            </td>
-            <td>
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code>name</code></b>
+              (<code>str</code>)
+          –
+          <div class="doc-md-description">
+            <p>Name of buffer to be created or attached to.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>resolution</code></b>
+              (<code>float = 0.1</code>, default:
                   <code>0.1</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>clock_period</code></td>
-            <td>
-                  <code>float = 1.0</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Length of clock period in seconds for
+)
+          –
+          <div class="doc-md-description">
+            <p>Resolution of timetags in seconds.
+Unused if connecting.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>clock_period</code></b>
+              (<code>float = 1.0</code>, default:
+                  <code>1.0</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Length of clock period in seconds for
 measurements that include clock information in each timetag. Unused
 if connecting</p>
-              </div>
-            </td>
-            <td>
-                  <code>1.0</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>channel_count</code></td>
-            <td>
-                  <code>Optional[int] = 4</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Number of channels. Unused
-if connecting.</p>
-              </div>
-            </td>
-            <td>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>channel_count</code></b>
+              (<code>Optional[int] = 4</code>, default:
                   <code>4</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>length</code></td>
-            <td>
-                  <code>Optional[int] = 10_000_000</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Length of buffer to create.
+)
+          –
+          <div class="doc-md-description">
+            <p>Number of channels. Unused
+if connecting.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>length</code></b>
+              (<code>Optional[int] = 10_000_000</code>)
+          –
+          <div class="doc-md-description">
+            <p>Length of buffer to create.
 Unused if connecting.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>format</code></td>
-            <td>
-                  <code>TangyBufferType = TangyBufferType.Standard</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Format of
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>format</code></b>
+              (<code>TangyBufferType = TangyBufferType.Standard</code>, default:
+                  <code>...</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Format of
 timetags in the buffer, default is the <code>standard</code> format with a
 single value for the channel and single value for timeing information.
 Unused if connecting.</p>
-              </div>
-            </td>
-            <td>
-                  <code>...</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+          </div>
+        </li>
+    </ul>
 
 
 <p><span class="doc-section-title">Attributes:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.name" href="#tangy.TangyBuffer.name">name</a></code></td>
-            <td>
-                  <code>str</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Name of buffer</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.resolution" href="#tangy.TangyBuffer.resolution">resolution</a></code></td>
-            <td>
-                  <code>float</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Resolution of timetags in seconds</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.clock_period" href="#tangy.TangyBuffer.clock_period">clock_period</a></code></td>
-            <td>
-                  <code>float</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Clock period of clock signal used if timetags with
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.name" href="#tangy.TangyBuffer.name">name</a></code></b>
+              (<code>str</code>)
+          –
+          <div class="doc-md-description">
+            <p>Name of buffer</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.resolution" href="#tangy.TangyBuffer.resolution">resolution</a></code></b>
+              (<code>float</code>)
+          –
+          <div class="doc-md-description">
+            <p>Resolution of timetags in seconds</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.clock_period" href="#tangy.TangyBuffer.clock_period">clock_period</a></code></b>
+              (<code>float</code>)
+          –
+          <div class="doc-md-description">
+            <p>Clock period of clock signal used if timetags with
 clock information are used. Defaults to 1.0 otherwise</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.resolution_bins" href="#tangy.TangyBuffer.resolution_bins">resolution_bins</a></code></td>
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Resolution in bins</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.clock_period_bins" href="#tangy.TangyBuffer.clock_period_bins">clock_period_bins</a></code></td>
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Clock period in units of resolution</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.conversion_factor" href="#tangy.TangyBuffer.conversion_factor">conversion_factor</a></code></td>
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Factor to convert between time and bins</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.capacity" href="#tangy.TangyBuffer.capacity">capacity</a></code></td>
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Maximum number of timetags that can be stored</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.count" href="#tangy.TangyBuffer.count">count</a></code></td>
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>total number of timetags written to the buffer</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.reference_count" href="#tangy.TangyBuffer.reference_count">reference_count</a></code></td>
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Number of reference to current open buffer. Other
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.resolution_bins" href="#tangy.TangyBuffer.resolution_bins">resolution_bins</a></code></b>
+              (<code>int</code>)
+          –
+          <div class="doc-md-description">
+            <p>Resolution in bins</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.clock_period_bins" href="#tangy.TangyBuffer.clock_period_bins">clock_period_bins</a></code></b>
+              (<code>int</code>)
+          –
+          <div class="doc-md-description">
+            <p>Clock period in units of resolution</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.conversion_factor" href="#tangy.TangyBuffer.conversion_factor">conversion_factor</a></code></b>
+              (<code>int</code>)
+          –
+          <div class="doc-md-description">
+            <p>Factor to convert between time and bins</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.capacity" href="#tangy.TangyBuffer.capacity">capacity</a></code></b>
+              (<code>int</code>)
+          –
+          <div class="doc-md-description">
+            <p>Maximum number of timetags that can be stored</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.count" href="#tangy.TangyBuffer.count">count</a></code></b>
+              (<code>int</code>)
+          –
+          <div class="doc-md-description">
+            <p>total number of timetags written to the buffer</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.reference_count" href="#tangy.TangyBuffer.reference_count">reference_count</a></code></b>
+              (<code>int</code>)
+          –
+          <div class="doc-md-description">
+            <p>Number of reference to current open buffer. Other
 processes can connect to the same buffer</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.channel_count" href="#tangy.TangyBuffer.channel_count">channel_count</a></code></td>
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Number of available channels in the buffer</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.begin" href="#tangy.TangyBuffer.begin">begin</a></code></td>
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Index of first timetag. Can be greater than capacity</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.end" href="#tangy.TangyBuffer.end">end</a></code></td>
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Index of last timetag. Can be greater than capacity and will
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.channel_count" href="#tangy.TangyBuffer.channel_count">channel_count</a></code></b>
+              (<code>int</code>)
+          –
+          <div class="doc-md-description">
+            <p>Number of available channels in the buffer</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.begin" href="#tangy.TangyBuffer.begin">begin</a></code></b>
+              (<code>int</code>)
+          –
+          <div class="doc-md-description">
+            <p>Index of first timetag. Can be greater than capacity</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><a class="autorefs autorefs-internal" title="tangy.TangyBuffer.end" href="#tangy.TangyBuffer.end">end</a></code></b>
+              (<code>int</code>)
+          –
+          <div class="doc-md-description">
+            <p>Index of last timetag. Can be greater than capacity and will
 always be greater than <code>begin</code></p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+          </div>
+        </li>
+    </ul>
 
 
 <details class="note" open>
@@ -2399,27 +2294,16 @@ Returns:
       <p>Maximum number of timetags the buffer can hold</p>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>maximum number of timetags</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>int</code>
+          –
+          <div class="doc-md-description">
+            <p>maximum number of timetags</p>
+          </div>
+        </li>
+    </ul>
     </div>
 
 </div>
@@ -2448,27 +2332,16 @@ Returns:
     available.</p>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>number of channels</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>int</code>
+          –
+          <div class="doc-md-description">
+            <p>number of channels</p>
+          </div>
+        </li>
+    </ul>
     </div>
 
 </div>
@@ -2498,27 +2371,16 @@ Returns:
     of an external clock signal</p>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code>float</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>clock period of timetags</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>float</code>
+          –
+          <div class="doc-md-description">
+            <p>clock period of timetags</p>
+          </div>
+        </li>
+    </ul>
     </div>
 
 </div>
@@ -2544,27 +2406,16 @@ Returns:
       <p>Clock period in terms of bins of timetags in buffer</p>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>clock period of timetags</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>int</code>
+          –
+          <div class="doc-md-description">
+            <p>clock period of timetags</p>
+          </div>
+        </li>
+    </ul>
     </div>
 
 </div>
@@ -2661,27 +2512,16 @@ Returns:
       <p>Name of buffer</p>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code>str</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>buffer name</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>str</code>
+          –
+          <div class="doc-md-description">
+            <p>buffer name</p>
+          </div>
+        </li>
+    </ul>
     </div>
 
 </div>
@@ -2710,27 +2550,16 @@ Returns:
     to delete the backing memory and close the memory mapping.</p>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>number of connections</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>int</code>
+          –
+          <div class="doc-md-description">
+            <p>number of connections</p>
+          </div>
+        </li>
+    </ul>
     </div>
 
 </div>
@@ -2757,27 +2586,16 @@ Returns:
       <p>Resolution of timetags in buffer</p>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code>float</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>resolution of timetags</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>float</code>
+          –
+          <div class="doc-md-description">
+            <p>resolution of timetags</p>
+          </div>
+        </li>
+    </ul>
     </div>
 
 </div>
@@ -2803,27 +2621,16 @@ Returns:
       <p>Resolution in terms of bins of timetags in buffer</p>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>resolution of timetags</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>int</code>
+          –
+          <div class="doc-md-description">
+            <p>resolution of timetags</p>
+          </div>
+        </li>
+    </ul>
     </div>
 
 </div>
@@ -2858,27 +2665,16 @@ Returns:
 </code></pre></div>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Index corresponding to requested time</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>int</code>
+          –
+          <div class="doc-md-description">
+            <p>Index corresponding to requested time</p>
+          </div>
+        </li>
+    </ul>
 
     </div>
 
@@ -2919,27 +2715,16 @@ Returns:
       <p>Length of buffer</p>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Length of buffer</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>int</code>
+          –
+          <div class="doc-md-description">
+            <p>Length of buffer</p>
+          </div>
+        </li>
+    </ul>
 
     </div>
 
@@ -2962,55 +2747,28 @@ Returns:
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td><code>time</code></td>
-            <td>
-                  <code>float</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Amount of time in seconds</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code>time</code></b>
+              (<code>float</code>)
+          –
+          <div class="doc-md-description">
+            <p>Amount of time in seconds</p>
+          </div>
+        </li>
+    </ul>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>number of bins</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>int</code>
+          –
+          <div class="doc-md-description">
+            <p>number of bins</p>
+          </div>
+        </li>
+    </ul>
 
     </div>
 
@@ -3029,7 +2787,7 @@ Returns:
     <span class="n">window</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">channels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
     <span class="n">delays</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Records</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Records</span> <span class="o">|</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3044,97 +2802,54 @@ Returns:
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td><code>read_time</code></td>
-            <td>
-                  <code>float</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>time to integrate over</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>window</code></td>
-            <td>
-                  <code>float</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>maximum distance between timetags allowed</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>channels</code></td>
-            <td>
-                  <code>List[int]</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>channels to find coincidences between</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>delays</code></td>
-            <td>
-                  <code>Optional[List[float]] = None,</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>delays for each channel</p>
-              </div>
-            </td>
-            <td>
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code>read_time</code></b>
+              (<code>float</code>)
+          –
+          <div class="doc-md-description">
+            <p>time to integrate over</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>window</code></b>
+              (<code>float</code>)
+          –
+          <div class="doc-md-description">
+            <p>maximum distance between timetags allowed</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>channels</code></b>
+              (<code>List[int]</code>)
+          –
+          <div class="doc-md-description">
+            <p>channels to find coincidences between</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>delays</code></b>
+              (<code>Optional[List[float]] = None,</code>, default:
                   <code>None</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+)
+          –
+          <div class="doc-md-description">
+            <p>delays for each channel</p>
+          </div>
+        </li>
+    </ul>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code><a class="autorefs autorefs-internal" title="tangy._tangy.Records" href="#tangy.Records">Records</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Records found in coincidence</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><a class="autorefs autorefs-internal" title="tangy._tangy.Records" href="#tangy.Records">Records</a></code>
+          –
+          <div class="doc-md-description">
+            <p>Records found in coincidence</p>
+          </div>
+        </li>
+    </ul>
 
     </div>
 
@@ -3168,97 +2883,54 @@ Returns:
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td><code>read_time</code></td>
-            <td>
-                  <code>float</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>time to integrate over</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>window</code></td>
-            <td>
-                  <code>float</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>maximum distance between timetags allowed</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>channels</code></td>
-            <td>
-                  <code>List[int]</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>channels to find coincidences between</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>delays</code></td>
-            <td>
-                  <code>Optional[List[float]] = None,</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>delays for each channel</p>
-              </div>
-            </td>
-            <td>
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code>read_time</code></b>
+              (<code>float</code>)
+          –
+          <div class="doc-md-description">
+            <p>time to integrate over</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>window</code></b>
+              (<code>float</code>)
+          –
+          <div class="doc-md-description">
+            <p>maximum distance between timetags allowed</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>channels</code></b>
+              (<code>List[int]</code>)
+          –
+          <div class="doc-md-description">
+            <p>channels to find coincidences between</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>delays</code></b>
+              (<code>Optional[List[float]] = None,</code>, default:
                   <code>None</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+)
+          –
+          <div class="doc-md-description">
+            <p>delays for each channel</p>
+          </div>
+        </li>
+    </ul>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Number of coincidences found</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>int</code>
+          –
+          <div class="doc-md-description">
+            <p>Number of coincidences found</p>
+          </div>
+        </li>
+    </ul>
 
     </div>
 
@@ -3320,168 +2992,101 @@ Returns:
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td><code>signal</code></td>
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>channel of signal photon</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>idler</code></td>
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>channel of idler photon</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>channels</code></td>
-            <td>
-                  <code>(List[int])</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>channels to test for coincidence, must contain
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code>signal</code></b>
+              (<code>int</code>)
+          –
+          <div class="doc-md-description">
+            <p>channel of signal photon</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>idler</code></b>
+              (<code>int</code>)
+          –
+          <div class="doc-md-description">
+            <p>channel of idler photon</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>channels</code></b>
+              (<code>(List[int])</code>)
+          –
+          <div class="doc-md-description">
+            <p>channels to test for coincidence, must contain
 signal, idler and optionally a clock channel</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>read_time</code></td>
-            <td>
-                  <code>float</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>time to integrate over</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>radius</code></td>
-            <td>
-                  <code>(float)</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>maximum distance between timetags allowed</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>delays</code></td>
-            <td>
-                  <code>Optional[List[float]] = None,</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>delays for each channel</p>
-              </div>
-            </td>
-            <td>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>read_time</code></b>
+              (<code>float</code>)
+          –
+          <div class="doc-md-description">
+            <p>time to integrate over</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>radius</code></b>
+              (<code>(float)</code>)
+          –
+          <div class="doc-md-description">
+            <p>maximum distance between timetags allowed</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>delays</code></b>
+              (<code>Optional[List[float]] = None,</code>, default:
                   <code>None</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>clock</code></td>
-            <td>
-                  <code>Optional[int] = None,</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Optional clock channel</p>
-              </div>
-            </td>
-            <td>
+)
+          –
+          <div class="doc-md-description">
+            <p>delays for each channel</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>clock</code></b>
+              (<code>Optional[int] = None,</code>, default:
                   <code>None</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>bin_width</code></td>
-            <td>
-                  <code>int = 1,</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Width of bins in histogram</p>
-              </div>
-            </td>
-            <td>
+)
+          –
+          <div class="doc-md-description">
+            <p>Optional clock channel</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>bin_width</code></b>
+              (<code>int = 1,</code>, default:
                   <code>1</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>centre</code></td>
-            <td>
-                  <code>bool = True</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Whether or not to centre the histogram</p>
-              </div>
-            </td>
-            <td>
+)
+          –
+          <div class="doc-md-description">
+            <p>Width of bins in histogram</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>centre</code></b>
+              (<code>bool = True</code>, default:
                   <code>True</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+)
+          –
+          <div class="doc-md-description">
+            <p>Whether or not to centre the histogram</p>
+          </div>
+        </li>
+    </ul>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code><span title="tangy._tangy.JointHistogram">JointHistogram</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Joint delay histogram and marginal distributions</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="tangy._tangy.JointHistogram">JointHistogram</span></code>
+          –
+          <div class="doc-md-description">
+            <p>Joint delay histogram and marginal distributions</p>
+          </div>
+        </li>
+    </ul>
 
     </div>
 
@@ -3505,55 +3110,28 @@ signal, idler and optionally a clock channel</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td><code>time</code></td>
-            <td>
-                  <code>float</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Amount of time, in seconds, to split the buffer by</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code>time</code></b>
+              (<code>float</code>)
+          –
+          <div class="doc-md-description">
+            <p>Amount of time, in seconds, to split the buffer by</p>
+          </div>
+        </li>
+    </ul>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Index in buffer corresponding to the timetag that is greater            than or equal to <code>buffer.time_in_buffer() - time</code></p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>int</code>
+          –
+          <div class="doc-md-description">
+            <p>Index in buffer corresponding to the timetag that is greater            than or equal to <code>buffer.time_in_buffer() - time</code></p>
+          </div>
+        </li>
+    </ul>
 
     </div>
 
@@ -3582,111 +3160,64 @@ signal, idler and optionally a clock channel</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td><code>channel_a</code></td>
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>First channel</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>channel_b</code></td>
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Second channel</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>read_time</code></td>
-            <td>
-                  <code>(float)</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Time to integrate over</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>resolution</code></td>
-            <td>
-                  <code>float = 1e-9,</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Resolution of bins</p>
-              </div>
-            </td>
-            <td>
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code>channel_a</code></b>
+              (<code>int</code>)
+          –
+          <div class="doc-md-description">
+            <p>First channel</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>channel_b</code></b>
+              (<code>int</code>)
+          –
+          <div class="doc-md-description">
+            <p>Second channel</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>read_time</code></b>
+              (<code>(float)</code>)
+          –
+          <div class="doc-md-description">
+            <p>Time to integrate over</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>resolution</code></b>
+              (<code>float = 1e-9,</code>, default:
                   <code>1e-09</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>window</code></td>
-            <td>
-                  <code>Optional[float] = None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Correlation window</p>
-              </div>
-            </td>
-            <td>
+)
+          –
+          <div class="doc-md-description">
+            <p>Resolution of bins</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>window</code></b>
+              (<code>Optional[float] = None</code>, default:
                   <code>None</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+)
+          –
+          <div class="doc-md-description">
+            <p>Correlation window</p>
+          </div>
+        </li>
+    </ul>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code><span title="tangy._tangy.delay_result">delay_result</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Dataclass containing histogram data and fitting results</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="tangy._tangy.delay_result">delay_result</span></code>
+          –
+          <div class="doc-md-description">
+            <p>Dataclass containing histogram data and fitting results</p>
+          </div>
+        </li>
+    </ul>
 
     </div>
 
@@ -3713,97 +3244,58 @@ signal, idler and optionally a clock channel</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td><code>buffer</code></td>
-            <td>
-                  <code>RecordBuffer</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Buffer containing timetags</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>read_time</code></td>
-            <td>
-                  <code>Optional[float] = None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Length of time to integrate over</p>
-              </div>
-            </td>
-            <td>
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code>buffer</code></b>
+              (<code>RecordBuffer</code>)
+          –
+          <div class="doc-md-description">
+            <p>Buffer containing timetags</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>read_time</code></b>
+              (<code>Optional[float] = None</code>, default:
                   <code>None</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>start</code></td>
-            <td>
-                  <code>Optional[int] = None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Buffer position to start counting from</p>
-              </div>
-            </td>
-            <td>
+)
+          –
+          <div class="doc-md-description">
+            <p>Length of time to integrate over</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>start</code></b>
+              (<code>Optional[int] = None</code>, default:
                   <code>None</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>stop</code></td>
-            <td>
-                  <code>Optional[int] = None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Buffer position to sotp counting to</p>
-              </div>
-            </td>
-            <td>
+)
+          –
+          <div class="doc-md-description">
+            <p>Buffer position to start counting from</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>stop</code></b>
+              (<code>Optional[int] = None</code>, default:
                   <code>None</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+)
+          –
+          <div class="doc-md-description">
+            <p>Buffer position to sotp counting to</p>
+          </div>
+        </li>
+    </ul>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code>(int, List[int])</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Total counts and list of total counts on each channel</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>(int, List[int])</code>
+          –
+          <div class="doc-md-description">
+            <p>Total counts and list of total counts on each channel</p>
+          </div>
+        </li>
+    </ul>
 
 
 <p><span class="doc-section-title">Examples:</span></p>
@@ -3845,6 +3337,73 @@ Returns:
 <div class="doc doc-object doc-function">
 
 
+<h5 id="tangy.TangyBuffer.timetags" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">timetags</span>
+
+
+</h5>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">timetags</span><span class="p">(</span>
+    <span class="n">channels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">stop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">]]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+      <p>Get the timetags for selected channels
+Args:
+    channels (Optional[Union[int, List[int]]]): Channels to get
+        timetags for, can be either a single channel (int) or many
+        (list of ints). If no channels are set and value left as None,
+        all channels will gathered.
+    start (Optional[int]): Position in buffer to start collecting from,
+        if None the first valid position in the buffer will be used.
+    stop (Optional[int]): Position in the buffer to collect timetags
+        up to, if left as None the end of the buffer will be used.</p>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>List[Tuple[int, <span title="numpy.typing.NDArray">NDArray</span>]]</code>
+          –
+          <div class="doc-md-description">
+            <p>a list of tuples, each list element
+contains the channel index and ndarray of timetags for that
+channel</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Examples:</span></p>
+    <p>Get all timetags for channels 0 and 1</p>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">timetags</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">timetags</span><span class="p">(</span><span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+</code></pre></div>
+    <p>Get the first 10 timetags on channel 2</p>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">start</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">begin</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stop</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="mi">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">channel_target</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">timetags_channel_2</span> <span class="o">=</span> <span class="n">timetags</span><span class="p">(</span><span class="n">channels</span><span class="o">=</span><span class="n">channel_target</span><span class="p">,</span>
+<span class="go">                                  start=start,</span>
+<span class="go">                                  stop=stop)</span>
+</code></pre></div>
+    <p>Get the last 100 timetags on channel 4</p>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">stop</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">end</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stop</span> <span class="o">=</span> <span class="n">stop</span> <span class="o">-</span> <span class="mi">100</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">timetags_channel_2</span> <span class="o">=</span> <span class="n">timetags</span><span class="p">(</span><span class="n">channels</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+<span class="go">                                  start=start,</span>
+<span class="go">                                  stop=stop)</span>
+</code></pre></div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h5 id="tangy.TangyBuffer.timetrace" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">timetrace</span>
 
@@ -3868,83 +3427,46 @@ Returns:
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td><code>channels</code></td>
-            <td>
-                  <code>List[int]</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Channels to count timetags of</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>read_time</code></td>
-            <td>
-                  <code>float</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Amount of time to measure over, In seconds</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>resolution</code></td>
-            <td>
-                  <code>float = 10.0</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Size of bins in seconds</p>
-              </div>
-            </td>
-            <td>
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code>channels</code></b>
+              (<code>List[int]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Channels to count timetags of</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>read_time</code></b>
+              (<code>float</code>)
+          –
+          <div class="doc-md-description">
+            <p>Amount of time to measure over, In seconds</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>resolution</code></b>
+              (<code>float = 10.0</code>, default:
                   <code>10.0</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+)
+          –
+          <div class="doc-md-description">
+            <p>Size of bins in seconds</p>
+          </div>
+        </li>
+    </ul>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code>ndarray</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>intensities</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>ndarray</code>
+          –
+          <div class="doc-md-description">
+            <p>intensities</p>
+          </div>
+        </li>
+    </ul>
 
     </div>
 
@@ -4006,32 +3528,16 @@ Returns:
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td><code>buffer</code></td>
-            <td>
-                  <code><a class="autorefs autorefs-internal" title="tangy._tangy.TangyBuffer" href="#tangy.TangyBuffer">TangyBuffer</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>buffer with configuration to save</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code>buffer</code></b>
+              (<code><a class="autorefs autorefs-internal" title="tangy._tangy.TangyBuffer" href="#tangy.TangyBuffer">TangyBuffer</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>buffer with configuration to save</p>
+          </div>
+        </li>
+    </ul>
 
     </div>
 
@@ -4088,130 +3594,30 @@ Returns:
 
 
       <p>Class to read data from Picoquant PTU file and write into buffer.</p>
+<pre><code>Args:
+    file_path (str): Path to Picoquant PTU file.
+    name (str): Name of buffer to be created (or connected to).
+    length (int = 1000):
 
+Attributes:
+    buffer: Buffer being written to
+    header (dict): Dictionary containing information found in the file header
+    record_count (int): Total number of records processed from PTU file
+    count (int): Total number of timetags written into the buffer
 
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td><code>file_path</code></td>
-            <td>
-                  <code>str</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Path to Picoquant PTU file.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>name</code></td>
-            <td>
-                  <code>str</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Name of buffer to be created (or connected to).</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code>length</code></td>
-            <td>
-                  <code>int = 1000</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                
-              </div>
-            </td>
-            <td>
-                  <code>1000</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-<p><span class="doc-section-title">Attributes:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td><code><span title="tangy.PTUFile.buffer">buffer</span></code></td>
-            <td>
-                  <code><a class="autorefs autorefs-internal" title="tangy._tangy.TangyBuffer" href="#tangy.TangyBuffer">TangyBuffer</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Buffer being written to</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code><span title="tangy.PTUFile.header">header</span></code></td>
-            <td>
-                  <code>dict</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Dictionary containing information found in the file header</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code><span title="tangy.PTUFile.record_count">record_count</span></code></td>
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Total number of records processed from PTU file</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code><span title="tangy.PTUFile.count">count</span></code></td>
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Total number of timetags written into the buffer</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-<p><span class="doc-section-title">Examples:</span></p>
-    <p>Open a .ptu file and create a new buffer with a name</p>
-    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">ptu</span> <span class="o">=</span> <span class="n">tangy</span><span class="o">.</span><span class="n">PTUFile</span><span class="p">(</span><span class="s2">&quot;my_measurement.ptu&quot;</span><span class="p">,</span> <span class="s2">&quot;measurement&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e8</span><span class="p">))</span>
-</code></pre></div>
-    <p>Get the underlying buffer and count the singles from it</p>
-    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">total</span><span class="p">,</span> <span class="n">singles</span><span class="p">)</span> <span class="o">=</span> <span class="n">tangy</span><span class="o">.</span><span class="n">singles</span><span class="p">(</span><span class="n">ptu</span><span class="o">.</span><span class="n">buffer</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-</code></pre></div>
+Examples:
+    Open a .ptu file and create a new buffer with a name
+</code></pre>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>ptu = tangy.PTUFile("my_measurement.ptu", "measurement", int(1e8))</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<pre><code>    Get the underlying buffer and count the singles from it
+    &gt;&gt;&gt; (total, singles) = tangy.singles(ptu.buffer, 1)
+</code></pre>
 
 
 
@@ -4234,13 +3640,37 @@ Returns:
 
 
 </h5>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">read</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="n">u64n</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">read</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="n">u64n</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
       <p>Read an amount of tags from the target file</p>
-<p>:param n: [TODO:description]</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code>n</code></b>
+              (<code>int</code>)
+          –
+          <div class="doc-md-description">
+            <p>Number of tags to read from the file</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="numpy.uint64">uint64</span></code>
+          –
+          <div class="doc-md-description">
+            <p>NUmber of records read</p>
+          </div>
+        </li>
+    </ul>
 
     </div>
 
@@ -4315,32 +3745,16 @@ Returns:
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td><code>percent</code></td>
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>brightness in percent</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code>percent</code></b>
+              (<code>int</code>)
+          –
+          <div class="doc-md-description">
+            <p>brightness in percent</p>
+          </div>
+        </li>
+    </ul>
     </div>
 
 </div>
@@ -4366,27 +3780,16 @@ Returns:
       <p>Version of FPGA design on device.</p>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>fpga design version</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>int</code>
+          –
+          <div class="doc-md-description">
+            <p>fpga design version</p>
+          </div>
+        </li>
+    </ul>
     </div>
 
 </div>
@@ -4414,27 +3817,16 @@ Returns:
 156.25ps.</p>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code>float</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>resolution</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>float</code>
+          –
+          <div class="doc-md-description">
+            <p>resolution</p>
+          </div>
+        </li>
+    </ul>
     </div>
 
 </div>
@@ -4461,27 +3853,16 @@ Returns:
 <p>Depending on loaded firmware this will return either 8 or 16</p>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>number of useable input channels</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>int</code>
+          –
+          <div class="doc-md-description">
+            <p>number of useable input channels</p>
+          </div>
+        </li>
+    </ul>
     </div>
 
 </div>
@@ -4508,27 +3889,16 @@ Returns:
       <p>Input thresholds</p>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code>list[<span title="numpy.float64">float64</span>]</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>List[float64]: Currently set input thresholds</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>list[<span title="numpy.float64">float64</span>]</code>
+          –
+          <div class="doc-md-description">
+            <p>List[float64]: Currently set input thresholds</p>
+          </div>
+        </li>
+    </ul>
     </div>
 
 </div>
@@ -4555,27 +3925,16 @@ Returns:
       <p>Channels set to use negative edge triggering</p>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code>List[<span title="numpy.uint8">uint8</span>]</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>List of channels set to trigger on negative edges</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>List[<span title="numpy.uint8">uint8</span>]</code>
+          –
+          <div class="doc-md-description">
+            <p>List of channels set to trigger on negative edges</p>
+          </div>
+        </li>
+    </ul>
     </div>
 
 </div>
@@ -4602,27 +3961,16 @@ Returns:
       <p>Delays in seconds set on each channel</p>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code><span title="numpy.float64">float64</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>delays on each channel in seconds</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="numpy.float64">float64</span></code>
+          –
+          <div class="doc-md-description">
+            <p>delays on each channel in seconds</p>
+          </div>
+        </li>
+    </ul>
     </div>
 
 </div>
@@ -4697,27 +4045,16 @@ Returns:
       <p>Minimum size of a group to be transmitted to the host computer.</p>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code>int</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Minimum size of a group to be transmitted</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>int</code>
+          –
+          <div class="doc-md-description">
+            <p>Minimum size of a group to be transmitted</p>
+          </div>
+        </li>
+    </ul>
     </div>
 
 </div>
@@ -4744,27 +4081,16 @@ Returns:
       <p>Maximum time between two pulses in the same group.</p>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code>float</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>maximum time between two pulses in the same group</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>float</code>
+          –
+          <div class="doc-md-description">
+            <p>maximum time between two pulses in the same group</p>
+          </div>
+        </li>
+    </ul>
     </div>
 
 </div>
