@@ -1,5 +1,6 @@
 import cython
 from cython.cimports import _tangy as _tangy
+import warnings
 
 import mmap
 from os import dup, listdir, remove, makedirs
@@ -974,7 +975,7 @@ class TangyBuffer:
     @cython.ccall
     def coincidence_collect(self, read_time: float, window: float,
                             channels: List[int],
-                            delays: Optional[List[float]] = None) -> Records:
+                            delays: Optional[List[float]] = None) -> Optional[Records]:
         """ Collect coincident timetags
 
         Collects the timetags in coincdience for the chosen channels over the
@@ -1020,6 +1021,10 @@ class TangyBuffer:
                                                  window,
                                                  read_time,
                                                  cython.address(self._buf.records))
+
+        if count == 0:
+            warnings.warn("No coincidences found")
+            return None
 
         slice: _tangy.tangy_field_ptrs
         n_records: u64n = count * _n_channels
@@ -1731,7 +1736,7 @@ class QuToolsFile():
             name, 1e-12, 1, 8, length, TangyBufferType.Standard)
 
         self._timetag_offset = _tangy.srb_read_header_qutools(
-                self._buffer._ptr_rb, self._c_file_handle)
+            self._buffer._ptr_rb, self._c_file_handle)
         return
 
     def __del__(self):

@@ -4,13 +4,7 @@ from numpy import get_include
 from Cython.Build import cythonize
 from setuptools import setup, Extension
 
-
-local = True
-print("CIBUILDWHEEL ", os.environ.get("CIBUILDWHEEL", '0'))
-if os.environ.get("CIBUILDWHEEL", '0') == 1:
-    local = False
-local = False
-
+local = os.path.isdir("./local_testing/")
 cython_dir = os.path.join("tangy_src")
 
 extensions = []
