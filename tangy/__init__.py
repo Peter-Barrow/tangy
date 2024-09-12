@@ -20,5 +20,5 @@ if platform.startswith("win32"):
 if _uqd_lib is not None:
     from ._uqd import UQDLogic16
 
-if _qutag_lib is not None:
-    from ._qutag import QuTagHR, DeviceChannel, SignalEdge, SignalConditioning
+# if _qutag_lib is not None:
+#     from ._qutag import QuTagHR, DeviceChannel, SignalEdge, SignalConditioning
