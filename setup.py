@@ -14,9 +14,9 @@ tangy_core = Extension(
     sources=[
         os.path.join(cython_dir, "_tangy.py"),
     ],
-    define_macros=[('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')],
+    define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")],
     include_dirs=[get_include(), cython_dir + "/src"],
-    optional=os.environ.get('CIBUILDWHEEL', '0') != '1',
+    optional=os.environ.get("CIBUILDWHEEL", "0") != "1",
 )
 
 extensions.append(tangy_core)
@@ -25,11 +25,13 @@ compiler_flags = []
 if "Linux" in platform.platform():
     # compiler_flags = ["-O2", "-march=native"]
     # compiler_flags = ["-march=native"]
-    uqd_include_dirs = [get_include(),
-                        "./opt/CTimeTag/Include",
-                        ".",
-                        "./tangy_src/src/"]
-    libusb = "usb"
+    uqd_include_dirs = [
+        get_include(),
+        "./opt/CTimeTag/Include",
+        ".",
+        "./tangy_src/src/",
+    ]
+    libusb = "usb-1.0"
     if local is True:
         libusb = "usb-1.0"
 
@@ -39,13 +41,13 @@ if "Linux" in platform.platform():
             os.path.join(cython_dir, "_ctimetag.py"),
             os.path.join(cython_dir, "src/uqd_bindings.cpp"),
         ],
-        define_macros=[('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')],
+        define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")],
         include_dirs=uqd_include_dirs,
-        libraries=[libusb, 'timetag64'],
-        library_dirs=['.', './opt/CTimeTag/Linux'],
+        libraries=[libusb, "timetag64"],
+        library_dirs=[".", "./opt/CTimeTag/Linux"],
         extra_compile_args=compiler_flags,
         # language="c",
-        optional=os.environ.get('CIBUILDWHEEL', '0') != '1',
+        optional=os.environ.get("CIBUILDWHEEL", "0") != "1",
     )
     extensions.append(uqd)
 
@@ -92,22 +94,23 @@ if "Windows" in platform.platform():
             os.path.join(cython_dir, "_ctimetag.py"),
             os.path.join(cython_dir, "src\\uqd_bindings.cpp"),
         ],
-        define_macros=[('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')],
+        define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")],
         include_dirs=uqd_include_dirs,
         libraries=["CTimeTagLib"],
-        library_dirs=[base_path, base_path + '\\opt\\CTimeTag\\Win64\\'],
-        extra_link_args=['/d2:-AllowCompatibleILVersions'],
+        library_dirs=[base_path, base_path + "\\opt\\CTimeTag\\Win64\\"],
+        extra_link_args=["/d2:-AllowCompatibleILVersions"],
         extra_compile_args=compiler_flags,
         language="c++",
-        optional=os.environ.get('CIBUILDWHEEL', '0') != '1',
+        optional=os.environ.get("CIBUILDWHEEL", "0") != "1",
     )
     extensions.append(uqd)
 
 ext_modules = cythonize(
     extensions,
     include_path=[cython_dir, cython_dir + "./src"],
-    compiler_directives={'language_level': '3'},
-    annotate=True)
+    compiler_directives={"language_level": "3"},
+    annotate=True,
+)
 
 # setup(ext_modules=ext_modules, include_package_data=True)
 setup(ext_modules=ext_modules)
