@@ -142,7 +142,7 @@ JOIN(STUB, buffer_info_init)(char* data, BUFFER* buffer) {
 
 SLICE JOIN(STUB, init_base_ptrs)(const BUFFER* const buffer);
 
-static inline tbResult
+static inline shmem_result
 JOIN(STUB, buffer_init)(const u64 num_elements,
                         RESOLUTION resolution,
                         const u8 n_channels,
@@ -155,7 +155,7 @@ JOIN(STUB, buffer_init)(const u64 num_elements,
     char* full_name = buffer_name_new(name);
     buffer_name_init(name, full_name);
     map.name = full_name;
-    tbResult result = shmem_create(num_bytes, &map);
+    shmem_result result = shmem_create(num_bytes, &map);
     if (false == result.Ok) {
         return result;
     }
@@ -201,14 +201,14 @@ JOIN(STUB, buffer_init)(const u64 num_elements,
     return result;
 }
 
-static inline tbResult
+static inline shmem_result
 JOIN(STUB, buffer_connect)(char* name, BUFFER* buffer) {
 
     char* full_name = buffer_name_new(name);
     buffer_name_init(name, full_name);
 
     u8 exists = 0;
-    tbResult result = shmem_exists(full_name, &exists);
+    shmem_result result = shmem_exists(full_name, &exists);
     if (false == result.Ok) {
         return result;
     }
@@ -237,7 +237,7 @@ JOIN(STUB, buffer_connect)(char* name, BUFFER* buffer) {
     return result;
 }
 
-static inline tbResult
+static inline shmem_result
 JOIN(STUB, buffer_deinit)(BUFFER* buffer) {
 
     shared_mapping map = { .file_descriptor = buffer->file_descriptor,
@@ -245,7 +245,7 @@ JOIN(STUB, buffer_deinit)(BUFFER* buffer) {
                            .data = buffer->map_ptr };
 
     u8 exists = 0;
-    tbResult result = shmem_exists(buffer->name, &exists);
+    shmem_result result = shmem_exists(buffer->name, &exists);
 
     usize offset = offsetof(BUFFER_INFO, reference_count) / 8;
     ((i64*)buffer->map_ptr)[offset] -= 1;
@@ -427,8 +427,8 @@ JOIN(STUB, time_in_buffer)(const BUFFER* buffer) {
 }
 #define TimeInBuffer(BUF) JOIN(STUB, time_in_buffer)(BUF)
 
-
-static inline f64 JOIN(STUB, current_time)(const BUFFER* buffer) {
+static inline f64
+JOIN(STUB, current_time)(const BUFFER* buffer) {
     u64 count = *(buffer->count) - 1;
     u64 capacity = *(buffer->capacity);
     RESOLUTION resolution = *(buffer->resolution);
@@ -439,7 +439,6 @@ static inline f64 JOIN(STUB, current_time)(const BUFFER* buffer) {
     f64 current_time = ToTime(RecordAt(buffer, index % capacity), resolution);
     return current_time;
 }
-
 
 /**
  * @brief Converts a an array of delays in time to delays in units of time bins
@@ -557,9 +556,9 @@ JOIN(STUB, singles)(const BUFFER* const buffer,
 
 static inline u64
 JOIN(STUB, void_singles)(const void* const vbuffer,
-                    const u64 start,
-                    const u64 stop,
-                    u64* counters) {
+                         const u64 start,
+                         const u64 stop,
+                         u64* counters) {
 
     BUFFER* buffer = (BUFFER*)vbuffer;
     u64 capacity = *buffer->capacity;
@@ -613,7 +612,8 @@ JOIN(STUB, pattern_init)(const BUFFER* const buffer,
     }
 
     u64 channel_min;
-    u64 most_recent = JOIN(STUB, as_bins)(RecordAt(buffer, (count - 1) % capacity), res);
+    u64 most_recent =
+      JOIN(STUB, as_bins)(RecordAt(buffer, (count - 1) % capacity), res);
 
     for (usize i = 0; i < n; i++) {
         if (most_recent <= delays[i]) {
@@ -840,7 +840,8 @@ JOIN(STUB, coincidences_count)(const BUFFER* const buffer,
     }
 
     RESOLUTION res = *(buffer->resolution);
-    u64 radius_bins = BinsFromTime(res, radius); //TODO: should this be doubled?
+    u64 radius_bins = BinsFromTime(res, radius); // TODO: should this be
+                                                 // doubled?
     u64 diameter_bins = radius_bins + radius_bins;
 
     bool in_range = true;
@@ -868,7 +869,6 @@ JOIN(STUB, coincidences_count)(const BUFFER* const buffer,
         current_times[pattern.oldest] =
           ArrivalTimeAtNext(conversion_factor,
                             TimestampAt(buffer, pattern.index[pattern.oldest]));
-
     }
 
     PatternIteratorDeinit(&pattern);
@@ -927,7 +927,7 @@ JOIN(STUB, coincidence_measurement_delete)(CC_MEASUREMENT* measurement) {
 //     cc.records = TT_VECTOR_INIT(128);
 //     return cc;
 // }
-// 
+//
 // static inline void JOIN(STUB, cc_measurement_deinit)(cc_measurement* cc){
 //     TT_VECTOR_DEINIT((TT_VECTOR*)cc.records);
 //     cc = NULL;
@@ -1172,7 +1172,8 @@ JOIN(STUB, joint_delay_histogram)(const BUFFER* const buffer,
  */
 // TODO: refactor, this should calculate bin_width internally
 // TODO: calculate number of bins in here
-// TODO: intensities should be a pointer an unitialised vec_u64, timetrace should call init
+// TODO: intensities should be a pointer an unitialised vec_u64, timetrace
+// should call init
 static inline u64
 JOIN(STUB, timetrace)(const BUFFER* const buffer,
                       const f64 read_time,

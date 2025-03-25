@@ -45,10 +45,10 @@ typedef enum {
     STAT_ERROR,
 } tbError;
 
-typedef struct tbResult {
-    tbError Error;
-    bool Ok;
-} tbResult;
+// typedef struct shmem_result {
+//     tbError Error;
+//     bool Ok;
+// } shmem_result;
 
 typedef struct index_range {
     u64 begin;
@@ -230,6 +230,4 @@ buffer_name(char* prefix, char* name) {
     return buffer;
 }
 
-
 #endif
-

@@ -191,8 +191,8 @@ clk_channel_at(const clk_slice* data, u64 absolute_index) {
 
 inline u64
 clk_arrival_time_at(const clk_slice* data,
-                     u64 conversion_factor,
-                     u64 absolute_index) {
+                    u64 conversion_factor,
+                    u64 absolute_index) {
     clk_timetag timestamp = data->timestamp[absolute_index];
     return (conversion_factor * timestamp.clock) + timestamp.delta;
 }
@@ -209,10 +209,10 @@ clk_as_bins(clk_timetag record, u64 conversion_factor) {
 
 inline u64
 clk_buffer_slice(shared_ring_buffer* const buf,
-                  const clk_slice* const data,
-                  clk_field_ptrs* ptrs,
-                  u64 start,
-                  u64 stop) {
+                 const clk_slice* const data,
+                 clk_field_ptrs* ptrs,
+                 u64 start,
+                 u64 stop) {
 
     if (ptrs->length == 0) {
         return 0;
@@ -244,10 +244,10 @@ clk_buffer_slice(shared_ring_buffer* const buf,
 
 inline u64
 clk_buffer_push(shared_ring_buffer* const buf,
-                 const clk_slice* const data,
-                 clk_field_ptrs* ptrs,
-                 u64 start,
-                 u64 stop) {
+                const clk_slice* const data,
+                clk_field_ptrs* ptrs,
+                u64 start,
+                u64 stop) {
 
     if (ptrs->length == 0) {
         return 0;
@@ -273,7 +273,7 @@ clk_buffer_push(shared_ring_buffer* const buf,
     for (i = 0; (i + start_abs) < mid_stop; i++) {
         data->channel[start_abs + i] = ptrs->channels[i];
         clk_timetag timestamp = { .clock = ptrs->clocks[i],
-                                   .delta = ptrs->deltas[i] };
+                                  .delta = ptrs->deltas[i] };
         data->timestamp[start_abs + i] = timestamp;
     }
 
@@ -283,7 +283,7 @@ clk_buffer_push(shared_ring_buffer* const buf,
         for (i = 0; i < stop_abs; i++) {
             data->channel[i] = ptrs->channels[count];
             clk_timetag timestamp = { .clock = ptrs->clocks[count],
-                                       .delta = ptrs->deltas[count] };
+                                      .delta = ptrs->deltas[count] };
             data->timestamp[i] = timestamp;
             count += 1;
         }
@@ -313,10 +313,10 @@ clk_records_copy(vec_clk_timetag* records, clk_field_ptrs* data) {
 
 histogram2D_coords
 clk_joint_histogram_position(const clk_slice* data,
-                              const u8 ch_idx_idler,
-                              const u8 ch_idx_signal,
-                              const u8 ch_idx_clock,
-                              const clk_timetag* timetags) {
+                             const u8 ch_idx_idler,
+                             const u8 ch_idx_signal,
+                             const u8 ch_idx_clock,
+                             const clk_timetag* timetags) {
 
     histogram2D_coords point = {
         .x = timetags[ch_idx_idler].delta,

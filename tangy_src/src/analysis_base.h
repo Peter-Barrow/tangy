@@ -778,8 +778,8 @@ JOIN(stub, joint_delay_histogram)(shared_ring_buffer* const buf,
         if (check == 1) {
             point = jointHistogramPosition(
               data, idx_signal, idx_idler, idx_clock, current_timetags);
-            // TODO: can we centre the spectra here? Have a central bin and then calculate the 
-            // offset from that?
+            // TODO: can we centre the spectra here? Have a central bin and then
+            // calculate the offset from that?
             if ((point.x < diameter_bins) & (point.y < diameter_bins)) {
                 // histogram_2d[point.y][point.x] += 1;
                 // signal -> rows -> x
@@ -968,7 +968,8 @@ JOIN(stub, second_order_coherence_delays)(shared_ring_buffer* const buf,
 
         ringbuffer_u64_push(buffers[idx_a], current_times[idx_a]);
         for (u64 i = 0; i < N; i++) {
-            // TODO: investigate makeing delta signed, might eliminate branch below
+            // TODO: investigate makeing delta signed, might eliminate branch
+            // below
             u64 delta =
               current_times[idx_a] -
               ringbuffer_u64_get(buffers[idx_b], buffers[idx_b]->head - i - 1);

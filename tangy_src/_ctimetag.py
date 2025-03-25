@@ -3,11 +3,15 @@ import time
 from cython.cimports import _ctimetag as _ctimetag
 from cython.cimports.libcpp import bool as cbool
 from typing import List, Tuple, Optional
-from cython.cimports.libc.stdint import uint8_t as u8
 from cython.cimports.libc.stdint import uint32_t as u32
-from cython.cimports.libc.stdint import uint64_t as u64
-from numpy import ndarray, zeros, uint8, uint64, float64, asarray
-from cython.cimports.numpy import PyArray_SimpleNewFromData, npy_intp, NPY_UINT8, NPY_INT64
+from numpy import array, ndarray, zeros, uint8, float64
+from cython.cimports.numpy import (
+    PyArray_SimpleNewFromData,
+    npy_intp,
+    NPY_UINT8,
+    NPY_INT64,
+    NPY_UINT64,
+)
 
 # from cython.cimports import _tangy
 from ._tangy import TangyBuffer
@@ -19,44 +23,32 @@ UQD_ERROR_FLAG = {
         "An overflow in the 512 k values SRAM FIFO has been detected. \
         The time-tag generation rate is higher than the USB transmission rate.",
     ),
-    2: (
-        "NegFifoOverflow",
-        "Internal reason, should never occur"
-    ),
-    4: (
-        "PosFifoOverflow",
-        "Internal reason, should never occur"
-    ),
-    8: (
-        "DoubleError",
-        "One input had two pulses within the coincidence window."
-    ),
+    2: ("NegFifoOverflow", "Internal reason, should never occur"),
+    4: ("PosFifoOverflow", "Internal reason, should never occur"),
+    8: ("DoubleError", "One input had two pulses within the coincidence window."),
     16: (
         "InputFifoOverflow",
-        "More than 1024 successive tags were detected with a rate greater 100 MHz"
+        "More than 1024 successive tags were detected with a rate greater 100 MHz",
     ),
     32: (
         "10MHzHardError",
-        "The 10 MHz input is not connected or connected to a wrong type of signal."
+        "The 10 MHz input is not connected or connected to a wrong type of signal.",
     ),
     64: (
         "10MHzSoftError",
-        "The 10 MHz input is connected, but the frequency is not 10 MHz."
+        "The 10 MHz input is connected, but the frequency is not 10 MHz.",
     ),
-    128: (
-        "OutFifoOverflow",
-        "Internal error, should never occur"
-    ),
+    128: ("OutFifoOverflow", "Internal error, should never occur"),
     256: (
         "OutDoublePulse",
         "An output pulse was generated, while another pulse was still present \
-        on the same output. The pulse length is too long for the given rate."
+        on the same output. The pulse length is too long for the given rate.",
     ),
     512: (
         "OutTooLate",
         "The internal processing was too slow. This is because the output \
         event queue is too small for the given rate. Increase the value with \
-        SetOutputEventQueue()"
+        SetOutputEventQueue()",
     ),
 }
 
@@ -69,7 +61,7 @@ def error_from_bit_set(bit_set: int) -> List[int]:
     for i in range(16):
         x = bit_set >> i
         if x & 1:
-            bits[15 - i] = 2 ** i
+            bits[15 - i] = 2**i
     return bits
 
 
@@ -115,10 +107,13 @@ class UQDLogic16:
     _buffer: TangyBuffer
     # _buffer: _tangy.TangyBufferStandard
 
-    def __init__(self, device_id: int = 1, calibrate: bool = True,
-                 add_buffer: bool = False,
-                 buffer_size: Optional[int] = 10_000_000):
-
+    def __init__(
+        self,
+        device_id: int = 1,
+        calibrate: bool = True,
+        add_buffer: bool = False,
+        buffer_size: Optional[int] = 10_000_000,
+    ):
         if device_id < 1:
             raise ValueError("device_id must be >= 1")
 
@@ -140,10 +135,12 @@ class UQDLogic16:
 
         self._have_buffer = False
         if add_buffer is True:
-            self._buffer = TangyBuffer(f"uqdbuffer{self._device_id}",
-                                       resolution=self.resolution,
-                                       capacity=buffer_size,
-                                       channel_count=self.number_of_channels)
+            self._buffer = TangyBuffer(
+                f"uqdbuffer{self._device_id}",
+                resolution=self.resolution,
+                capacity=buffer_size,
+                channel_count=self.number_of_channels,
+            )
             self._have_buffer = True
         return
 
@@ -155,11 +152,11 @@ class UQDLogic16:
         return False
 
     def __close__(self):
-        print('Gracefully closing connection to device...')
+        print("Gracefully closing connection to device...")
         _ctimetag.CTimeTag_destroy(self._c_timetag)
 
     def __exit__(self):
-        print('Gracefully closing connection to device...')
+        print("Gracefully closing connection to device...")
         _ctimetag.CTimeTag_destroy(self._c_timetag)
 
     def calibrate(self):
@@ -184,8 +181,7 @@ class UQDLogic16:
             percent (int): brightness in percent
         """
         if (percent < 0) or (percent > 100):
-            raise ValueError(
-                "led_brightness must be in an integer between 0 and 100")
+            raise ValueError("led_brightness must be in an integer between 0 and 100")
 
         _ctimetag.CTimeTag_setLedBrightness(self._c_timetag, percent)
         self._led_brightness = percent
@@ -222,7 +218,7 @@ class UQDLogic16:
         Depending on loaded firmware this will return either 8 or 16
 
         Returns:
-            (int): number of useable input channels
+            (int): number of usable input channels
         """
         return _ctimetag.CTimeTag_getNoInputs(self._c_timetag)
 
@@ -326,8 +322,7 @@ class UQDLogic16:
         max_delay: float = ((2**18) - 1) * self.resolution
         delay: int = value[0] // self.resolution
         if (delay < 0) or (delay > max_delay):
-            raise ValueError(
-                f"Delay is out of range, must be >= 0 or < {max_delay}s")
+            raise ValueError(f"Delay is out of range, must be >= 0 or < {max_delay}s")
 
         self._input_delay[channel] = delay
         _ctimetag.CTimeTag_setDelay(self._c_timetag, channel, delay)
@@ -349,13 +344,11 @@ class UQDLogic16:
 
     @property
     def external_10MHz_reference(self) -> bool:
-        """
-        """
+        """ """
         return self._10MHz
 
     @external_10MHz_reference.setter
     def external_10MHz_reference(self, value: bool):
-
         use: cbool
         if value is True:
             use = True
@@ -381,24 +374,57 @@ class UQDLogic16:
         """
         _ctimetag.CTimeTag_stopTimetags(self._c_timetag)
 
+    # @cython.ccall
+    # def read_tags(self) -> Tuple[int, List[uint8], List[uint64]]:
+    #     count: int = _ctimetag.CTimeTag_readTags(
+    #         self._c_timetag, self._channel_ptr, self._timetag_ptr
+    #     )
+    #     count: int = 10
+    #     channel_arr: uint8[:] = zeros(count, dtype=uint8)
+    #     timetag_arr: uint64[:] = zeros(count, dtype=uint64)
+
+    #     channel_view: u8[:] = channel_arr
+    #     timetag_view: u64[:] = timetag_arr
+
+    #     i: cython.Py_ssize_
+    #     for i in range(count):
+    #         channel_view[i] = channel_arr[i]
+    #         timetag_view[i] = timetag_arr[i]
+
+    #     return (count, channel_arr, timetag_arr)
+
     @cython.ccall
-    def read_tags(self) -> Tuple[int, List[uint8], List[uint64]]:
-        # count: int = _ctimetag.CTimeTag_readTags(self._c_timetag,
-        #                                          self._channel_ptr,
-        #                                          self._timetag_ptr)
-        count: int = 10
-        channel_arr: uint8[:] = zeros(count, dtype=uint8)
-        timetag_arr: uint64[:] = zeros(count, dtype=uint64)
+    def read_tags(self) -> Tuple[int, ndarray, ndarray]:
+        count: int = _ctimetag.CTimeTag_readTags(
+            self._c_timetag,
+            cython.address(self._channel_ptr),
+            cython.address(self._timetag_ptr),
+        )
 
-        channel_view: u8[:] = channel_arr
-        timetag_view: u64[:] = timetag_arr
+        if count == 0:
+            return (count, array([]), array([]))
 
-        i: cython.Py_ssize_t
-        for i in range(count):
-            channel_view[i] = channel_arr[i]
-            timetag_view[i] = timetag_arr[i]
+        shape: npy_intp[1] = [count]
 
-        return (count, channel_arr, timetag_arr)
+        channels = PyArray_SimpleNewFromData(
+            1,
+            cython.address(shape[0]),
+            NPY_UINT8,
+            cython.cast(cython.pointer(cython.void), self._channel_ptr),
+        )
+
+        timestamps = PyArray_SimpleNewFromData(
+            1,
+            cython.address(shape[0]),
+            NPY_INT64,
+            cython.cast(cython.pointer(cython.void), self._timetag_ptr),
+        )
+
+        return (
+            count,
+            array(channels, copy=True),
+            array(timestamps, copy=True),
+        )
 
     @property
     def filter_min_count(self) -> int:
@@ -447,8 +473,7 @@ class UQDLogic16:
 
     @property
     def exclusion(self) -> List[uint8]:
-        """
-        """
+        """ """
         return self._exclusion
 
     @exclusion.setter
@@ -481,13 +506,11 @@ class UQDLogic16:
 
     @property
     def level_gate(self) -> bool:
-        """
-        """
+        """ """
         return _ctimetag.CTimeTag_levelGateActive(self._c_timetag)
 
     @level_gate.setter
     def level_gate(self, value: bool):
-
         use: cbool
         if value is True:
             use = True
@@ -498,8 +521,7 @@ class UQDLogic16:
 
     @property
     def time_gating(self) -> bool:
-        """
-        """
+        """ """
         return self._time_gating
 
     @time_gating.setter
@@ -514,8 +536,7 @@ class UQDLogic16:
 
     @property
     def time_gate_width(self) -> int:
-        """
-        """
+        """ """
         return self._time_gate_width
 
     @time_gate_width.setter
@@ -527,7 +548,8 @@ class UQDLogic16:
     def check_errors(self) -> dict:
         active_errors: dict = {}
         error_bits = error_from_bit_set(
-            _ctimetag.CTimeTag_readErrorFlags(self._c_timetag))
+            _ctimetag.CTimeTag_readErrorFlags(self._c_timetag)
+        )
         for e in error_bits:
             if e == 0:
                 continue
@@ -546,23 +568,30 @@ class UQDLogic16:
         """
         Write tags directly into buffer
         """
-        # count: int = _ctimetag.CTimeTag_readTags(self._c_timetag,
-        #                                          self._channel_ptr,
-        #                                          self._timetag_ptr)
-        count = 0
+        count: int = _ctimetag.CTimeTag_readTags(
+            self._c_timetag,
+            cython.address(self._channel_ptr),
+            cython.address(self._timetag_ptr),
+        )
 
         if count == 0:
             return count
 
-        # shape: npy_intp[:] = zeros(1, dtype=uint64)
         shape: npy_intp[1] = [count]
-        # shape[0] = count
 
         channels = PyArray_SimpleNewFromData(
-            1, cython.address(shape[0]), NPY_UINT8, self._channel_ptr)
+            1,
+            shape,
+            NPY_UINT8,
+            cython.cast(cython.pointer(cython.void), self._channel_ptr),
+        )
 
         timestamps = PyArray_SimpleNewFromData(
-            1, cython.address(shape[0]), NPY_INT64, self._timetag_ptr)
+            1,
+            shape,
+            NPY_UINT64,
+            cython.cast(cython.pointer(cython.void), self._timetag_ptr),
+        )
 
-        self._buffer.push(channels - 1, asarray(timestamps, uint64))
+        self._buffer.push(channels, timestamps)
         return self._buffer.count

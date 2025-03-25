@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tangy"
-version = "0.9.1"
+version = "0.9.2"
 description = "Timetag analysing library"
 authors = [
     {name = "Peter Thomas Barrow", email = "peter.barrow.93@gmail.com"}
@@ -14,7 +14,7 @@ maintainers = [
 ]
 readme = "README.md"
 keywords = []
-license = {text = "GPLv3"}
+# license = "GPLv3"
 dependencies = [
     "numpy>=2.0.0",
     "scipy",

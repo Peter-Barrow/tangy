@@ -15,7 +15,7 @@ cdef extern from "./src/uqd_bindings.h":
     int CTimeTag_isOpen(CTimeTag_ptr timetag)
 
     void CTimeTag_close(CTimeTag_ptr timetag)
-    
+
     void CTimeTag_calibrate(CTimeTag_ptr timetag)
 
     void CTimeTag_setInputThreshold(CTimeTag_ptr timetag, int channel, double voltage)
@@ -62,7 +62,7 @@ cdef extern from "./src/uqd_bindings.h":
 
     void CTimeTag_stopTimetags(CTimeTag_ptr timetag)
 
-    int CTimeTag_readTags(CTimeTag_ptr timetag, c_ChannelType* channel_ret, c_TimeType* time_ret)
+    int CTimeTag_readTags(CTimeTag_ptr timetag, c_ChannelType** channel_ret, c_TimeType** time_ret)
 
     void CTimeTag_saveDcCalibration(CTimeTag_ptr timetag, char* filename)
 
@@ -70,7 +70,7 @@ cdef extern from "./src/uqd_bindings.h":
 
     void CTimeTag_setFG(CTimeTag_ptr timetag, int period, int high)
 
-    void CTimeTag_setFGCount(CTimeTag_ptr timetag, int periode, int high, int count)
+    void CTimeTag_setFGCount(CTimeTag_ptr timetag, int period, int high, int count)
 
     int CTimeTag_getSingleCount(CTimeTag_ptr timetag, int i)
 

@@ -13,6 +13,7 @@ tangy_core = Extension(
     "tangy._tangy",
     sources=[
         os.path.join(cython_dir, "_tangy.py"),
+        # os.path.join(cython_dir + "/src/*.c"),
     ],
     define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")],
     include_dirs=[get_include(), cython_dir + "/src"],
@@ -29,7 +30,7 @@ if "Linux" in platform.platform():
         get_include(),
         "./opt/CTimeTag/Include",
         ".",
-        "./tangy_src/src/",
+        "./tangy_src/src",
     ]
     libusb = "usb-1.0"
     if local is True:
