@@ -1,8 +1,9 @@
 import os
-import platform
+
+# import platform
 import requests
 import zipfile
-import tarfile
+# import tarfile
 
 opt_path = os.path.realpath(os.path.join(os.getcwd(), "opt"))
 if not os.path.exists(opt_path):
@@ -36,17 +37,17 @@ if not os.path.exists(zip_universalquantum):
                 zip.getinfo(file).filename = destination
                 zip.extract(file, path=os.path.relpath(opt_path))
 
-if "Linux" in platform.platform():
-    url_qutag = "https://qutools.com/files/quTAG/QUTAG-LX64QT5-V1.5.10.tgz"
-    zip_qutag = os.path.join(opt_path, "QUTAG-LX64QT5-V1.5.10.tgz")
-    if not os.path.exists(zip_qutag):
-        download_url(url_qutag, zip_qutag)
-    with tarfile.open(zip_qutag, "r") as tar:
-        tar.extractall(opt_path)
-    os.rename(
-        os.path.join(opt_path, zip_qutag.replace(".tgz", "")),
-        os.path.join(opt_path, "QUTAG"),
-    )
+# if "Linux" in platform.platform():
+#     url_qutag = "https://qutools.com/files/quTAG/QUTAG-LX64QT5-V1.5.10.tgz"
+#     zip_qutag = os.path.join(opt_path, "QUTAG-LX64QT5-V1.5.10.tgz")
+#     if not os.path.exists(zip_qutag):
+#         download_url(url_qutag, zip_qutag)
+#     with tarfile.open(zip_qutag, "r") as tar:
+#         tar.extractall(opt_path)
+#     os.rename(
+#         os.path.join(opt_path, zip_qutag.replace(".tgz", "")),
+#         os.path.join(opt_path, "QUTAG"),
+#     )
 
 # if "Windows" in platform.platform():
 #     url_qutag = "https://qutools.com/files/quTAG/QUTAG-WIN64QT5-V1.5.10.zip"
