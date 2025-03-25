@@ -32,7 +32,7 @@ if "Linux" in platform.platform():
         ".",
         "./tangy_src/src",
     ]
-    libusb = "usb-1.0"
+    libusb = "usb"
     if local is True:
         libusb = "usb-1.0"
 
